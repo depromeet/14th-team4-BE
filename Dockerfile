@@ -17,7 +17,7 @@ FROM openjdk:17 as builder
 
 WORKDIR /app
 ARG JAR_FILE=build/libs/*.jar
-COPY ./target/${JAR_FILE} ./app.jar
+COPY ${JAR_FILE} ./app.jar
 RUN java -Djarmode=layertools -jar ./app.jar extract
 
 FROM openjdk:17.0.2
