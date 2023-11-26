@@ -15,4 +15,4 @@ COPY ${JAR_FILE} dmback.jar
 #COPY build/libs/*.jar app.jar
 
 # 실행 명령어
-ENTRYPOINT ["java", "-jar", "dmback.jar"]
+ENTRYPOINT ["java", "-jar", "/dmback.jar"]
