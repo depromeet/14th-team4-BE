@@ -6,5 +6,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
 }
 
-bootJar { enabled=true }
+bootJar {
+    enabled=true
+    layered {
+        isEnabled()
+    }
+}
+
 jar { enabled=false }

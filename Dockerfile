@@ -1,13 +1,29 @@
+## jdk17 Image Start
+#FROM openjdk:17
+#
+## WORKDIR /app
+#
+## 인자 설정 - JAR_File
+#ARG JAR_FILE=build/libs/*.jar
+#
+## jar 파일 복제
+#COPY ${JAR_FILE} dpmback.jar
+#
+## 실행 명령어
+#ENTRYPOINT ["java", "-jar", "dpmback.jar"]
+
 # jdk17 Image Start
-FROM openjdk:17
+FROM openjdk:17 as builder
 
-# WORKDIR /app
-
-# 인자 설정 - JAR_File
+WORKDIR /app
 ARG JAR_FILE=build/libs/*.jar
+COPY ./target/${JAR_FILE} ./app.jar
+RUN java -Djarmode=layertools -jar ./app.jar extract
 
-# jar 파일 복제
-COPY ${JAR_FILE} dpmback.jar
-
-# 실행 명령어
-ENTRYPOINT ["java", "-jar", "dpmback.jar"]
+FROM openjdk:17.0.2
+WORKDIR /application
+COPY --from=builder /app/dependencies ./
+COPY --from=builder /app/spring-boot-loader ./
+COPY --from=builder /app/snapshot-dependencies ./
+COPY --from=builder /app/application ./
+ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
