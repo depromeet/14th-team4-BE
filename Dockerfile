@@ -6,7 +6,7 @@ FROM openjdk:17
 WORKDIR /usr/src/app
 
 # 인자 설정 - JAR_File
-ARG JAR_FILE=build/libs/*.jar
+ARG JAR_FILE=./build/libs/*.jar
 
 # jar 파일 복제
 COPY ${JAR_FILE} dmback.jar
