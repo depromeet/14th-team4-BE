@@ -39,7 +39,7 @@ jobs:
     # 3. Docker 이미지 빌드
     - name: docker image build
       run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/dmbackdevelop .
-      working-directory: ./build/libs
+#      working-directory: build/libs
 
     # 4. DockerHub 로그인
     - name: docker login
