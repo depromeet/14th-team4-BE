@@ -7,10 +7,10 @@ dependencies {
 }
 
 bootJar {
-    enabled=true
-    layered {
-        isEnabled()
-    }
+    enabled = true
+//    layered {
+//        isEnabled()
+//    }
 }
 
-jar { enabled=false }
+jar { enabled = false }
