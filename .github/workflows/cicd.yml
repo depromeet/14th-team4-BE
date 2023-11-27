@@ -51,3 +51,25 @@ jobs:
       # 5. Docker Hub 이미지 푸시
       - name: docker Hub push
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/dpmbackdevelop
+
+  # 위 과정에서 푸시한 이미지를 클라우드 서버에서 pull 받아서 실행시키는 과정
+  run-docker-image-on-cloud:
+    needs: build-docker-image
+    runs-on: self-hosted
+
+    steps:
+      # 1. 최신 이미지를 풀
+      - name: docker pull
+        run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/dpmbackdevelop
+
+      # 2. 기존의 컨테이너를 중지
+      - name: docker stop container
+        run: sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
+
+      # 3. 최신 이미지를 컨테이너화하여 실행시킵니다
+      - name: docker run new container
+        run: sudo docker run --name github-actions-demo --rm -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/dpmbackdevelop
+
+      # 4. 미사용 이미지를 정리합니다
+      - name: delete old docker image
+        run: sudo docker system prune -f
