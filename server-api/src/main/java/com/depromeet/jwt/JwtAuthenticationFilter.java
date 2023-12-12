@@ -20,14 +20,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtService jwtTokenProvider;
 
-	public String[] whiteListInSwagger() {
-		return new String[] {"/swagger", "/swagger-ui/springfox.css", "/swagger-ui/swagger-ui-bundle.js",
-			"/swagger-ui/springfox.js", "/swagger-ui/swagger-ui-standalone-preset.js", "/swagger-ui/swagger-ui.css",
-			"/swagger-resources/configuration/ui", "/swagger-ui/favicon-32x32.png",
-			"/swagger-resources/configuration/security", "/swagger-resources", "/v2/api-docs", "/swagger-ui/login.html",
-			"/favicon.ico"};
-	}
-
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
