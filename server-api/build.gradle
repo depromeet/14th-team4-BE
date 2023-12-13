@@ -1,13 +1,46 @@
+plugins {
+    id 'org.asciidoctor.jvm.convert' version '3.3.2'
+}
+
+ext {
+    snippetsDir = file("build/generated-snippets")
+}
+
+asciidoctor { // (3)
+    inputs.dir snippetsDir
+    dependsOn test
+}
+
 dependencies {
     // 컴파일시 가져올 모듈
     implementation project(":server-domain")
 
     // spring
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // junit
+    testImplementation 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params'
+
+
+    // Spring Rest Docs 관련 추가
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
+}
+
+test {
+    useJUnitPlatform()
 }
 
 bootJar {
     enabled = true
+    dependsOn asciidoctor
+    copy {
+        from("${asciidoctor.outputDir}")
+        into 'src/main/resources/static/docs'
+    }
 //    layered {
 //        isEnabled()
 //    }
