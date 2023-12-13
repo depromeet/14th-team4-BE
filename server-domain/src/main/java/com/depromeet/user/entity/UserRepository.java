@@ -23,7 +23,7 @@ public class UserRepository {
 
 	public Optional<User> findBySocialTypeAndEmail(SocialType socialType, String email) {
 		return userMap.values().stream()
-			.filter(user -> socialType.equals(user.getSocialType()) && email.equals(user.getemail()))
+			.filter(user -> socialType.equals(user.getSocialType()) && email.equals(user.getEmail()))
 			.findFirst();
 	}
 }
