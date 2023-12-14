@@ -1,10 +1,10 @@
 dependencies {
     // 컴파일시 가져올 모듈
-    implementation project(":server-domain")
+    implementation project(':server-domain')
 
     // spring
     implementation 'org.springframework.boot:spring-boot-starter-web'
 }
 
-bootJar { enabled=true }
-jar { enabled=false }
+bootJar { enabled = true }
+jar { enabled = false }
