@@ -9,12 +9,12 @@ public class HomeController {
 	// test
 	@GetMapping("/")
 	public String root() {
-		return "hello root";
+		return "hello root(수정됨2)";
 	}
 
 	// test
 	@GetMapping("/home")
 	public String home() {
-		return "hello home";
+		return "hello home(수정됨2)";
 	}
 }
