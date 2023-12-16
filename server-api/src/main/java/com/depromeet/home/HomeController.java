@@ -30,6 +30,8 @@ public class HomeController {
 	@GetMapping("/jwt-test")
 	public User getUserInfo(@AuthenticationPrincipal User user) {
 		return user;
+	}
+
 	// rest docs test
 	@GetMapping("/hello/{name}")
 	public ResponseEntity<Person> hello(@PathVariable String name) {
