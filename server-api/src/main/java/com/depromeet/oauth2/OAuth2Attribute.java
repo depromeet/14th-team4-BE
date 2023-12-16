@@ -1,4 +1,4 @@
-package com.depromeet.oauth2.dto;
+package com.depromeet.oauth2;
 
 import java.util.Map;
 

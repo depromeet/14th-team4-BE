@@ -11,8 +11,8 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import com.depromeet.oauth2.dto.CustomOAuth2User;
-import com.depromeet.oauth2.dto.OAuth2Attribute;
+import com.depromeet.oauth2.CustomOAuth2User;
+import com.depromeet.oauth2.OAuth2Attribute;
 import com.depromeet.user.entity.User;
 import com.depromeet.user.entity.UserRepository;
 import com.depromeet.user.enums.SocialType;

@@ -8,7 +8,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import com.depromeet.jwt.JwtService;
-import com.depromeet.oauth2.dto.CustomOAuth2User;
+import com.depromeet.oauth2.CustomOAuth2User;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

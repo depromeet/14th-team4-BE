@@ -1,4 +1,4 @@
-package com.depromeet.oauth2.dto;
+package com.depromeet.oauth2;
 
 import java.util.Collection;
 import java.util.Map;
@@ -10,7 +10,7 @@ import lombok.Getter;
 
 @Getter
 public class CustomOAuth2User extends DefaultOAuth2User {
-	private String userId;
+	private final String userId;
 
 	/**
 	 * Constructs a {@code DefaultOAuth2User} using the provided parameters.
