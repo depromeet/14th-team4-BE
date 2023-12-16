@@ -1,0 +1,5 @@
+:doctype: book
+:icons: font
+
+[[test-member-status]]
+include::{snippets}/common-doc-controller-test/enums/custom-response-fields-testMemberStatus.adoc[]
