@@ -1,0 +1,3 @@
+[[Test]]
+=== Test
+operation::home-controller-test/hello_테스트[snippets='http-request,path-parameters,http-response,response-fields']
