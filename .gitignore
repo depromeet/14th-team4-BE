@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### yml
+/server-domain/**/resources/*.yml
