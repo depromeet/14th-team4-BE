@@ -14,12 +14,7 @@ import lombok.RequiredArgsConstructor;
 public class StoreController {
 
 	private final StoreService storeService;
-
-	@GetMapping("/")
-	public String root() {
-		return "hello root";
-	}
-
+	
 	@GetMapping("/stores")
 	public ResponseEntity getStores() {
 		return ResponseEntity.status(HttpStatus.OK).body(this.storeService.findAll());
