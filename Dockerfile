@@ -12,7 +12,7 @@ ARG JAR_FILE=server-api/build/libs/*.jar
 COPY ${JAR_FILE} dpmback.jar
 
 # 실행 명령어
-ENTRYPOINT ["java", "-jar", "dpmback.jar"]
+ENTRYPOINT ["java", "-jar", "dpmback.jar", "-Dspring.profiles.active=develop"]
 
 # jdk17 Image Start
 #FROM openjdk:17 as builder
