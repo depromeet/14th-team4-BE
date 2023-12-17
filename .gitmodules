@@ -1,0 +1,4 @@
+[submodule "Config"]
+	path = Config
+	url = https://github.com/depromeet-14th-team4-BE/Config.git
+    

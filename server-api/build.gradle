@@ -2,6 +2,14 @@ plugins {
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
 
+processResources.dependsOn('copySecret')
+
+tasks.register('copySecret', Copy) {
+    from './Config/server-api/'
+    include "application*.yml"  // 복사할 파일들
+    into 'src/main/resources'  // 복사 위치
+}
+
 configurations {
     asciidoctorExtensions // dependencies 에서 적용한 것 추가
     compileOnly {

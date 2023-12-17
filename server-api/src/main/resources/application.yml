@@ -1,7 +1,0 @@
-spring.application.name: server-api
-spring.profiles.active: local
-
-spring:
-  config:
-    import:
-      - server-domain.yml
