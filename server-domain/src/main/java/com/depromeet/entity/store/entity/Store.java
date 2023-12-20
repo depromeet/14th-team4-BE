@@ -1,4 +1,4 @@
-package com.depromeet.domain.store.entity;
+package com.depromeet.entity.store.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

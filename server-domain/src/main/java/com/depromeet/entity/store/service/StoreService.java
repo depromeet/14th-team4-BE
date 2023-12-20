@@ -1,11 +1,11 @@
-package com.depromeet.domain.store.service;
+package com.depromeet.entity.store.service;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.depromeet.domain.store.StoreFinder;
-import com.depromeet.domain.store.entity.Store;
+import com.depromeet.entity.store.StoreFinder;
+import com.depromeet.entity.store.entity.Store;
 
 import lombok.RequiredArgsConstructor;
 
