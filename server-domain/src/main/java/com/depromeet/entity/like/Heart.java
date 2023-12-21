@@ -1,6 +1,4 @@
-package com.depromeet.entity.log;
-
-import java.time.LocalDateTime;
+package com.depromeet.entity.like;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,28 +12,15 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class DdoEatLog {
+public class Heart {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long ddoeatlogId;
+	private Long heartId;
 
-	@Column(nullable = false)
-	private Long storeId;
-
-	@Column(nullable = false)
+	@Column(name = "image", columnDefinition = "varchar(500) null comment '이미지'")
 	private Long userId;
 
 	@Column(nullable = false)
-	private Float rating;
-
-	@Column(nullable = false)
-	private LocalDateTime visitedAt;
-
-	private String imageUrl;
-
-	@Column(nullable = false)
-	private Integer visitTimes;
-
-	private String description;
+	private Long ddoeatlogId;
 }

@@ -16,11 +16,11 @@ public class Follow {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long follow_id;
+	private Long followId;
 
 	@Column(nullable = false)
-	private Long follower_id;
+	private Long followerId;
 
 	@Column(nullable = false)
-	private Long following_id;
+	private Long followingId;
 }
