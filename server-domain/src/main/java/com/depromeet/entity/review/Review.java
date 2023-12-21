@@ -1,4 +1,4 @@
-package com.depromeet.entity.ddoeatlog;
+package com.depromeet.entity.review;
 
 import java.time.LocalDateTime;
 
@@ -14,11 +14,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class DdoEatLog {
+public class Review {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long ddoeatlogId;
+	private Long reviewId;
 
 	@Column(nullable = false)
 	private Long storeId;
