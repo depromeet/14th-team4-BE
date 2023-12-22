@@ -22,6 +22,6 @@ public class StorePersist {
 	}
 
 	public Long append(Store store) {
-		return this.storeRepository.save(store).getId();
+		return this.storeRepository.save(store).getStoreId();
 	}
 }
