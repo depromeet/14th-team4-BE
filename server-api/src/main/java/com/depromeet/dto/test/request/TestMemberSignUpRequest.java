@@ -1,7 +1,7 @@
-package com.depromeet.dto;
+package com.depromeet.dto.test.request;
 
-import com.depromeet.entity.TestMember;
-import com.depromeet.entity.TestMemberStatus;
+import com.depromeet.test.TestMember;
+import com.depromeet.test.TestMemberStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

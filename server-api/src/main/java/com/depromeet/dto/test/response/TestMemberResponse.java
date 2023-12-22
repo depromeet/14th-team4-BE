@@ -1,8 +1,7 @@
-package com.depromeet.dto;
+package com.depromeet.dto.test.response;
 
-import com.depromeet.entity.TestMember;
-import com.depromeet.entity.TestMemberStatus;
-import com.depromeet.entity.TestSex;
+import com.depromeet.test.TestMemberStatus;
+import com.depromeet.test.TestSex;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
