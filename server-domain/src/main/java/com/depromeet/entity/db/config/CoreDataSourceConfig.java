@@ -1,4 +1,4 @@
-package com.depromeet.domain.db.config;
+package com.depromeet.entity.db.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
