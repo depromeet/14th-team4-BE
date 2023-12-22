@@ -9,10 +9,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.depromeet.config.jwt.JwtAuthenticationFilter;
-import com.depromeet.config.jwt.JwtService;
-import com.depromeet.config.oauth2.handler.CustomOAuth2SuccessHandler;
-import com.depromeet.config.oauth2.service.CustomOAuth2UserService;
+import com.depromeet.auth.jwt.JwtAuthenticationFilter;
+import com.depromeet.auth.jwt.JwtService;
+import com.depromeet.auth.oauth2.handler.CustomOAuth2SuccessHandler;
+import com.depromeet.auth.oauth2.service.CustomOAuth2UserService;
 
 import lombok.RequiredArgsConstructor;
 

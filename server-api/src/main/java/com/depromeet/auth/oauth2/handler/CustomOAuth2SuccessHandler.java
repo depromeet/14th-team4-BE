@@ -1,9 +1,9 @@
-package com.depromeet.config.oauth2.handler;
+package com.depromeet.auth.oauth2.handler;
 
 import java.io.IOException;
 
-import com.depromeet.config.jwt.JwtService;
-import com.depromeet.config.oauth2.CustomOAuth2User;
+import com.depromeet.auth.oauth2.CustomOAuth2User;
+import com.depromeet.auth.jwt.JwtService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;

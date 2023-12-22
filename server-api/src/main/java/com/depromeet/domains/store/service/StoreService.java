@@ -1,4 +1,4 @@
-package com.depromeet.service.store;
+package com.depromeet.domains.store.service;
 
 import com.depromeet.domains.store.repository.StoreFinder;
 import com.depromeet.domains.store.entity.Store;

@@ -1,6 +1,6 @@
-package com.depromeet.controller.store;
+package com.depromeet.domains.store.controller;
 
-import com.depromeet.service.store.StoreService;
+import com.depromeet.domains.store.service.StoreService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

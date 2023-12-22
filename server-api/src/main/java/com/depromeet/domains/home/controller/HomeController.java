@@ -1,4 +1,4 @@
-package com.depromeet.controller.home;
+package com.depromeet.domains.home.controller;
 
 
 import com.depromeet.domains.user.entity.User;

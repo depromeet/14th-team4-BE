@@ -1,10 +1,10 @@
-package com.depromeet.config.oauth2.service;
+package com.depromeet.auth.oauth2.service;
 
 import java.util.Collections;
 import java.util.Map;
 
-import com.depromeet.config.oauth2.CustomOAuth2User;
-import com.depromeet.config.oauth2.OAuth2Attribute;
+import com.depromeet.auth.oauth2.CustomOAuth2User;
+import com.depromeet.auth.oauth2.OAuth2Attribute;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
