@@ -1,8 +1,8 @@
 package com.depromeet.document;
 
-import com.depromeet.entity.EnumType;
-import com.depromeet.entity.TestMemberStatus;
-import com.depromeet.entity.TestSex;
+import com.depromeet.enums.EnumType;
+import com.depromeet.test.TestMemberStatus;
+import com.depromeet.test.TestSex;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;

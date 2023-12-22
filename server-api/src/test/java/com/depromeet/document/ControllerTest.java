@@ -1,7 +1,7 @@
 package com.depromeet.document;
 
 import com.depromeet.controller.TestMemberController;
-import com.depromeet.home.HomeController;
+import com.depromeet.controller.home.HomeController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Disabled;

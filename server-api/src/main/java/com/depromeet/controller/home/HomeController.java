@@ -1,15 +1,14 @@
-package com.depromeet.home;
+package com.depromeet.controller.home;
 
 
+import com.depromeet.domains.user.entity.User;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
-import com.depromeet.entity.Person;
+import com.depromeet.test.Person;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.depromeet.user.entity.User;
 
 @RestController
 public class HomeController {

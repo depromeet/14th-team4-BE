@@ -1,11 +1,10 @@
-package com.depromeet.store.controller;
+package com.depromeet.controller.store;
 
+import com.depromeet.service.store.StoreService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.depromeet.entity.store.service.StoreService;
 
 import lombok.RequiredArgsConstructor;
 
