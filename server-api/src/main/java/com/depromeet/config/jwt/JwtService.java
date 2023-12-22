@@ -1,10 +1,14 @@
-package com.depromeet.jwt;
+package com.depromeet.config.jwt;
 
 import java.security.Key;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 
+import com.depromeet.common.exception.CustomException;
+import com.depromeet.common.exception.Result;
+import com.depromeet.domains.user.entity.User;
+import com.depromeet.domains.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,9 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
-import com.depromeet.user.entity.User;
-import com.depromeet.user.entity.UserRepository;
-import com.depromeet.user.enums.Role;
+import com.depromeet.enums.Role;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -116,6 +118,6 @@ public class JwtService {
 
 	private User getUserFromToken(String token) {
 		Claims claims = parseToken(token);
-		return userRepository.findByUserId(claims.get("userId", String.class));
+		return userRepository.findById(Long.valueOf(claims.get("userId", String.class))).orElseThrow(() -> new CustomException(Result.FAIL));
 	}
 }

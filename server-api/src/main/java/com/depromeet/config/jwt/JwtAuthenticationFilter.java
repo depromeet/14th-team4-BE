@@ -1,4 +1,4 @@
-package com.depromeet.jwt;
+package com.depromeet.config.jwt;
 
 import java.io.IOException;
 

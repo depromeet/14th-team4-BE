@@ -1,10 +1,10 @@
-package com.depromeet.oauth2;
+package com.depromeet.config.oauth2;
 
 import java.util.Map;
 
-import com.depromeet.user.entity.User;
-import com.depromeet.user.enums.Role;
-import com.depromeet.user.enums.SocialType;
+import com.depromeet.domains.user.entity.User;
+import com.depromeet.enums.Role;
+import com.depromeet.enums.SocialType;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -61,9 +61,9 @@ public class OAuth2Attribute {
 		return User.builder()
 			.socialType(socialType)
 			.socialId(socialId)
-			.nickname(nickname)
+			.nickName(nickname)
 			.email(email)
-			.role(Role.USER)
+			.userRole(Role.USER)
 			.build();
 	}
 }

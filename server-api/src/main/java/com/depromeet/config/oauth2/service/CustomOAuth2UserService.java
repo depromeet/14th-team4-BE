@@ -1,8 +1,12 @@
-package com.depromeet.oauth2.service;
+package com.depromeet.config.oauth2.service;
 
 import java.util.Collections;
 import java.util.Map;
 
+import com.depromeet.config.oauth2.CustomOAuth2User;
+import com.depromeet.config.oauth2.OAuth2Attribute;
+import com.depromeet.domains.user.entity.User;
+import com.depromeet.domains.user.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -11,11 +15,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import com.depromeet.oauth2.CustomOAuth2User;
-import com.depromeet.oauth2.OAuth2Attribute;
-import com.depromeet.user.entity.User;
-import com.depromeet.user.entity.UserRepository;
-import com.depromeet.user.enums.SocialType;
+import com.depromeet.enums.SocialType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -44,8 +44,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
 		User createdUser = getUser(extractAttributes, socialType);
 
-		return new CustomOAuth2User(Collections.singleton(new SimpleGrantedAuthority(createdUser.getRole().getKey())),
-			attributes, extractAttributes.getNameAttributeKey(), createdUser.getId());
+		return new CustomOAuth2User(Collections.singleton(new SimpleGrantedAuthority(createdUser.getUserRole().getKey())),
+			attributes, extractAttributes.getNameAttributeKey(), createdUser.getSocialId());
 	}
 
 	private String getUserNameAttributeName(final OAuth2UserRequest userRequest) {

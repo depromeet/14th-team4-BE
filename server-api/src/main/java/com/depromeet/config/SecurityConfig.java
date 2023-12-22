@@ -5,15 +5,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.DefaultLoginPageConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.depromeet.jwt.JwtAuthenticationFilter;
-import com.depromeet.jwt.JwtService;
-import com.depromeet.oauth2.handler.CustomOAuth2SuccessHandler;
-import com.depromeet.oauth2.service.CustomOAuth2UserService;
+import com.depromeet.config.jwt.JwtAuthenticationFilter;
+import com.depromeet.config.jwt.JwtService;
+import com.depromeet.config.oauth2.handler.CustomOAuth2SuccessHandler;
+import com.depromeet.config.oauth2.service.CustomOAuth2UserService;
 
 import lombok.RequiredArgsConstructor;
 
