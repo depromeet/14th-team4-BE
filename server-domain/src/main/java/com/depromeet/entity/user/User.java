@@ -1,5 +1,6 @@
 package com.depromeet.entity.user;
 
+import com.depromeet.common.BaseTimeEntity;
 import com.depromeet.user.enums.Role;
 import com.depromeet.user.enums.SocialType;
 
@@ -17,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class User {
+public class User extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

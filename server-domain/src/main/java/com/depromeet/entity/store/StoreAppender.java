@@ -15,7 +15,7 @@ public class StoreAppender {
 	public Long append(String storeName) {
 		Store store = Store
 			.builder()
-			.name(storeName)
+			.storeName(storeName)
 			.build();
 		return storePersist.append(store);
 	}
