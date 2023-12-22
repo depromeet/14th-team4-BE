@@ -1,4 +1,4 @@
-package com.depromeet.dto.test.response;
+package com.depromeet.domains.test.dto.response;
 
 import com.depromeet.test.TestMemberStatus;
 import com.depromeet.test.TestSex;
