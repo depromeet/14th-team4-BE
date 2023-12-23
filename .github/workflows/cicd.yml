@@ -28,6 +28,13 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      # 설정모듈 있는 Config
+      - name: Checkout
+        uses: actions/checkout@v1
+        with:
+          token: ${{ secrets.ACTION_TOKEN }}
+          submodules: true
+
       # 2. Spring Boot 애플리케이션 빌드
       - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
@@ -64,9 +71,11 @@ jobs:
       - name: docker stop container
         run: sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
 
-      # 3. 최신 이미지를 컨테이너화하여 실행시킵니다
-      - name: docker run new container
-        run: sudo docker run --name github-actions-demo --rm -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/dpmbackdevelop
+      #      # 3. 최신 이미지를 컨테이너화하여 실행시킵니다
+      #      - name: docker run new container
+      #        run: sudo docker run --name github-actions-demo --rm -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/dpmbackdevelop
+      - name: docker compose up
+        run: sudo docker-compose up -d
 
       # 4. 미사용 이미지를 정리합니다
       - name: delete old docker image
