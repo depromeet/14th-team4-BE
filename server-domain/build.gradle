@@ -7,7 +7,7 @@ tasks.register('copySecret', Copy) {
 dependencies {
 
     // jpa
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    api('org.springframework.boot:spring-boot-starter-data-jpa')
 
     // Querydsl 추가
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'

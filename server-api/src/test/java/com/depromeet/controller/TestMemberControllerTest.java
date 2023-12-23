@@ -2,8 +2,8 @@ package com.depromeet.controller;
 
 import com.depromeet.document.DocumentLinkGenerator;
 import com.depromeet.document.RestDocsTestSupport;
-import com.depromeet.dto.TestMemberSignUpRequest;
-import com.depromeet.entity.TestMemberStatus;
+import com.depromeet.domains.test.dto.request.TestMemberSignUpRequest;
+import com.depromeet.test.TestMemberStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
