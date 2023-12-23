@@ -1,8 +1,8 @@
 package com.depromeet.controller;
 
-import com.depromeet.dto.TestMemberResponse;
-import com.depromeet.dto.TestMemberSignUpRequest;
-import com.depromeet.entity.TestMemberStatus;
+import com.depromeet.domains.test.dto.response.TestMemberResponse;
+import com.depromeet.domains.test.dto.request.TestMemberSignUpRequest;
+import com.depromeet.test.TestMemberStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
