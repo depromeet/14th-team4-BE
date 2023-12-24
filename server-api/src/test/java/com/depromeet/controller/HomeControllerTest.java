@@ -8,6 +8,8 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static com.depromeet.config.RestDocsConfig.field;
@@ -19,6 +21,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(HomeController.class)
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
+@WithMockUser
+//@TestPropertySource(locations = "classpath:application-test.yml")
 public class HomeControllerTest extends RestDocsTestSupport {
 
     @Autowired
@@ -28,7 +32,7 @@ public class HomeControllerTest extends RestDocsTestSupport {
     public void Hello_테스트() throws Exception {
 
         // given (pathvariable)
-        String name = "디프만 4팀 서버 파이팅!! 아자아자 테스트 4번째11112222333";
+        String name = "디프만 4팀 서버 파이팅!!";
 
         // when
         mockMvc.perform(

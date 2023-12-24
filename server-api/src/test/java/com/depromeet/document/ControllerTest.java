@@ -1,7 +1,7 @@
 package com.depromeet.document;
 
-import com.depromeet.controller.TestMemberController;
 import com.depromeet.domains.home.controller.HomeController;
+import com.depromeet.domains.test.controller.TestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Disabled;
@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
         // 테스트 하고자 하는 컨트롤러를 명시
         HomeController.class,
         CommonDocController.class,
-        TestMemberController.class,
+        TestController.class,
 })
 public abstract class ControllerTest {
 
