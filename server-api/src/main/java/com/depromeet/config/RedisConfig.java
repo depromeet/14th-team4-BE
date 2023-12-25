@@ -20,8 +20,6 @@ public class RedisConfig {
 	// RedisProperties로 yaml에 저장한 host, post를 연결
 	@Bean
 	public RedisConnectionFactory redisConnectionFactory() {
-		System.out.println(redisProperties.getHost());
-		System.out.println(redisProperties.getPort());
 		return new LettuceConnectionFactory(redisProperties.getHost(), redisProperties.getPort());
 	}
 
