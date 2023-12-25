@@ -41,11 +41,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		String userNameAttributeName = getUserNameAttributeName(userRequest);
 		Map<String, Object> attributes = oAuth2User.getAttributes();
 		OAuth2Attribute extractAttributes = OAuth2Attribute.of(socialType, userNameAttributeName, attributes);
-
+		// 기존 가입된 유저인지 확인
 		User createdUser = getUser(extractAttributes, socialType);
 
 		return new CustomOAuth2User(Collections.singleton(new SimpleGrantedAuthority(createdUser.getUserRole().getKey())),
-			attributes, extractAttributes.getNameAttributeKey(), createdUser.getSocialId());
+			attributes, extractAttributes.getNameAttributeKey(), createdUser.getUserId());
 	}
 
 	private String getUserNameAttributeName(final OAuth2UserRequest userRequest) {
@@ -68,7 +68,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	 * 만약 찾은 회원이 있다면, 그대로 반환하고 없다면 saveUser()를 호출하여 회원을 저장한다.
 	 */
 	private User getUser(OAuth2Attribute attributes, SocialType socialType) {
-		User findUser = userRepository.findBySocialTypeAndEmail(socialType, attributes.getEmail()).orElse(null);
+		User findUser = userRepository.findBySocialTypeAndSocialId(socialType, attributes.getSocialId()).orElse(null);
 
 		if (findUser == null) {
 			return saveUser(attributes, socialType);
