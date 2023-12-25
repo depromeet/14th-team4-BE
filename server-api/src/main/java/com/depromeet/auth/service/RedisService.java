@@ -1,4 +1,4 @@
-package com.depromeet.config;
+package com.depromeet.auth.service;
 
 import java.time.Duration;
 
