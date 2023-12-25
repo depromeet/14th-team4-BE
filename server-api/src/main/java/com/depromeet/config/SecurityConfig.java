@@ -11,6 +11,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.depromeet.auth.jwt.JwtAuthenticationFilter;
 import com.depromeet.auth.jwt.JwtService;
+import com.depromeet.auth.oauth2.handler.CustomOAuth2FailureHandler;
 import com.depromeet.auth.oauth2.handler.CustomOAuth2SuccessHandler;
 import com.depromeet.auth.oauth2.service.CustomOAuth2UserService;
 
@@ -22,16 +23,18 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 	private static final String[] PATTERNS = {
 		"/", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**",
-		"/jwt-test", "/auth/refresh", "/auth/logout"
+		"/jwt-test", "/api/v1/auth/token/reissue"
 	};
 	private final JwtService jwtTokenProvider;
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
+	private final CustomOAuth2FailureHandler customOAuth2FailureHandler;
 
 	@Bean
 	protected SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
 		http
 			.csrf(AbstractHttpConfigurer::disable) //csrf 비활성
+			.cors(AbstractHttpConfigurer::disable)
 			.formLogin(AbstractHttpConfigurer::disable) //폼 로그인 비활성
 			.httpBasic(AbstractHttpConfigurer::disable) //HTTP 기본인증 비활성
 			.sessionManagement((sessionManagement) ->
@@ -43,8 +46,12 @@ public class SecurityConfig {
 			)
 			.oauth2Login(oauth2Login ->
 				oauth2Login
+					.authorizationEndpoint(
+						authEndpoint -> authEndpoint.baseUri("/oauth2/authorization/**")) // 이 url로 접근시 로그인을 요청한다
+					.redirectionEndpoint(redirectEndpoint -> redirectEndpoint.baseUri("/login/oauth2/code/**"))
 					.userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(customOAuth2UserService))
 					.successHandler(customOAuth2SuccessHandler)
+					.failureHandler(customOAuth2FailureHandler)
 			)
 			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 		return http.build();
