@@ -1,17 +1,14 @@
 package com.depromeet.controller;
 
 import com.depromeet.document.RestDocsTestSupport;
-import com.depromeet.domains.test.controller.TestController;
 import com.depromeet.domains.test.dto.request.TestRequest;
 import com.depromeet.domains.test.dto.response.TestResponse;
-import com.depromeet.domains.test.service.TestService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -32,16 +29,12 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(TestController.class)
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
 @WithMockUser // 해당 어노테이션이 있어야 인증 유저로 받아들임
 public class TestControllerTest extends RestDocsTestSupport {
     @Autowired
     MockMvc mockMvc;
-
-    @MockBean
-    private TestService testService;
 
     @Test
     public void create() throws Exception {
@@ -62,7 +55,7 @@ public class TestControllerTest extends RestDocsTestSupport {
         // when & then
         mockMvc.perform(
                 post("/test")
-                        .with(csrf())
+                        .with(csrf()) // Spring Security Test에서 csrf로 발생하는 403을  해결하기 위해
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer accessToken")
                         .content(objectMapper.writeValueAsString(testRequest)))
@@ -176,13 +169,6 @@ public class TestControllerTest extends RestDocsTestSupport {
                 .content("content")
                 .build();
 
-        // given
-        TestResponse testResponse = TestResponse.builder()
-                .id(1L)
-                .title("title1")
-                .content("content1")
-                .build();
-
         doNothing().when(testService).update(eq(1L), any(TestRequest.class));
 
         // when & then
@@ -204,6 +190,37 @@ public class TestControllerTest extends RestDocsTestSupport {
                                 requestFields(
                                         fieldWithPath("title").description("제목"),
                                         fieldWithPath("content").description("내용")
+                                ),
+                                responseFields(
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL).description("data")
+                                )
+                        )
+                )
+        ;
+    }
+
+    @Test
+    public void delete() throws Exception {
+        // given
+
+        doNothing().when(testService).delete(eq(1L));
+
+        // when & then
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.delete("/test/{testId}", 1L) // delete mapping은 RestDocumentationRequestBuilders를 명시해줘야 함
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", "Bearer accessToken"))
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("testId").description("테스트 번호")
+                                ),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("accessToken")
                                 ),
                                 responseFields(
                                         fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),

@@ -32,13 +32,14 @@ public class TestController {
     }
 
     @PutMapping("/{testId}")
-    public CustomResponseEntity update(@PathVariable final Long testId, @RequestBody TestRequest testRequest) {
+    public CustomResponseEntity<Void> update(@PathVariable final Long testId, @RequestBody TestRequest testRequest) {
         testService.update(testId, testRequest);
         return CustomResponseEntity.success();
     }
 
     @DeleteMapping("/{testId}")
     public CustomResponseEntity<Void> delete(@PathVariable final Long testId) {
+        testService.delete(testId);
         return CustomResponseEntity.success();
     }
 }
