@@ -2,6 +2,7 @@ package com.depromeet.domains.test.controller;
 
 import com.depromeet.common.exception.CustomResponseEntity;
 import com.depromeet.domains.test.dto.request.TestRequest;
+import com.depromeet.domains.test.dto.response.TestEnum;
 import com.depromeet.domains.test.dto.response.TestResponse;
 import com.depromeet.domains.test.service.TestService;
 import lombok.RequiredArgsConstructor;
@@ -42,4 +43,10 @@ public class TestController {
         testService.delete(testId);
         return CustomResponseEntity.success();
     }
+
+    @PostMapping("/enum")
+    public CustomResponseEntity<TestEnum> enumTest() {
+        return CustomResponseEntity.success(testService.enumTest());
+    }
+
 }

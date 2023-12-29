@@ -1,8 +1,11 @@
 package com.depromeet.controller;
 
+import com.depromeet.document.DocumentLinkGenerator;
 import com.depromeet.document.RestDocsTestSupport;
 import com.depromeet.domains.test.dto.request.TestRequest;
+import com.depromeet.domains.test.dto.response.TestEnum;
 import com.depromeet.domains.test.dto.response.TestResponse;
+import com.depromeet.test.TestEnumType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -226,6 +229,37 @@ public class TestControllerTest extends RestDocsTestSupport {
                                         fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
                                         fieldWithPath("data").type(JsonFieldType.NULL).description("data")
+                                )
+                        )
+                )
+        ;
+    }
+
+    @Test
+    public void enumTest() throws Exception {
+        // given
+        TestEnum testEnum = TestEnum.builder().id(1L).title("title").content("content").testEnumType(TestEnumType.Good).build();
+
+        given(testService.enumTest()).willReturn(testEnum);
+        // when & then
+        mockMvc.perform(
+                        post("/test/enum")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", "Bearer accessToken"))
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                requestHeaders(
+                                        headerWithName("Authorization").description("accessToken")
+                                ),
+                                responseFields(
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+                                        fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("ID"),
+                                        fieldWithPath("data.title").type(JsonFieldType.STRING).description("제목"),
+                                        fieldWithPath("data.content").type(JsonFieldType.STRING).description("내용"),
+                                        fieldWithPath("data.testEnumType").description(DocumentLinkGenerator.generateLinkCode(DocumentLinkGenerator.DocUrl.TEST_ENUM_TYPE))
                                 )
                         )
                 )

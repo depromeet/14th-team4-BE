@@ -1,7 +1,9 @@
 package com.depromeet.domains.test.service;
 
 import com.depromeet.domains.test.dto.request.TestRequest;
+import com.depromeet.domains.test.dto.response.TestEnum;
 import com.depromeet.domains.test.dto.response.TestResponse;
+import com.depromeet.test.TestEnumType;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,5 +47,14 @@ public class TestService {
 
     public void delete(Long testId) {
 
+    }
+
+    public TestEnum enumTest() {
+        return TestEnum.builder()
+                .id(1L)
+                .title("title")
+                .content("content")
+                .testEnumType(TestEnumType.Good)
+                .build();
     }
 }
