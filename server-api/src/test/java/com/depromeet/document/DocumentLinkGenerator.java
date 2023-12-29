@@ -16,8 +16,7 @@ public interface DocumentLinkGenerator {
 
     @RequiredArgsConstructor
     enum DocUrl {// 아래에 모든 enum에 대해서 정의하면 됨
-        TEST_MEMBER_STATUS("test-member-status", "상태"),
-        TEST_SEX("test-sex","성별")
+        TEST_ENUM_TYPE("test-enum", "테스트 enum")
         ;
 
         private final String pageId;
