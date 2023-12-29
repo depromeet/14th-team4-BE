@@ -1,5 +1,7 @@
+processResources.dependsOn('copySecret')
+
 tasks.register('copySecret', Copy) {
-    from './Config/server-domain/'
+    from '../Config/server-domain/'
     include "application*.yml"  // 복사할 파일들
     into 'src/main/resources'  // 복사 위치
 }
