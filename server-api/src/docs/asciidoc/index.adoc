@@ -12,32 +12,4 @@
 
 include::overview.adoc[]
 
-[[Test-MEMBER-API]]
-== Test MEMBER API
-
-[[Member-API]]
-== Member API
-
-include::Member-API.adoc[]
-
-[[Test]]
-== Test
-include::Home.adoc[]
-
-
-
-
-// === Request
-//
-// CURL:
-// include::{snippets}/hello/curl-request.adoc[]
-//
-// Request Parameters:
-// include::{snippets}/hello/http-request.adoc[]
-//
-// Request HTTP Example:
-// include::{snippets}/hello/http-request.adoc[]
-//
-// === Response
-// Response:
-// include::{snippets}/hello/http-response.adoc[]
+include::test.adoc[]
