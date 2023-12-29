@@ -1,6 +1,0 @@
-
-:doctype: book
-:icons: font
-
-[[test-sex]]
-include::{snippets}/common-doc-controller-test/enums/custom-response-fields-testSex.adoc[]
