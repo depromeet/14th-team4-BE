@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 	private static final String[] PATTERNS = {
 		"/", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**",
-		"/jwt-test", "/auth/refresh", "/auth/logout"
+		"/jwt-test", "/auth/refresh", "/auth/logout", "/docs/index.html", "/common/*.html"
 	};
 	private final JwtService jwtTokenProvider;
 	private final CustomOAuth2UserService customOAuth2UserService;

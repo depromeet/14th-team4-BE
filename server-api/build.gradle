@@ -54,6 +54,7 @@ dependencies {
     //test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'com.h2database:h2'
+    testImplementation group: 'org.springframework.security', name: 'spring-security-test', version: '6.2.1'
 
     // validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'

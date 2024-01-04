@@ -2,23 +2,20 @@ package com.depromeet.test;
 
 import com.depromeet.enums.EnumType;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 @AllArgsConstructor
-@Getter
-public enum TestSex implements EnumType {
-    MALE("남자"),
-    FEMALE("여자");
+public enum TestEnumType implements EnumType {
+    Good("좋음"), Bad("나쁨");
 
-    private String description;
+    private final String description;
 
     @Override
-    public String getDescription() {
+    public String getName() {
         return this.description;
     }
 
     @Override
-    public String getName() {
+    public String getDescription() {
         return this.name();
     }
 }

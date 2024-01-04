@@ -1,8 +1,8 @@
 package com.depromeet.document;
 
 import com.depromeet.enums.EnumType;
-import com.depromeet.test.TestMemberStatus;
-import com.depromeet.test.TestSex;
+
+import com.depromeet.test.TestEnumType;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -42,13 +42,12 @@ public class CommonDocController {
     public ApiResponseDto<EnumDocs> findEnums() {
 
         // 문서화 하고 싶은 -> EnumDocs 클래스에 담긴 모든 Enum 값 생성
-        Map<String, String> testMemberStatus = getDocs(TestMemberStatus.values());
-        Map<String, String> testSex = getDocs(TestSex.values());
+        Map<String, String> testEnumStatus = getDocs(TestEnumType.values());
+
 
         // 전부 담아서 반환 -> 테스트에서는 이걸 꺼내 해석하여 조각을 만들면 된다.
         return ApiResponseDto.of(EnumDocs.builder()
-                .testMemberStatus(testMemberStatus)
-                .testSex(testSex)
+                .testEnumType(testEnumStatus)
                 .build()
         );
     }

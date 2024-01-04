@@ -39,3 +39,6 @@ out/
 ### yml
 /server-domain/**/resources/*.yml
 /server-api/**/resources/*.yml
+
+### rest docs
+/server-api/**/resources/static/docs/*.html
