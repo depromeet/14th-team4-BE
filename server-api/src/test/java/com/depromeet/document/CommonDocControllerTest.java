@@ -67,13 +67,10 @@ class CommonDocControllerTest extends RestDocsTestSupport {
         // 문서화 진행
         result.andExpect(status().isOk())
                 .andDo(restDocs.document(
-                        customResponseFields("custom-response", beneathPath("data.testMemberStatus").withSubsectionId("testMemberStatus"), // (1)
-                                attributes(key("title").value("testMemberStatus")), // (2)
-                                enumConvertFieldDescriptor((enumDocs.getTestMemberStatus()))
-                        ),
-                        customResponseFields("custom-response", beneathPath("data.testSex").withSubsectionId("testSex"),
-                                attributes(key("title").value("testSex")),
-                                enumConvertFieldDescriptor((enumDocs.getTestSex()))
+
+                        customResponseFields("custom-response", beneathPath("data.testEnumType").withSubsectionId("testEnumType"),
+                                attributes(key("title").value("testEnum")),
+                                enumConvertFieldDescriptor((enumDocs.getTestEnumType()))
                         )
                 ));
     }

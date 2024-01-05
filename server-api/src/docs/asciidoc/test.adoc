@@ -1,0 +1,27 @@
+== Test API
+
+[[test-api-create]]
+=== Create a test
+operation::test-controller-test/create[]
+
+[[test-api-findById]]
+=== Find a test by ID
+operation::test-controller-test/find-by-id[snippets='curl-request,http-request,http-response,httpie-request,path-parameters,request-headers,response-body,response-fields']
+
+[[test-api-findByTitle]]
+
+[[test-api-findAll]]
+=== Find all
+operation::test-controller-test/find-all[]
+
+[[test-api-update]]
+=== Update
+operation::test-controller-test/update[]
+
+[[test-api-delete]]
+=== Delete
+operation::test-controller-test/delete[]
+
+[[test-api-enum]]
+=== enums
+operation::test-controller-test/enum-test[]

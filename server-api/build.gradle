@@ -5,7 +5,7 @@ plugins {
 processResources.dependsOn('copySecret')
 
 tasks.register('copySecret', Copy) {
-    from './Config/server-api/'
+    from '../Config/server-api/'
     include "application*.yml"  // 복사할 파일들
     into 'src/main/resources'  // 복사 위치
 }
@@ -57,6 +57,7 @@ dependencies {
     //test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'com.h2database:h2'
+    testImplementation group: 'org.springframework.security', name: 'spring-security-test', version: '6.2.1'
 
     // validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -83,8 +84,8 @@ asciidoctor { // asciidoctor 작업 구성
 
     // source가 없으면 .adoc파일을 전부 html로 만들어버림
     // source 지정시 특정 adoc만 HTML로 만든다.
-    sources{
-        include("**/index.adoc","**/common/*.adoc")
+    sources {
+        include("**/index.adoc", "**/common/*.adoc")
     }
 
     // 특정 .adoc에 다른 adoc 파일을 가져와서(include) 사용하고 싶을 경우 경로를 baseDir로 맞춰주는 설정입니다.

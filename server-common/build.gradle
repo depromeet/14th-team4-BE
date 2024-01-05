@@ -1,7 +1,8 @@
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    implementation 'com.github.maricn:logback-slack-appender:1.6.1'
 }
 
-bootJar { enabled=false }
-jar { enabled=true }
+bootJar { enabled = false }
+jar { enabled = true }

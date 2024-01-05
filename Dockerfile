@@ -1,7 +1,7 @@
 # jdk17 Image Start
 FROM openjdk:17
 
-# WORKDIR /app
+WORKDIR /app
 
 EXPOSE 80 443
 
