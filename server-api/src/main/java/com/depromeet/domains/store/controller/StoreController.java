@@ -32,7 +32,7 @@ public class StoreController {
 		return CustomResponseEntity.success(storeService.getStoreReport(storeId));
 	}
 
-	@GetMapping("/stores/{storeId}/logs")
+	@GetMapping("/stores/{storeId}/reviews")
 	public CustomResponseEntity<Slice<StoreReviewResponse>> getStoreReview(@PathVariable Long storeId, @RequestParam("type") String type, Pageable pageable) {
 		return CustomResponseEntity.success(storeService.getStoreReview(storeId, type, pageable));
 	}
