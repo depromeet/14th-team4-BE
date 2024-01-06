@@ -62,6 +62,7 @@ public class StoreService {
 
 		return StoreReportResponse.of(
 				store.getStoreId(),
+				store.getThumbnailUrl(),
 				mostVisitedCount,
 				totalRevisitedCount);
 	}
