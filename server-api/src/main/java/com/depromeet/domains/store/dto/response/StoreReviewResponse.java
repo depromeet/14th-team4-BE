@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class StoreLogResponse {
+public class StoreReviewResponse {
 
     private Long userId;
     private String nickName;
@@ -17,8 +17,8 @@ public class StoreLogResponse {
     private LocalDateTime visitedAt;
     private String description;
 
-    public static StoreLogResponse of(Long userId, String nickName, Float rating, String imageUrl, Integer visitTimes, LocalDateTime visitedAt, String description) {
-        return StoreLogResponse.builder()
+    public static StoreReviewResponse of(Long userId, String nickName, Float rating, String imageUrl, Integer visitTimes, LocalDateTime visitedAt, String description) {
+        return StoreReviewResponse.builder()
                 .userId(userId)
                 .nickName(nickName)
                 .rating(rating)

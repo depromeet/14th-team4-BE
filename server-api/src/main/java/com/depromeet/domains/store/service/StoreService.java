@@ -4,9 +4,9 @@ import com.depromeet.common.exception.CustomException;
 import com.depromeet.common.exception.Result;
 import com.depromeet.domains.review.entity.Review;
 import com.depromeet.domains.review.repository.ReviewRepository;
-import com.depromeet.domains.store.dto.response.StoreLogResponse;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
 import com.depromeet.domains.store.dto.response.StoreReportResponse;
+import com.depromeet.domains.store.dto.response.StoreReviewResponse;
 import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.store.repository.StoreRepository;
 import com.depromeet.domains.user.entity.User;
@@ -67,7 +67,7 @@ public class StoreService {
 	}
 
 	@Transactional(readOnly = true)
-	public Slice<StoreLogResponse> getStoreLog(Long storeId, String type, Pageable pageable) {
+	public Slice<StoreReviewResponse> getStoreReview(Long storeId, String type, Pageable pageable) {
 
 		Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
 		PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
@@ -82,15 +82,15 @@ public class StoreService {
 		}
 
 		// Review 객체를 StoreLogResponse DTO로 변환
-		List<StoreLogResponse> storeLogResponses = getStoreLogResponses(reviews);
+		List<StoreReviewResponse> storeReviewResponse = getStoreLogResponses(reviews);
 
 		// Slice 객체 생성
-		return new SliceImpl<>(storeLogResponses, pageable, storeLogResponses.size() == pageable.getPageSize());
+		return new SliceImpl<>(storeReviewResponse, pageable, storeReviewResponse.size() == pageable.getPageSize());
 	}
 
-	private static List<StoreLogResponse> getStoreLogResponses(List<Review> reviews) {
-		List<StoreLogResponse> storeLogResponses = reviews.stream()
-				.map(review -> StoreLogResponse.of(
+	private static List<StoreReviewResponse> getStoreLogResponses(List<Review> reviews) {
+		List<StoreReviewResponse> storeLogResponses = reviews.stream()
+				.map(review -> StoreReviewResponse.of(
 						review.getUser().getUserId(),
 						review.getUser().getNickName(),
 						review.getRating(),
