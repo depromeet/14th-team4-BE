@@ -12,4 +12,6 @@
 
 include::overview.adoc[]
 
+include::store.adoc[]
+
 include::test.adoc[]
