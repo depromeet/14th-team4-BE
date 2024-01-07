@@ -112,7 +112,7 @@ build {
 jacocoTestReport {
     reports {
         html.required = true // html 설정
-        html.destination file('build/reports/testResult.html')
+        html.destination file('build/reports/jacocoTestResult')
         csv.required = true // csv 설정
         xml.required = false // xml 미설정
     }
@@ -154,14 +154,14 @@ jacocoTestCoverageVerification {
             limit {
                 counter = 'LINE' // 빈 줄을 제외한 실제 코드의 라인 수, 라인이 한 번이라도 실행되면 실행된 것으로 간주한다.
                 value = 'COVEREDRATIO'  // 커버된 비율, 0부터 1사이의 숫자로 1이 100%이다.
-                minimum = 0.0 // 현재는 0%, 추후에 60 ~ 80%로 설정
+                minimum = 0.0 // 현재는 0%, 추후에 60 ~ 80%로 설정. 80% 이려면 0.8
             }
 
             // 브랜치 커버리지 제한을 80%로 설정
             limit {
                 counter = 'BRANCH' // 조건문 등의 분기 수
                 value = 'COVEREDRATIO'
-                minimum = 0.0 // 현재는 0%, 추후에 60 ~ 80%로 설정
+                minimum = 0.0 // 현재는 0%, 추후에 60 ~ 80%로 설정. 80% 이려면 0.8
             }
 
             excludes = [] + Qdomains
