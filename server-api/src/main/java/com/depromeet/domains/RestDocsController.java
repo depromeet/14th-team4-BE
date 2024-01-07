@@ -10,6 +10,6 @@ public class RestDocsController {
 
     @GetMapping("/docs")
     public String docs() {
-        return "redirect:/docs/index.html";
+        return "/docs/index";
     }
 }
