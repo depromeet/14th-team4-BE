@@ -1,5 +1,6 @@
 plugins {
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
+    id 'jacoco'
 }
 
 processResources.dependsOn('copySecret')
@@ -72,6 +73,7 @@ test {
     // 위에서 작성한 snippetsDir 디렉토리를 test의 output으로 구성하는 설정 -> 스니펫 조각들이 build/generated-snippets로 출력
     outputs.dir snippetsDir
     useJUnitPlatform()
+    finalizedBy 'jacocoTestReport' // test 실행 -> jacocoTestReport 실행 위해
 }
 
 asciidoctor { // asciidoctor 작업 구성
@@ -105,6 +107,66 @@ task copyDocument(type: Copy) {
 // build 의 의존작업 명시
 build {
     dependsOn copyDocument
+}
+
+jacocoTestReport {
+    reports {
+        html.required = true // html 설정
+        html.destination file('build/reports/testResult.html')
+        csv.required = true // csv 설정
+        xml.required = false // xml 미설정
+    }
+
+    def Qdomains = []
+    for (qPattern in "**/QA".."**/QZ") {
+        Qdomains.add(qPattern + "*")
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: [] + Qdomains)
+        }))
+    }
+
+    finalizedBy 'jacocoTestCoverageVerification' // jacocoTestReport 실행 -> jacocoTestCoverageVerification 실행 위해
+}
+
+jacoco {
+    toolVersion = '0.8.7' // 작성일(20.10.05) 기준
+    // reportsDir = ${project.reporting.baseDir}/jacoco
+}
+
+jacocoTestCoverageVerification {
+    // 추후에 QueryDsl 사용하게 되었을 때 자동생성되는 Qxxx 클래스 제외.
+    def Qdomains = []
+    for (qPattern in "*.QA".."*.QZ") {  // qPattern = "*.QA","*.QB","*.QC", ... "*.QZ"
+        Qdomains.add(qPattern + "*")
+    }
+
+    violationRules {
+        rule {
+            enabled = true // 활성화
+            element = 'CLASS' // 클래스 단위로 커버리지 체크
+            // includes = []
+
+            // 라인 커버리지 제한을 80%로 설정 (-> 추후 조정)
+            limit {
+                counter = 'LINE' // 빈 줄을 제외한 실제 코드의 라인 수, 라인이 한 번이라도 실행되면 실행된 것으로 간주한다.
+                value = 'COVEREDRATIO'  // 커버된 비율, 0부터 1사이의 숫자로 1이 100%이다.
+                minimum = 0.0 // 현재는 0%, 추후에 60 ~ 80%로 설정
+            }
+
+            // 브랜치 커버리지 제한을 80%로 설정
+            limit {
+                counter = 'BRANCH' // 조건문 등의 분기 수
+                value = 'COVEREDRATIO'
+                minimum = 0.0 // 현재는 0%, 추후에 60 ~ 80%로 설정
+            }
+
+            excludes = [] + Qdomains
+        }
+    }
 }
 
 bootJar {
