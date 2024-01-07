@@ -1,4 +1,14 @@
+processResources.dependsOn('copySecret')
+
+tasks.register('copySecret', Copy) {
+    from '../Config/server-infra/'
+    include "application*.yml"  // 복사할 파일들
+    into 'src/main/resources'  // 복사 위치
+}
+
 dependencies {
+    api ("com.amazonaws:aws-java-sdk-s3:1.12.585")
+    api('org.springframework.boot:spring-boot-starter-data-jpa')
 }
 
 bootJar { enabled=false }
