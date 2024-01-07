@@ -2,11 +2,8 @@ package com.depromeet.domains.follow.entity;
 
 import com.depromeet.domains.common.entity.BaseTimeEntity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.depromeet.domains.user.entity.User;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,9 +17,11 @@ public class Follow extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long followId;
 
-	@Column(nullable = false)
-	private Long followerId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "following_id", referencedColumnName = "user_id")
+	private User following; //일반유저
 
-	@Column(nullable = false)
-	private Long followingId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "followed_id", referencedColumnName = "user_id")
+	private User followed; //크리에이터
 }

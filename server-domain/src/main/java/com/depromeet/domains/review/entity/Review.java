@@ -4,11 +4,9 @@ import java.time.LocalDateTime;
 
 import com.depromeet.domains.common.entity.BaseTimeEntity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.depromeet.domains.store.entity.Store;
+import com.depromeet.domains.user.entity.User;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,11 +20,13 @@ public class Review extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long reviewId;
 
-	@Column(nullable = false)
-	private Long storeId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "store_id")
+	private Store store;
 
-	@Column(nullable = false)
-	private Long userId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	private User user;
 
 	@Column(nullable = false)
 	private Float rating;
