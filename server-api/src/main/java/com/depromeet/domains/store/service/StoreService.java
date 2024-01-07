@@ -10,6 +10,7 @@ import com.depromeet.domains.store.dto.response.StoreReviewResponse;
 import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.store.repository.StoreRepository;
 import com.depromeet.domains.user.entity.User;
+import com.depromeet.enums.ReviewType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -68,7 +69,7 @@ public class StoreService {
 	}
 
 	@Transactional(readOnly = true)
-	public Slice<StoreReviewResponse> getStoreReview(Long storeId, String type, Pageable pageable) {
+	public Slice<StoreReviewResponse> getStoreReview(Long storeId, ReviewType reviewType, Pageable pageable) {
 
 		Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
 		PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
@@ -76,9 +77,9 @@ public class StoreService {
 		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 
 		List<Review> reviews = new ArrayList<>();
-		if (type.equals("revisit")) {
+		if (reviewType==ReviewType.REVISITED) {
 			reviews = reviewRepository.findRevisitedReviews(store);
-		} else if (type.equals("photo")) {
+		} else if (reviewType==ReviewType.PHOTO) {
 			reviews = reviewRepository.findByImageUrlIsNotNullOrderByCreatedAtDesc();
 		}
 
