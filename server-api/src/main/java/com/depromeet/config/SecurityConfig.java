@@ -25,7 +25,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig implements WebMvcConfigurer {
 	private static final String[] PATTERNS = {
 		"/", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**",
-			"/jwt-test", "/auth/refresh", "/auth/logout", "/api/v1/auth/token/reissue",
+			"/api/v1/docs/**", "/jwt-test", "/auth/refresh", "/auth/logout", "/api/v1/auth/token/reissue",
 	};
 	private final JwtService jwtTokenProvider;
 	private final CustomOAuth2UserService customOAuth2UserService;
