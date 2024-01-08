@@ -1,9 +1,11 @@
 package com.depromeet.config;
 
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -16,8 +18,6 @@ import com.depromeet.auth.oauth2.handler.CustomOAuth2SuccessHandler;
 import com.depromeet.auth.oauth2.service.CustomOAuth2UserService;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @RequiredArgsConstructor
@@ -25,12 +25,21 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig {
 	private static final String[] PATTERNS = {
 		"/", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**",
-			"/api/v1/docs/**", "/jwt-test", "/auth/refresh", "/auth/logout", "/api/v1/auth/token/reissue",
+			"/docs/index.html", "/api/v1/docs/**", "/jwt-test", "/auth/refresh", "/auth/logout", "/api/v1/auth/token/reissue",
 	};
 	private final JwtService jwtTokenProvider;
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
 	private final CustomOAuth2FailureHandler customOAuth2FailureHandler;
+
+	@Bean
+	public WebSecurityCustomizer webSecurityCustomizer(){
+		return web -> web.ignoring()
+				.requestMatchers(String.valueOf(PathRequest
+						.toStaticResources()
+						.atCommonLocations())
+				);
+	}
 
 //	@Override
 //	public void addResourceHandlers(final ResourceHandlerRegistry registry) {
