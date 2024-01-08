@@ -22,7 +22,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
-public class SecurityConfig implements WebMvcConfigurer {
+public class SecurityConfig {
 	private static final String[] PATTERNS = {
 		"/", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**",
 			"/api/v1/docs/**", "/jwt-test", "/auth/refresh", "/auth/logout", "/api/v1/auth/token/reissue",
@@ -32,11 +32,11 @@ public class SecurityConfig implements WebMvcConfigurer {
 	private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
 	private final CustomOAuth2FailureHandler customOAuth2FailureHandler;
 
-	@Override
-	public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/api/v1/docs/**")
-				.addResourceLocations("classpath:/static/docs/");
-	}
+//	@Override
+//	public void addResourceHandlers(final ResourceHandlerRegistry registry) {
+//		registry.addResourceHandler("/api/v1/docs/**")
+//				.addResourceLocations("classpath:/static/docs/");
+//	}
 
 	@Bean
 	protected SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
