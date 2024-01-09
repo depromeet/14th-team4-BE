@@ -53,22 +53,22 @@ jobs:
 ##          arguments: clean bootJar
 #          arguments: clean build
 
-#      # 2.1. 빌드시 생성되는 index.html을 rest-docs bucket에 업로드
-#      - name: rest-docs upload
-#        uses: shallwefootball/s3-upload-action@master
-#        id: S3
-#        with:
-#          aws_key_id: ${{ secrets.NCP_ACCESS_KEY_ID }}
-#          aws_secret_access_key: ${{ secrets.NCP_SECRET_ACCESS_KEY }}
-#          aws_bucket: ${{ secrets.REST_DOCS_BUCKET }}
-##          DEFAULT_REGION: ${{ secrets.DEFAULT_REGION }}
-#          source_dir: ./server-api/src/main/resources/static/docs
-#          # 저장소에 index.html 없어서 빌드가 안되던것.
-##        run: aws --endpoint-url=https://kr.object.ncloudstorage.com s3 cp ./../../server-api/src/main/resources/static/docs/index.html s3://$REST_DOCS_BUCKET/api/index.html
-##        run: |
-##          aws --endpoint-url=https://kr.object.ncloudstorage.com
-##          s3 cp --recursive ./../../server-api/src/main/resources/static/docs/index.html
-##          s3://$REST_DOCS_BUCKET/api/index.html
+      # 2.1. 빌드시 생성되는 index.html을 rest-docs bucket에 업로드
+      - name: rest-docs upload
+        uses: shallwefootball/s3-upload-action@master
+        id: S3
+        with:
+          aws_key_id: ${{ secrets.NCP_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.NCP_SECRET_ACCESS_KEY }}
+          aws_bucket: ${{ secrets.REST_DOCS_BUCKET }}
+#          DEFAULT_REGION: ${{ secrets.DEFAULT_REGION }}
+          source_dir: ./server-api/build/docs/asciidoc/index.html
+          # 저장소에 index.html 없어서 빌드가 안되던것.
+#        run: aws --endpoint-url=https://kr.object.ncloudstorage.com s3 cp ./../../server-api/src/main/resources/static/docs/index.html s3://$REST_DOCS_BUCKET/api/index.html
+#        run: |
+#          aws --endpoint-url=https://kr.object.ncloudstorage.com
+#          s3 cp --recursive ./../../server-api/src/main/resources/static/docs/index.html
+#          s3://$REST_DOCS_BUCKET/api/index.html
 
       # 3. Docker 이미지 빌드
       - name: docker image build
