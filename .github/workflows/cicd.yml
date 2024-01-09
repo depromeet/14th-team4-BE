@@ -45,12 +45,13 @@ jobs:
       # 2.1. 빌드시 생성되는 index.html을 rest-docs bucket에 업로드
       - uses: shallwefootball/s3-upload-action@master
         name: rest-docs upload
+        id: S3
         with:
           aws_key_id: ${{ secrets.NCP_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.NCP_SECRET_ACCESS_KEY }}
           aws_bucket: ${{ secrets.REST_DOCS_BUCKET }}
 #          DEFAULT_REGION: ${{ secrets.DEFAULT_REGION }}
-          source_dir: 'static/docs'
+          source_dir: server-api/src/main/resources/static/docs
 #        run: aws --endpoint-url=https://kr.object.ncloudstorage.com s3 cp ./../../server-api/src/main/resources/static/docs/index.html s3://$REST_DOCS_BUCKET/api/index.html
 #        run: |
 #          aws --endpoint-url=https://kr.object.ncloudstorage.com
