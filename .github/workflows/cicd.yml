@@ -42,14 +42,9 @@ jobs:
 #          arguments: clean bootJar
           arguments: clean build
 
-      # 2.1 빌드된 jar 압축해제
-      - name: unzip jar
-        run: unzip -o ./server-api/build/libs/*.jar -d ./server-api/build/libs/
-        shell: bash
-
       # 2.1. 빌드시 생성되는 index.html을 rest-docs bucket에 업로드
-      - uses: shallwefootball/s3-upload-action@master
-        name: rest-docs upload
+      - name: rest-docs upload
+        uses: shallwefootball/s3-upload-action@master
         id: S3
         with:
           aws_key_id: ${{ secrets.NCP_ACCESS_KEY_ID }}
