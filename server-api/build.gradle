@@ -110,12 +110,12 @@ build {
     dependsOn copyDocument
 }
 
-bootJar {
-    enabled = false
-//    layered {
-//        isEnabled()
-//    }
-}
-
-jar { enabled = true }
+//bootJar {
+//    enabled = true
+////    layered {
+////        isEnabled()
+////    }
+//}
+//
+//jar { enabled = false }
 
