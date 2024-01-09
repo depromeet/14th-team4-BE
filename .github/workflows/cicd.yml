@@ -39,10 +39,13 @@ jobs:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         with:
-          arguments: clean bootJar
-      #          arguments: clean build
+#          arguments: clean bootJar
+          arguments: clean build
 
-
+      # 2.1 빌드된 jar 압축해제
+      - name: unzip jar
+        run: unzip -o ./server-api/build/libs/*.jar -d ./server-api/build/libs/
+        shell: bash
 
       # 2.1. 빌드시 생성되는 index.html을 rest-docs bucket에 업로드
       - uses: shallwefootball/s3-upload-action@master
