@@ -42,6 +42,14 @@ jobs:
           arguments: clean bootJar
       #          arguments: clean build
 
+      # 2.1. 빌드시 생성되는 index.html을 rest-docs bucket에 업로드
+      - name: rest-docs upload
+        env:
+          NCP_ACCESS_KEY_ID: ${{ secrets.NCP_ACCESS_KEY_ID }}
+          NCP_SECRET_ACCESS_KEY: ${{ secrets.NCP_SECRET_ACCESS_KEY }}
+          REST_DOCS_BUCKET: ${{ secrets.REST_DOCS_BUCKET }}
+        run: aws --endpoint-url=https://kr.object.ncloudstorage.com s3 cp ./server-api/src/main/resources/static/docs/index.html s3://$REST_DOCS_BUCKET/index.html
+
       # 3. Docker 이미지 빌드
       - name: docker image build
         run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/dpmbackdevelop .
@@ -80,3 +88,9 @@ jobs:
       # 4. 미사용 이미지를 정리합니다
       - name: delete old docker image
         run: sudo docker system prune -f
+
+
+#        env:
+#          NCP_ACCESS_KEY_ID: ${{ secrets.NCP_ACCESS_KEY_ID }}
+#          NCP_SECRET_ACCESS_KEY: ${{ secrets.NCP_SECRET_ACCESS_KEY }}
+#          REST-DOCS-BUCKET: ${{ secrets.REST_DOCS_BUCKET }} #https://kr.object.ncloudstorage.com/rest-docs/api
