@@ -5,11 +5,17 @@ plugins {
 sourceSets {
     main {
         resources {
-            srcDirs "src/main/resources/static/docs", "src/main/resources/static/docs"
+            srcDirs "src/main/resources/static/docs"
         }
     }
 }
 
+tasks {
+
+    processResources {
+        duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
+    }
+}
 
 processResources.dependsOn('copySecret')
 
