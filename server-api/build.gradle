@@ -116,6 +116,10 @@ bootJar{ //springboot를 이용한 jar 파일 생성 시 필요한 설정 task
     from("src/main/resources/static/docs"){ //문서 생성 시, Jar 파일 내 static/docs 에도 복사되도록 함
         into 'BOOT-INF/classes/static/docs'
     }
+
+    from("src/docs/asciidoc"){ //문서 생성 시, Jar 파일 내 static/docs 에도 복사되도록 함
+        into 'BOOT-INF/classes/static/docs'
+    }
 }
 
 // 빌드시에 하위 리소스를 가져오기 위한 코드
