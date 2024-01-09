@@ -111,11 +111,11 @@ build {
 }
 
 bootJar {
-    enabled = true
+    enabled = false
 //    layered {
 //        isEnabled()
 //    }
 }
 
-jar { enabled = false }
+jar { enabled = true }
 
