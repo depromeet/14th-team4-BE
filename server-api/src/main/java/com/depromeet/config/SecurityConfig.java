@@ -25,27 +25,12 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 	private static final String[] PATTERNS = {
 		"/", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**",
-			"/docs/index.html", "/api/v1/docs/**", "/jwt-test", "/auth/refresh", "/auth/logout", "/api/v1/auth/token/reissue",
+			"/jwt-test", "/auth/refresh", "/auth/logout", "/api/v1/auth/token/reissue",
 	};
 	private final JwtService jwtTokenProvider;
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
 	private final CustomOAuth2FailureHandler customOAuth2FailureHandler;
-
-	@Bean
-	public WebSecurityCustomizer webSecurityCustomizer(){
-		return web -> web.ignoring()
-				.requestMatchers(String.valueOf(PathRequest
-						.toStaticResources()
-						.atCommonLocations())
-				);
-	}
-
-//	@Override
-//	public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-//		registry.addResourceHandler("/api/v1/docs/**")
-//				.addResourceLocations("classpath:/static/docs/");
-//	}
 
 	@Bean
 	protected SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
