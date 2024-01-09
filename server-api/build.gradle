@@ -2,21 +2,6 @@ plugins {
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
 
-sourceSets {
-    main {
-        resources {
-            srcDirs "src/main/resources/static/docs"
-        }
-    }
-}
-
-tasks {
-
-    processResources {
-        duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
-    }
-}
-
 processResources.dependsOn('copySecret')
 
 tasks.register('copySecret', Copy) {
@@ -123,6 +108,21 @@ task copyDocument(type: Copy) {
 // build 의 의존작업 명시
 build {
     dependsOn copyDocument
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs "src/main/resources/static/docs"
+        }
+    }
+}
+
+tasks {
+
+    processResources {
+        duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
+    }
 }
 
 //bootJar {
