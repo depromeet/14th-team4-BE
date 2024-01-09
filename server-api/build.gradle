@@ -2,6 +2,15 @@ plugins {
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDirs "src/main/resources/static/docs", "src/main/resources/static/docs"
+        }
+    }
+}
+
+
 processResources.dependsOn('copySecret')
 
 tasks.register('copySecret', Copy) {
