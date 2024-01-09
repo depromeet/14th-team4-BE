@@ -110,16 +110,16 @@ build {
     dependsOn copyDocument
 }
 
+// 빌드시에 하위 리소스를 가져오기 위한 코드
 sourceSets {
     main {
         resources {
-            srcDirs "src/main/resources/static/docs"
+            srcDirs = ["src/main/resources", "src/main/resources"]
         }
     }
 }
 
 tasks {
-
     processResources {
         duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
     }
