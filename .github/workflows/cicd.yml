@@ -37,10 +37,11 @@ jobs:
 
       # 2. Spring Boot 애플리케이션 빌드
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-        with:
-#          arguments: clean bootJar
-          arguments: clean build
+        run: ./gradlew build
+#        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+#        with:
+##          arguments: clean bootJar
+#          arguments: clean build
 
 #      # 2.1. 빌드시 생성되는 index.html을 rest-docs bucket에 업로드
 #      - name: rest-docs upload
