@@ -43,7 +43,7 @@ public class StoreService {
 
 		return StorePreviewResponse.of(
 				store.getStoreId(),
-				store.getCategory().getCategoryId(),
+				store.getCategory().getCategoryName(),
 				store.getStoreName(),
 				store.getRoadAddress(),
 				store.getTotalRating(),

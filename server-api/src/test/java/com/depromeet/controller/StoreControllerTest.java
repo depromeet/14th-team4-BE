@@ -42,7 +42,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 
         StorePreviewResponse storePreviewResponse = StorePreviewResponse.builder()
                 .storeId(1L)
-                .categoryId(1L)
+                .categoryName("중식")
                 .storeName("칠기마라탕")
                 .address("서울시 강남구 역삼동 123-123")
                 .starRating(4.1F)
@@ -74,7 +74,7 @@ class StoreControllerTest extends RestDocsTestSupport {
                                         fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
                                         fieldWithPath("data.storeId").type(JsonFieldType.NUMBER).description("음식점 ID"),
-                                        fieldWithPath("data.categoryId").type(JsonFieldType.NUMBER).description("음식 카테고리 ID"),
+                                        fieldWithPath("data.categoryName").type(JsonFieldType.STRING).description("카테고리 명"),
                                         fieldWithPath("data.storeName").type(JsonFieldType.STRING).description("음식점 명"),
                                         fieldWithPath("data.address").type(JsonFieldType.STRING).description("음식점 주소"),
                                         fieldWithPath("data.starRating").type(JsonFieldType.NUMBER).description("음식점 별점"),
@@ -94,6 +94,7 @@ class StoreControllerTest extends RestDocsTestSupport {
         // given
         StoreReportResponse storeReportResponse = StoreReportResponse.builder()
                 .storeId(1L)
+                .storeMainImageUrl("https://image.com/1.jpg")
                 .mostVisitedCount(15L)
                 .totalRevisitedCount(100L)
                 .build();
@@ -119,6 +120,7 @@ class StoreControllerTest extends RestDocsTestSupport {
                                         fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
                                         fieldWithPath("data.storeId").type(JsonFieldType.NUMBER).description("음식점 ID"),
+                                        fieldWithPath("data.storeMainImageUrl").type(JsonFieldType.STRING).description("음식점 대표 이미지 URL"),
                                         fieldWithPath("data.mostVisitedCount").type(JsonFieldType.NUMBER).description("가장 많이 유저의 방문한 횟수"),
                                         fieldWithPath("data.totalRevisitedCount").type(JsonFieldType.NUMBER).description("전체 재방문 인원 수")
                                 )
