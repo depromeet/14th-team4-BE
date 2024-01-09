@@ -45,7 +45,6 @@ jobs:
       - name: rest-docs upload
         uses: shallwefootball/s3-upload-action@master
         id: S3
-        with:
         env:
           aws_key_id: ${{ secrets.NCP_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.NCP_SECRET_ACCESS_KEY }}
