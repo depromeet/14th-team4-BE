@@ -3,9 +3,9 @@ package com.depromeet.domains.review.entity;
 import java.time.LocalDateTime;
 
 import com.depromeet.domains.common.entity.BaseTimeEntity;
-
 import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.user.entity.User;
+
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -29,7 +29,7 @@ public class Review extends BaseTimeEntity {
 	private User user;
 
 	@Column(nullable = false)
-	private Float rating;
+	private Integer rating;
 
 	@Column(nullable = false)
 	private LocalDateTime visitedAt;
