@@ -39,27 +39,11 @@ jobs:
         run: chmod +x gradlew
 
         # 어차피 이렇게 빌드해도, api 모듈에는 docs 관련해서 파일이 없음. -> 왜냐? bootjar로 빌드하니까 리소스를 포함 안함.
-      - name: Build with Gradle # 실제 application build(-x 옵션을 통해 test는 제외) # 빌드시에는 resource 하위 파일들을 못가져옴
-        run: ./gradlew clean build # -x test
-
-      # 2.1. 빌드시 생성되는 index.html을 rest-docs bucket에 업로드
-#      - name: rest-docs upload
-#        uses: shallwefootball/s3-upload-action@master
-#        id: S3
-#        env:
-#          aws_key_id: ${{ secrets.NCP_ACCESS_KEY_ID }}
-#          aws_secret_access_key: ${{ secrets.NCP_SECRET_ACCESS_KEY }}
-#          aws_bucket: ${{ secrets.REST_DOCS_BUCKET }}
-#          DEFAULT_REGION: ${{ secrets.DEFAULT_REGION }}
-#          source_dir: ./../server-api/build/docs/asciidoc/index.html
-#           저장소에 index.html 없어서 빌드가 안되던것.
-#        run: echo s3 cp /server-api/src/main/resources/static/docs/index.html s3://$REST_DOCS_BUCKET/api/index.html
-##              aws --endpoint-url=https://kr.object.ncloudstorage.com s3 cp /server-api/src/main/resources/static/docs/index.html s3://$aws_bucket/api/index.html
-#        run: |
-#          aws --endpoint-url=https://kr.object.ncloudstorage.com
-#          s3 cp --recursive /server-api/src/main/resources/static/docs/index.html
-#          s3://$aws_bucket/api/index.html
-
+      - name: Build with Gradle
+#        run: ./gradlew clean build
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: clean bootJar
       # 3. Docker 이미지 빌드
       - name: docker image build
         run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/dpmbackdevelop .
