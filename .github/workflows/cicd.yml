@@ -40,10 +40,8 @@ jobs:
 
         # 어차피 이렇게 빌드해도, api 모듈에는 docs 관련해서 파일이 없음. -> 왜냐? bootjar로 빌드하니까 리소스를 포함 안함.
       - name: Build with Gradle
-#        run: ./gradlew clean build
-        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-        with:
-          arguments: clean bootJar
+        run: ./gradlew clean build
+
       # 3. Docker 이미지 빌드
       - name: docker image build
         run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/dpmbackdevelop .
@@ -82,9 +80,3 @@ jobs:
       # 4. 미사용 이미지를 정리합니다
       - name: delete old docker image
         run: sudo docker system prune -f
-
-
-#        env:
-#          NCP_ACCESS_KEY_ID: ${{ secrets.NCP_ACCESS_KEY_ID }}
-#          NCP_SECRET_ACCESS_KEY: ${{ secrets.NCP_SECRET_ACCESS_KEY }}
-#          REST-DOCS-BUCKET: ${{ secrets.REST_DOCS_BUCKET }} #https://kr.object.ncloudstorage.com/rest-docs/api
