@@ -1,9 +1,11 @@
 package com.depromeet.config;
 
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 	private static final String[] PATTERNS = {
 		"/", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**",
-		"/jwt-test", "/api/v1/images/**", "/api/v1/auth/token/reissue", "/docs/index.html", "/common/*.html"
+			"/docs/index.html", "/common/*.html", "/jwt-test", "/auth/refresh", "/auth/logout", "/api/v1/auth/token/reissue",
 	};
 	private final JwtService jwtTokenProvider;
 	private final CustomOAuth2UserService customOAuth2UserService;
