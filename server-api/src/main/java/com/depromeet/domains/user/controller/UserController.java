@@ -26,7 +26,6 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
 	private final UserService userService;
-	private final UserRepository userRepository;
 
 	/**
 	 * 유저 닉네임 수정
