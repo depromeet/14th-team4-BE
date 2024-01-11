@@ -15,3 +15,17 @@ include::overview.adoc[]
 include::store.adoc[]
 
 include::test.adoc[]
+
+== User API
+
+=== 1. 유저 닉네임 변경
+operation::user-controller-test/get-my-reviews[]
+
+=== 2. 유저 프로필 조회
+operation::user-controller-test/get-my-reviews[]
+
+=== 3. 유저 북마크 조회
+operation::user-controller-test/get-my-bookmarks[]
+
+=== 4. 유저 리뷰 조회
+operation::user-controller-test/get-my-reviews[]
