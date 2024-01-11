@@ -1,27 +1,40 @@
 package com.depromeet.domains.store.controller;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.depromeet.annotation.AuthUser;
 import com.depromeet.common.exception.CustomResponseEntity;
+import com.depromeet.domains.store.dto.request.StoreLocationRangeRequest;
+import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
 import com.depromeet.domains.store.dto.response.StoreReportResponse;
 import com.depromeet.domains.store.dto.response.StoreReviewResponse;
 import com.depromeet.domains.store.service.StoreService;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.enums.ReviewType;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 
+@RequestMapping("/api/v1")
 @RestController
 @RequiredArgsConstructor
 public class StoreController {
 
 	private final StoreService storeService;
+
+	@GetMapping("/stores/location-range")
+	public CustomResponseEntity<StoreLocationRangeResponse> getStores(
+		@RequestParam("location1") StoreLocationRangeRequest location1,
+		@RequestParam("location2") StoreLocationRangeRequest location2,
+		@AuthUser User user) {
+		return CustomResponseEntity.success(storeService.getRangeStores(location1, location2, user.getUserId()));
+	}
 
 	@GetMapping("/stores/{storeId}")
 	public CustomResponseEntity<StorePreviewResponse> getStore(@PathVariable Long storeId, @AuthUser User user) {
@@ -34,9 +47,9 @@ public class StoreController {
 	}
 
 	@GetMapping("/stores/{storeId}/reviews")
-	public CustomResponseEntity<Slice<StoreReviewResponse>> getStoreReview(@PathVariable Long storeId, @RequestParam("type") ReviewType reviewType, Pageable pageable) {
+	public CustomResponseEntity<Slice<StoreReviewResponse>> getStoreReview(@PathVariable Long storeId,
+		@RequestParam("type") ReviewType reviewType, Pageable pageable) {
 		return CustomResponseEntity.success(storeService.getStoreReview(storeId, reviewType, pageable));
 	}
-
 
 }
