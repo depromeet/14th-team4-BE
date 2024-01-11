@@ -5,6 +5,8 @@ import com.depromeet.domains.store.controller.StoreController;
 import com.depromeet.domains.store.service.StoreService;
 import com.depromeet.domains.test.controller.TestController;
 import com.depromeet.domains.test.service.TestService;
+import com.depromeet.domains.user.controller.UserController;
+import com.depromeet.domains.user.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Disabled;
@@ -19,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
         CommonDocController.class,
         TestController.class,
         StoreController.class,
+        UserController.class
 })
 public abstract class ControllerTest {
 
@@ -31,6 +34,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected StoreService storeService;
+
+    @MockBean
+    protected UserService userService;
 
     // @MockBean으로 필요한 레포지토리, 서비스로직을 정의
 
