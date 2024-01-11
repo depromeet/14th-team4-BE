@@ -21,7 +21,7 @@ public class Store extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long storeId;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
 	private Category category;
 
@@ -45,4 +45,18 @@ public class Store extends BaseTimeEntity {
 	private Float totalRating;
 
 	private Long totalReviewCount;
+
+	public void updateStoreSummary(Float rating) {
+		float totalRatingSum = this.totalRating * this.totalReviewCount;
+		totalRatingSum += rating;
+		this.totalReviewCount = this.totalReviewCount + 1;
+		this.totalRating = totalRatingSum / this.totalReviewCount;
+	}
+
+	// 기존에 썸네일 없었던 경우에만 업데이트
+	public void updateThumnailUrl(String thumbnailUrl) {
+		if (this.thumbnailUrl == null) {
+			this.thumbnailUrl = thumbnailUrl;
+		}
+	}
 }
