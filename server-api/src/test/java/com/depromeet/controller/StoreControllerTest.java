@@ -15,7 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -135,7 +135,7 @@ class StoreControllerTest extends RestDocsTestSupport {
                 .rating(4)
                 .imageUrl("https://image.com/1.jpg")
                 .visitTimes(3)
-                .visitedAt(LocalDateTime.now())
+                .visitedAt(LocalDate.now())
                 .description("맛있어요")
                 .build();
 
@@ -145,7 +145,7 @@ class StoreControllerTest extends RestDocsTestSupport {
                 .rating(2)
                 .imageUrl("https://image.com/2.jpg")
                 .visitTimes(1)
-                .visitedAt(LocalDateTime.now())
+                .visitedAt(LocalDate.now())
                 .description("맛있어요")
                 .build();
 
@@ -155,7 +155,7 @@ class StoreControllerTest extends RestDocsTestSupport {
                 .rating(3)
                 .imageUrl(null)
                 .visitTimes(1)
-                .visitedAt(LocalDateTime.now())
+                .visitedAt(LocalDate.now())
                 .description("왈왈왈왈왈왈왈")
                 .build();
 

@@ -83,6 +83,7 @@ public class UserService {
 			review.getStore().getStoreId(),
 			review.getStore().getStoreName(),
 			review.getVisitTimes(),
+			review.getVisitedAt(),
 			review.getStore().getCategory().getCategoryName(),
 			review.getRating(),
 			review.getImageUrl(),
