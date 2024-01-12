@@ -37,14 +37,17 @@ public class Store extends BaseTimeEntity {
 	@Embedded
 	private StoreLocation storeLocation;
 
-	@Embedded
-	private StoreAddress storeAddress;
+	private String storeAddress;
 
 	private String thumbnailUrl;
 
 	private Float totalRating;
 
 	private Long totalReviewCount;
+
+	private Long kakaoStoreId;
+
+	private Long revisitedCount;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
