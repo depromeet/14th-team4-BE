@@ -6,22 +6,30 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
-import com.depromeet.auth.jwt.JwtService;
 import com.depromeet.common.exception.CustomException;
 import com.depromeet.common.exception.Result;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class CustomOAuth2FailureHandler implements AuthenticationFailureHandler {
 
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 		AuthenticationException exception) throws IOException, ServletException {
-		throw new CustomException(Result.BAD_REQUEST);
+		response.setContentType("application/json");
+		response.setStatus(Result.SOCIAL_LOGIN_FAIL.getCode());
+		ObjectMapper objectMapper = new ObjectMapper();
+		response.getWriter().write(objectMapper.writeValueAsString(
+			new CustomException(Result.SOCIAL_LOGIN_FAIL)
+		));
+		log.info("소셜 로그인에 실패했습니다. 에러 메시지 : {}", exception.getMessage());
 	}
 }
