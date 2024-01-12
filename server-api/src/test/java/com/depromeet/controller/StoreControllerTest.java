@@ -9,7 +9,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -136,30 +136,30 @@ class StoreControllerTest extends RestDocsTestSupport {
 		StoreReviewResponse storeReviewResponse1 = StoreReviewResponse.builder()
 			.userId(1L)
 			.nickName("김철수")
-			.rating(4F)
+			.rating(4)
 			.imageUrl("https://image.com/1.jpg")
 			.visitTimes(3)
-			.visitedAt(LocalDateTime.now())
+			.visitedAt(LocalDate.now())
 			.description("맛있어요")
 			.build();
 
 		StoreReviewResponse storeReviewResponse2 = StoreReviewResponse.builder()
 			.userId(2L)
 			.nickName("김길동")
-			.rating(2F)
+			.rating(2)
 			.imageUrl("https://image.com/2.jpg")
 			.visitTimes(1)
-			.visitedAt(LocalDateTime.now())
+			.visitedAt(LocalDate.now())
 			.description("맛있어요")
 			.build();
 
 		StoreReviewResponse storeReviewResponse3 = StoreReviewResponse.builder()
 			.userId(3L)
 			.nickName("맛있는 음식을보면 짖는 개")
-			.rating(3F)
+			.rating(3)
 			.imageUrl(null)
 			.visitTimes(1)
-			.visitedAt(LocalDateTime.now())
+			.visitedAt(LocalDate.now())
 			.description("왈왈왈왈왈왈왈")
 			.build();
 
@@ -223,5 +223,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 				)
 			);
 	}
+
+
 
 }
