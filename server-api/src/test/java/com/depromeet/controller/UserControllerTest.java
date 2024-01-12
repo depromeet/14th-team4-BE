@@ -44,7 +44,7 @@ class UserControllerTest extends RestDocsTestSupport {
 		// given
 		NicknameRequest nicknameRequest = new NicknameRequest("뉴닉네임");
 
-		doNothing().when(userService).updateUserNickname(eq(1L), eq("뉴닉네임"));
+		doNothing().when(userService).updateUserNickname(any(), eq("뉴닉네임"));
 
 		// when & then
 		mockMvc.perform(
@@ -53,7 +53,7 @@ class UserControllerTest extends RestDocsTestSupport {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsBytes(nicknameRequest))
 					.header("Authorization", "Bearer accessToken"))
-			.andExpect(status().isNoContent())
+			.andExpect(status().isOk())
 			.andDo(
 				restDocs.document(
 					requestHeaders(

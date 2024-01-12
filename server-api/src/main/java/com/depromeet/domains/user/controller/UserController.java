@@ -32,7 +32,7 @@ public class UserController {
 	 */
 	@PutMapping("/nickname")
 	public void updateUserNickname(@AuthUser User user, @RequestBody @Valid NicknameRequest nicknameRequest) {
-		userService.updateUserNickname(user.getUserId(), nicknameRequest.getNickname());
+		userService.updateUserNickname(user, nicknameRequest.getNickname());
 	}
 
 	/**

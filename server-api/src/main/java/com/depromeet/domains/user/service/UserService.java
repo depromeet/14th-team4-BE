@@ -29,9 +29,9 @@ public class UserService {
 	private final ReviewRepository reviewRepository;
 
 	@Transactional
-	public void updateUserNickname(Long userId, String nickname) {
-		User user = findUserById(userId);
-		user.updateNickname(nickname);
+	public void updateUserNickname(User user, String nickname) {
+		User existUser = findUserById(user.getUserId());
+		existUser.updateNickname(nickname);
 	}
 
 	@Transactional(readOnly = true)
