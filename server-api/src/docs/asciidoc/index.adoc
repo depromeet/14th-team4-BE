@@ -56,6 +56,12 @@ operation::store-controller-test/get-store-report[]
 === 리뷰 조회
 operation::store-controller-test/get-store-review[]
 
+== Store Search API
+
+[[get-store-search]]
+operation::store-search-controller-test/search[]
+
+
 == Test API
 
 [[test-api-create]]
