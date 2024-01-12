@@ -2,6 +2,8 @@ package com.depromeet.document;
 
 import com.depromeet.domains.home.controller.HomeController;
 import com.depromeet.domains.store.controller.StoreController;
+import com.depromeet.domains.store.controller.StoreSearchController;
+import com.depromeet.domains.store.service.StoreSearchService;
 import com.depromeet.domains.store.service.StoreService;
 import com.depromeet.domains.test.controller.TestController;
 import com.depromeet.domains.test.service.TestService;
@@ -19,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
         CommonDocController.class,
         TestController.class,
         StoreController.class,
+        StoreSearchController.class,
 })
 public abstract class ControllerTest {
 
@@ -31,6 +34,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected StoreService storeService;
+
+    @MockBean
+    protected StoreSearchService storeSearchService;
 
     // @MockBean으로 필요한 레포지토리, 서비스로직을 정의
 
