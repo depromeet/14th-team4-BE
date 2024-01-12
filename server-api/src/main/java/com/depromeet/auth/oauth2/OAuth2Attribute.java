@@ -46,12 +46,9 @@ public class OAuth2Attribute {
 
 	private static OAuth2Attribute ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
 		Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get("kakao_account");
-		Map<String, Object> kakaoProfile = (Map<String, Object>)kakaoAccount.get("profile");
 
 		return OAuth2Attribute.builder()
 			.socialId(String.valueOf(attributes.get("id")))
-			.nickname((String)kakaoProfile.get("nickname"))
-			.email((String)kakaoAccount.get("email"))
 			.attributes(kakaoAccount)
 			.nameAttributeKey(userNameAttributeName)
 			.build();
@@ -61,9 +58,8 @@ public class OAuth2Attribute {
 		return User.builder()
 			.socialType(socialType)
 			.socialId(socialId)
-			.nickName(nickname)
-			.email(email)
-			.userRole(Role.USER)
+			.nickName("게스트"+socialId)
+			.userRole(Role.GUEST)
 			.build();
 	}
 }

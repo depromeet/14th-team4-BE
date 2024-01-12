@@ -133,7 +133,7 @@ public class JwtService {
 
 	private Collection<GrantedAuthority> getAuthorities(User user) {
 		return Collections.singletonList(
-			new SimpleGrantedAuthority(user.getUserRole().toString())
+			new SimpleGrantedAuthority("ROLE_" + user.getUserRole().toString())
 		);
 	}
 
