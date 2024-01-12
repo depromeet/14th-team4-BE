@@ -30,7 +30,7 @@ public class StoreSearchService {
     private final ReviewRepository reviewRepository;
 
     @Transactional(readOnly = true)
-    public List<StoreSearchResponse> searchStoreList(User user, String query, String x, String y, Optional<Integer> storePage, Optional<Integer> cafePage) {
+    public StoreSearchResponse searchStoreList(User user, String query, String x, String y, Optional<Integer> storePage, Optional<Integer> cafePage) {
         Integer size = 15;
         String sort = "distance";
 
@@ -97,9 +97,7 @@ public class StoreSearchService {
         combinedResults.sort(Comparator.comparing(StoreSearchResult::getDistance));
 
 
-        List<StoreSearchResponse> responses = Collections.singletonList(
-                StoreSearchResponse.of(combinedResults, storeIsEnd, cafeIsEnd)
-        );
+        StoreSearchResponse responses = StoreSearchResponse.of(combinedResults, storeIsEnd, cafeIsEnd);
 
         return responses;
 
