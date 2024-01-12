@@ -120,10 +120,10 @@ public class StoreService {
 	public StoreLocationRangeResponse getRangeStores(StoreLocationRangeRequest location1,
 		StoreLocationRangeRequest location2, Long userId) {
 
-		Double maxLatitude = Double.max(location1.getLatitute(), location2.getLatitute());
-		Double minLatitude = Double.min(location1.getLatitute(), location2.getLatitute());
-		Double maxLongitude = Double.max(location1.getLongtitue(), location2.getLongtitue());
-		Double minLongitude = Double.min(location1.getLongtitue(), location2.getLongtitue());
+		Double maxLatitude = Double.max(location1.getLatitude(), location2.getLatitude());
+		Double minLatitude = Double.min(location1.getLatitude(), location2.getLatitude());
+		Double maxLongitude = Double.max(location1.getLongitude(), location2.getLongitude());
+		Double minLongitude = Double.min(location1.getLongitude(), location2.getLongitude());
 
 		// 특정 위, 경도 범위 안에 있는 식당 정보 + 해당 user의 북마크 여부
 		List<Object[]> locationRangesQueryResult =
