@@ -24,7 +24,7 @@ public class StoreSearchController {
     private final StoreSearchService storeSearchService;
 
     @GetMapping("/search")
-    public CustomResponseEntity<List<StoreSearchResponse>> search(@AuthUser User user,
+    public CustomResponseEntity<StoreSearchResponse> search(@AuthUser User user,
                                                                   @RequestParam("query") String query,
                                                                   @RequestParam("x") String x,
                                                                   @RequestParam("y") String y,
