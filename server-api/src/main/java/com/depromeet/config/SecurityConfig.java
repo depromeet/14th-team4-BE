@@ -1,5 +1,6 @@
 package com.depromeet.config;
 
+import org.apache.catalina.filters.CorsFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -35,19 +36,6 @@ public class SecurityConfig {
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
 	private final CustomOAuth2FailureHandler customOAuth2FailureHandler;
-
-//	// cors
-//	@Bean
-//	CorsConfigurationSource corsConfigurationSource() {
-//		CorsConfiguration config = new CorsConfiguration();
-//		config.setAllowedHeaders(Collections.singletonList("*"));
-//		config.setAllowedMethods(Collections.singletonList("*"));
-//		config.setAllowedOriginPatterns(Collections.singletonList("/**")); // 허용할 origin
-//		config.setAllowCredentials(true);
-//		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//		source.registerCorsConfiguration("/**", config);
-//		return source;
-//	}
 
 	@Bean
 	protected SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
