@@ -32,9 +32,6 @@ public class Store extends BaseTimeEntity {
 	@Embedded
 	private StoreLocation storeLocation;
 
-	@Embedded
-	private StoreAddress storeAddress;
-
 	private String address;
 
 	private String thumbnailUrl;

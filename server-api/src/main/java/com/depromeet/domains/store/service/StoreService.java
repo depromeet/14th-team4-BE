@@ -63,7 +63,7 @@ public class StoreService {
 			store.getStoreId(),
 			store.getCategory().getCategoryName(),
 			store.getStoreName(),
-			store.getStoreAddress().getRoadAddress(),
+			store.getAddress(),
 			store.getTotalRating(),
 			store.getTotalReviewCount(),
 			logImageUrls,

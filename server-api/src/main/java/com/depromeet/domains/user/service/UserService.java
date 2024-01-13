@@ -71,7 +71,7 @@ public class UserService {
 		return UserBookmarkResponse.of(
 			store.getStoreId(),
 			store.getStoreName(),
-			store.getStoreAddress().getRoadAddress(),
+			store.getAddress(),
 			totalRevisitedCount,
 			store.getCategory().getCategoryName(),
 			isVisited

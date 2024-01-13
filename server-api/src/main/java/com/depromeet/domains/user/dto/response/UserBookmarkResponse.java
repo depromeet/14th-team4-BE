@@ -1,7 +1,5 @@
 package com.depromeet.domains.user.dto.response;
 
-import com.depromeet.domains.store.entity.StoreAddress;
-
 import lombok.Builder;
 import lombok.Getter;
 
