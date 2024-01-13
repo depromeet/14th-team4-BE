@@ -118,6 +118,7 @@ public class StoreService {
 					// 필요한 정보를 포함하여 StoreReviewResponse 객체 생성
 					return StoreReviewResponse.of(
 							review.getUser().getUserId(),
+							review.getReviewId(),
 							review.getUser().getNickName(),
 							review.getRating(),
 							review.getImageUrl(),

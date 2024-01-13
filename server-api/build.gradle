@@ -102,18 +102,6 @@ bootJar{ //springboot를 이용한 jar 파일 생성 시 필요한 설정 task
     }
 }
 
-// asccidoctor 작업 이후 생성된 HTML 파일을 static/docs 로 copy
-task copyDocument(type: Copy) {
-    dependsOn asciidoctor
-    from file("build/docs/asciidoc")
-    into file("src/main/resources/static/docs")
-}
-
-// build 의 의존작업 명시
-build {
-    dependsOn copyDocument
-}
-
 jacocoTestReport {
     reports {
         html.required = true // html 설정

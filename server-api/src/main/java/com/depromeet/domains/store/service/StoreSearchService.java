@@ -112,6 +112,9 @@ public class StoreSearchService {
                     String storeName = doc.get("place_name").toString();
                     String address = doc.get("address_name").toString();
                     Long revisitedCount = 0L;
+                    String categoryName = doc.get("categoryName").toString();
+                    String[] categories = categoryName.split(" > ");
+                    String category = categories[1];
 
                     // storeName + address 조합후 DB 검색시 존재하지 않으면 새로운 음식점이므로 revisitedCount = 0,
                     // 존재하면 revisitedCount = 해당 음식점의 revisitedCount
@@ -125,7 +128,7 @@ public class StoreSearchService {
                     return StoreSearchResult.of(
                             kakaoStoreId, // 카카오 스토어 ID
                             storeName,
-                            doc.get("category_name").toString(),
+                            category,
                             address,
                             distance, // 숫자로 변환
                             revisitedCount,
