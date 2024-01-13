@@ -44,8 +44,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		// 기존 가입된 유저인지 확인
 		User createdUser = getUser(extractAttributes, socialType);
 
-		return new CustomOAuth2User(Collections.singleton(new SimpleGrantedAuthority(createdUser.getUserRole().getKey())),
-			attributes, extractAttributes.getNameAttributeKey(), createdUser.getUserId());
+		return new CustomOAuth2User(Collections.singleton(new SimpleGrantedAuthority(createdUser.getUserRole().getDescription())),
+			attributes, extractAttributes.getNameAttributeKey(), createdUser.getUserId(), createdUser.getUserRole());
 	}
 
 	private String getUserNameAttributeName(final OAuth2UserRequest userRequest) {

@@ -3,17 +3,17 @@ VALUES (1, '일식', NOW());
 INSERT INTO Category (categoryId, categoryName, createdAt)
 VALUES (2, '카페', NOW());
 
-INSERT INTO User (socialType, profileImageUrl, nickName, email, userRole, socialId, createdAt)
-VALUES ('KAKAO', 'http://example.com/profile1.jpg', '김철수', 'kim@example.com', 'USER', 'kakao1234', NOW());
+INSERT INTO User (socialType, profileImageUrl, nickName, email, userRole, socialId, level, reviewCount, createdAt)
+VALUES ('KAKAO', 'http://example.com/profile1.jpg', '김철수', 'kim@example.com', 'USER', 'kakao1234','LEVEL1', 0, NOW());
 
-INSERT INTO User (socialType, profileImageUrl, nickName, email, userRole, socialId, createdAt)
-VALUES ('KAKAO', 'http://example.com/profile2.jpg', '이영희', 'lee@example.com', 'USER', 'KAKAO11', NOW());
+INSERT INTO User (socialType, profileImageUrl, nickName, email, userRole, socialId, level, reviewCount, createdAt)
+VALUES ('KAKAO', 'http://example.com/profile2.jpg', '이영희', 'lee@example.com', 'USER', 'KAKAO11','LEVEL2', 3, NOW());
 
-INSERT INTO User (socialType, profileImageUrl, nickName, email, userRole, socialId, createdAt)
-VALUES ('APPLE', 'http://example.com/profile3.jpg', '김동현', 'email', 'USER', 'kakao123411', NOW());
+INSERT INTO User (socialType, profileImageUrl, nickName, email, userRole, socialId, level, reviewCount, createdAt)
+VALUES ('APPLE', 'http://example.com/profile3.jpg', '김동현', 'email', 'USER', 'kakao123411','LEVEL3', 11, NOW());
 
-INSERT INTO User (socialType, profileImageUrl, nickName, email, userRole, socialId, createdAt)
-VALUES ('APPLE', 'http://example.com/profile4.jpg', '김나다', 'email', 'USER', 'kakao12341111', NOW());
+INSERT INTO User (socialType, profileImageUrl, nickName, email, userRole, socialId, level, reviewCount, createdAt)
+VALUES ('APPLE', 'http://example.com/profile4.jpg', '김나다', 'email', 'USER', 'kakao12341111','LEVEL4', 21, NOW());
 
 INSERT INTO Store (category_id, storeName, latitude, longitude, thumbnailUrl, address, totalRating, totalReviewCount, revisitedCount, createdAt, updatedAt)
 VALUES (1, '맛집1', 37.3665, 123.9780, 'thumbnail1.jpg', '서울특별시 중구 세종대로 110', 4.5, 100, 3,
