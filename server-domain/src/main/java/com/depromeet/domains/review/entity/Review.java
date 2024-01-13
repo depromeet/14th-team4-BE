@@ -40,7 +40,7 @@ public class Review extends BaseTimeEntity {
 	private User user;
 
 	@Column(nullable = false)
-	private Float rating;
+	private Integer rating;
 
 	@Column(nullable = false)
 	private LocalDate visitedAt;

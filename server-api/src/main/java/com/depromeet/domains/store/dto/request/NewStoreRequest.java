@@ -2,6 +2,7 @@ package com.depromeet.domains.store.dto.request;
 
 import com.depromeet.domains.category.entity.Category;
 import com.depromeet.domains.store.entity.Store;
+import com.depromeet.domains.store.entity.StoreLocation;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,11 +22,11 @@ public class NewStoreRequest {
 	private String address;
 
 	public Store toEntity(Category category) {
+
 		return Store.builder()
 			.storeName(this.storeName)
-			.latitude(this.latitude)
-			.longitude(this.longitude)
-			.roadAddress(address)
+			.storeLocation(new StoreLocation(this.latitude, this.longitude))
+			.address(this.address)
 			.category(category)
 			.totalRating(0.0F)
 			.totalReviewCount(1L)

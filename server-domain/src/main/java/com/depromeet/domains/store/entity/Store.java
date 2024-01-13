@@ -4,6 +4,7 @@ import com.depromeet.domains.category.entity.Category;
 import com.depromeet.domains.common.entity.BaseTimeEntity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "Store")
 public class Store extends BaseTimeEntity {
 
@@ -28,25 +29,21 @@ public class Store extends BaseTimeEntity {
 	@Column(nullable = false)
 	private String storeName;
 
-	@Column(nullable = false)
-	private Double latitude;
+	@Embedded
+	private StoreLocation storeLocation;
 
-	@Column(nullable = false)
-	private Double longitude;
+	@Embedded
+	private StoreAddress storeAddress;
+
+	private String address;
 
 	private String thumbnailUrl;
-
-	private String jibunAddress;
-
-	private String roadAddress;
-
-	private String addressDetail;
 
 	private Float totalRating;
 
 	private Long totalReviewCount;
 
-	public void updateStoreSummary(Float rating) {
+	public void updateStoreSummary(Integer rating) {
 		float totalRatingSum = this.totalRating * this.totalReviewCount;
 		totalRatingSum += rating;
 		this.totalReviewCount = this.totalReviewCount + 1;

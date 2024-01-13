@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 public class ReviewRequest {
 	private Long storeId;
 	private NewStoreRequest newStore;
-	private Float rating;
+	private Integer rating;
 	private String visitedAt;
 	private String imageUrl;
 	private String description;

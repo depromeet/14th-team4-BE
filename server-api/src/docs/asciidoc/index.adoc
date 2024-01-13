@@ -64,6 +64,21 @@ operation::store-controller-test/create-exist-store-review[]
 === 4-2. 리뷰 작성 (새로운 가게)
 operation::store-controller-test/create-new-store-review[]
 
+== User API
+
+=== 1. 유저 닉네임 변경
+operation::user-controller-test/get-my-reviews[]
+
+=== 2. 유저 프로필 조회
+operation::user-controller-test/get-my-reviews[]
+
+=== 3. 유저 북마크 조회
+operation::user-controller-test/get-my-bookmarks[]
+
+=== 4. 유저 리뷰 조회
+operation::user-controller-test/get-my-reviews[]
+
+
 == Test API
 
 [[test-api-create]]
@@ -91,3 +106,4 @@ operation::test-controller-test/delete[]
 [[test-api-enum]]
 === enums
 operation::test-controller-test/enum-test[]
+
