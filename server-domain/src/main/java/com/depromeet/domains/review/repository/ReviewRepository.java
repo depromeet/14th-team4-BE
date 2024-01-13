@@ -35,4 +35,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByImageUrlIsNotNullOrderByCreatedAtDesc();
 
 
+    List<Review> findByStore(Store store);
 }
