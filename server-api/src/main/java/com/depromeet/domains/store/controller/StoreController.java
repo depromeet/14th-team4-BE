@@ -32,36 +32,40 @@ import com.depromeet.enums.ReviewType;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.Optional;
+
 @RequestMapping("/api/v1")
 @RestController
 @RequiredArgsConstructor
 public class StoreController {
 
-	private final StoreService storeService;
+    private final StoreService storeService;
 
-	@GetMapping("/stores/location-range")
-	public CustomResponseEntity<StoreLocationRangeResponse> getStores(
-		@RequestParam("location1") StoreLocationRangeRequest location1,
-		@RequestParam("location2") StoreLocationRangeRequest location2,
-		@AuthUser User user) {
-		return CustomResponseEntity.success(storeService.getRangeStores(location1, location2, user.getUserId()));
-	}
+    @GetMapping("/stores/location-range")
+    public CustomResponseEntity<StoreLocationRangeResponse> getStores(
+            @RequestParam("location1") StoreLocationRangeRequest location1,
+            @RequestParam("location2") StoreLocationRangeRequest location2,
+            @AuthUser User user) {
+        return CustomResponseEntity.success(storeService.getRangeStores(location1, location2, user.getUserId()));
+    }
 
-	@GetMapping("/stores/{storeId}")
-	public CustomResponseEntity<StorePreviewResponse> getStore(@PathVariable Long storeId, @AuthUser User user) {
-		return CustomResponseEntity.success(storeService.getStore(storeId, user));
-	}
+    @GetMapping("/stores/{storeId}")
+    public CustomResponseEntity<StorePreviewResponse> getStore(@PathVariable Long storeId, @AuthUser User user) {
+        return CustomResponseEntity.success(storeService.getStore(storeId, user));
+    }
 
-	@GetMapping("/stores/{storeId}/reports")
-	public CustomResponseEntity<StoreReportResponse> getStoreReport(@PathVariable Long storeId) {
-		return CustomResponseEntity.success(storeService.getStoreReport(storeId));
-	}
+    @GetMapping("/stores/{storeId}/reports")
+    public CustomResponseEntity<StoreReportResponse> getStoreReport(@PathVariable Long storeId) {
+        return CustomResponseEntity.success(storeService.getStoreReport(storeId));
+    }
 
-	@GetMapping("/stores/{storeId}/reviews")
-	public CustomResponseEntity<Slice<StoreReviewResponse>> getStoreReview(@PathVariable Long storeId,
-		@RequestParam("type") ReviewType reviewType, Pageable pageable) {
-		return CustomResponseEntity.success(storeService.getStoreReview(storeId, reviewType, pageable));
-	}
+    @GetMapping("/stores/{storeId}/reviews")
+    public CustomResponseEntity<Slice<StoreReviewResponse>> getStoreReview(@AuthUser User user,
+            @PathVariable Long storeId,
+            @RequestParam("type") Optional<ReviewType> reviewType,
+            Pageable pageable) {
+        return CustomResponseEntity.success(storeService.getStoreReview(user, storeId, reviewType, pageable));
+    }
 
 	@PostMapping("/stores/reviews")
 	public CustomResponseEntity<ReviewAddResponse> createStoreReview(@AuthUser User user, @RequestBody

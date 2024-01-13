@@ -40,4 +40,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     boolean existsByStoreAndUser(Store store, User user);
 
     Slice<Review> findByUser(User user, Pageable pageable);
+    List<Review> findByStore(Store store);
 }

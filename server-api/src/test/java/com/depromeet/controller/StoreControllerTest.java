@@ -12,7 +12,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
+import com.depromeet.domains.user.entity.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -144,6 +146,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.visitTimes(3)
 			.visitedAt(LocalDate.now())
 			.description("맛있어요")
+			.isMine(true)
 			.build();
 
 		StoreReviewResponse storeReviewResponse2 = StoreReviewResponse.builder()
@@ -154,6 +157,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.visitTimes(1)
 			.visitedAt(LocalDate.now())
 			.description("맛있어요")
+			.isMine(false)
 			.build();
 
 		StoreReviewResponse storeReviewResponse3 = StoreReviewResponse.builder()
@@ -164,13 +168,16 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.visitTimes(1)
 			.visitedAt(LocalDate.now())
 			.description("왈왈왈왈왈왈왈")
+			.isMine(false)
 			.build();
+
+		ReviewType reviewType = ReviewType.REVISITED;
 
 		List<StoreReviewResponse> content = Arrays.asList(storeReviewResponse1, storeReviewResponse2,
 			storeReviewResponse3);
 		Slice<StoreReviewResponse> storeReviewResponses = new SliceImpl<>(content, Pageable.unpaged(), true);
 
-		given(storeService.getStoreReview(eq(1L), eq(ReviewType.REVISITED), any())).willReturn(storeReviewResponses);
+		given(storeService.getStoreReview(any(), eq(1L), eq(Optional.of(ReviewType.REVISITED)), any(Pageable.class))).willReturn(storeReviewResponses);
 
 		// when
 		mockMvc.perform(
@@ -187,7 +194,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 					queryParameters(
 						parameterWithName("page").description("페이지 번호 (1번 부터)"),
 						parameterWithName("size").description("페이지 사이즈"),
-						parameterWithName("type").description("리뷰 타입 - revisited, photo")
+						parameterWithName("type").description("리뷰 타입 - revisited, photo").optional()
 					),
 					pathParameters(
 						parameterWithName("storeId").description("음식점 ID")
@@ -208,6 +215,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 						fieldWithPath("data.content[].visitTimes").type(JsonFieldType.NUMBER).description("방문 횟수"),
 						fieldWithPath("data.content[].visitedAt").type(JsonFieldType.STRING).description("방문 일시"),
 						fieldWithPath("data.content[].description").type(JsonFieldType.STRING).description("리뷰 내용"),
+						fieldWithPath("data.content[].isMine").type(JsonFieldType.BOOLEAN).description("자신의 리뷰인지 여부"),
 						subsectionWithPath("data.pageable").type(JsonFieldType.STRING).description("페이지 정보"),
 						//                                        fieldWithPath("data.pageable.pageNumber").type(JsonFieldType.NUMBER).description("페이지 수"),
 						//                                        fieldWithPath("data.pageable.pageSize").type(JsonFieldType.NUMBER).description("페이지 크기"),

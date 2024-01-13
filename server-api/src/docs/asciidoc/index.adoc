@@ -67,10 +67,10 @@ operation::store-controller-test/create-new-store-review[]
 == User API
 
 === 1. 유저 닉네임 변경
-operation::user-controller-test/get-my-reviews[]
+operation::user-controller-test/update-user-nickname[]
 
 === 2. 유저 프로필 조회
-operation::user-controller-test/get-my-reviews[]
+operation::user-controller-test/
 
 === 3. 유저 북마크 조회
 operation::user-controller-test/get-my-bookmarks[]

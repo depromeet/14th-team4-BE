@@ -1,9 +1,6 @@
 package com.depromeet.domains.store.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.depromeet.domains.category.repository.CategoryRepository;
@@ -88,7 +85,7 @@ public class StoreService {
 	}
 
 	@Transactional(readOnly = true)
-	public Slice<StoreReviewResponse> getStoreReview(Long storeId, ReviewType reviewType, Pageable pageable) {
+	public Slice<StoreReviewResponse> getStoreReview(User user, Long storeId, Optional<ReviewType> reviewType, Pageable pageable) {
 
 		Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
 		PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
@@ -96,31 +93,42 @@ public class StoreService {
 		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 
 		List<Review> reviews = new ArrayList<>();
-		if (reviewType == ReviewType.REVISITED) {
+		if(reviewType.isEmpty()){
+			reviews = reviewRepository.findByStore(store);
+		}
+		else if (reviewType.get() == ReviewType.REVISITED) {
 			reviews = reviewRepository.findRevisitedReviews(store);
-		} else if (reviewType == ReviewType.PHOTO) {
+		} else if (reviewType.get() == ReviewType.PHOTO) {
 			reviews = reviewRepository.findByImageUrlIsNotNullOrderByCreatedAtDesc();
 		}
 
 		// Review 객체를 StoreLogResponse DTO로 변환
-		List<StoreReviewResponse> storeReviewResponse = getStoreLogResponses(reviews);
+		List<StoreReviewResponse> storeReviewResponse = getStoreReviewResponses(user, reviews);
 
 		// Slice 객체 생성
 		return new SliceImpl<>(storeReviewResponse, pageable, storeReviewResponse.size() == pageable.getPageSize());
 	}
 
-	private static List<StoreReviewResponse> getStoreLogResponses(List<Review> reviews) {
-		List<StoreReviewResponse> storeLogResponses = reviews.stream()
-			.map(review -> StoreReviewResponse.of(
-				review.getUser().getUserId(),
-				review.getUser().getNickName(),
-				review.getRating(),
-				review.getImageUrl(),
-				review.getVisitTimes(),
-				review.getVisitedAt(),
-				review.getDescription()))
-			.collect(Collectors.toList());
-		return storeLogResponses;
+	private static List<StoreReviewResponse> getStoreReviewResponses(User user, List<Review> reviews) {
+		List<StoreReviewResponse> storeReviewResponse = reviews.stream()
+				.map(review -> {
+					// 현재 사용자가 리뷰 작성자와 동일한지 확인
+					Boolean isMine = review.getUser().getUserId().equals(user);
+
+					// 필요한 정보를 포함하여 StoreReviewResponse 객체 생성
+					return StoreReviewResponse.of(
+							review.getUser().getUserId(),
+							review.getUser().getNickName(),
+							review.getRating(),
+							review.getImageUrl(),
+							review.getVisitTimes(),
+							review.getVisitedAt(),
+							review.getDescription(),
+							isMine
+					);
+				})
+				.collect(Collectors.toList());
+		return storeReviewResponse;
 	}
 
 	@Transactional(readOnly = true)
