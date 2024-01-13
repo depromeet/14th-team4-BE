@@ -17,10 +17,15 @@ import org.springframework.util.ObjectUtils;
 
 import com.depromeet.common.exception.CustomException;
 import com.depromeet.common.exception.Result;
+import com.depromeet.domains.category.entity.Category;
+import com.depromeet.domains.category.repository.CategoryRepository;
 import com.depromeet.domains.review.entity.Review;
 import com.depromeet.domains.review.repository.ReviewRepository;
 import com.depromeet.domains.store.dto.StoreLocationDto;
+import com.depromeet.domains.store.dto.request.NewStoreRequest;
+import com.depromeet.domains.store.dto.request.ReviewRequest;
 import com.depromeet.domains.store.dto.request.StoreLocationRangeRequest;
+import com.depromeet.domains.store.dto.response.ReviewAddResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
 import com.depromeet.domains.store.dto.response.StoreReportResponse;
@@ -38,6 +43,7 @@ public class StoreService {
 
 	private final StoreRepository storeRepository;
 	private final ReviewRepository reviewRepository;
+	private final CategoryRepository categoryRepository;
 
 	@Transactional(readOnly = true)
 	public StorePreviewResponse getStore(Long storeId, User user) {
@@ -199,4 +205,43 @@ public class StoreService {
 		return result;
 	}
 
+
+	@Transactional
+	public ReviewAddResponse createStoreReview(User user, ReviewRequest reviewRequest) {
+		Store store = getOrSaveStore(reviewRequest);
+		Review review = saveReview(user, store, reviewRequest);
+		store.updateStoreSummary(reviewRequest.getRating());
+		store.updateThumnailUrl(reviewRequest.getImageUrl());
+		return ReviewAddResponse.of(review.getReviewId(), store.getStoreId());
+	}
+
+	private Store getOrSaveStore(ReviewRequest reviewRequest) {
+		if (reviewRequest.getStoreId() != null) {
+			return storeRepository.findById(reviewRequest.getStoreId())
+				.orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
+		}
+		return saveStore(reviewRequest.getNewStore());
+	}
+
+	private int getVisitTimes(Long storeId, Store store, User user) {
+		return storeId != null
+			? reviewRepository.countByStoreAndUser(store, user).intValue() + 1
+			: 1;
+	}
+
+	private Store saveStore(NewStoreRequest newStore) {
+		Category category = categoryRepository.findById(newStore.getCategoryId())
+			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_CATEGORY));
+		Store store = newStore.toEntity(category);
+		storeRepository.save(store);
+
+		return store;
+	}
+
+	private Review saveReview(User user, Store store, ReviewRequest reviewRequest) {
+		int visitTimes = getVisitTimes(reviewRequest.getStoreId(), store, user);
+		Review review = reviewRequest.toEntity(store, user, visitTimes);
+		reviewRepository.save(review);
+		return review;
+	}
 }

@@ -1,7 +1,0 @@
-cloud:
-  aws:
-    region: kr-standard
-    endpoint: https://kr.object.ncloudstorage.com
-    accessKey: 9409347DA2ED6099F421
-    secretKey: 25E1291C79339926447FC4262998A6FC0C8755C1
-    bucket: ddoeatimg

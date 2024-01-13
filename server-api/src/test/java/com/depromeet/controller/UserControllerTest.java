@@ -1,8 +1,6 @@
 package com.depromeet.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -12,7 +10,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,12 +24,9 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import com.depromeet.document.RestDocsTestSupport;
-import com.depromeet.domains.store.dto.response.StoreReviewResponse;
-import com.depromeet.domains.test.dto.request.TestRequest;
 import com.depromeet.domains.user.dto.request.NicknameRequest;
 import com.depromeet.domains.user.dto.response.UserBookmarkResponse;
 import com.depromeet.domains.user.dto.response.UserReviewResponse;
-import com.depromeet.enums.ReviewType;
 
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
@@ -101,7 +95,8 @@ class UserControllerTest extends RestDocsTestSupport {
 			.isVisited(false)
 			.build();
 
-		List<UserBookmarkResponse> content = Arrays.asList(userBookmarkResponse1, userBookmarkResponse2, userBookmarkResponse3);
+		List<UserBookmarkResponse> content = Arrays.asList(userBookmarkResponse1, userBookmarkResponse2,
+			userBookmarkResponse3);
 		Slice<UserBookmarkResponse> userBookmarkResponses = new SliceImpl<>(content, Pageable.unpaged(), true);
 
 		given(userService.getUserBookmarks(any(), any())).willReturn(userBookmarkResponses);
@@ -131,8 +126,10 @@ class UserControllerTest extends RestDocsTestSupport {
 						fieldWithPath("data.content[].storeName").type(JsonFieldType.STRING).description("가게 이름"),
 						fieldWithPath("data.content[].address").type(JsonFieldType.STRING).description("가게 주소"),
 						fieldWithPath("data.content[].categoryName").type(JsonFieldType.STRING).description("카테고리 이름"),
-						fieldWithPath("data.content[].totalRevisitedCount").type(JsonFieldType.NUMBER).description("총 재방문한 사람 수"),
-						fieldWithPath("data.content[].isVisited").type(JsonFieldType.BOOLEAN).description("유저의 가게 방문 여부"),
+						fieldWithPath("data.content[].totalRevisitedCount").type(JsonFieldType.NUMBER)
+							.description("총 재방문한 사람 수"),
+						fieldWithPath("data.content[].isVisited").type(JsonFieldType.BOOLEAN)
+							.description("유저의 가게 방문 여부"),
 						subsectionWithPath("data.pageable").type(JsonFieldType.STRING).description("페이지 요청 정보"),
 						//                                        fieldWithPath("data.pageable.pageNumber").type(JsonFieldType.NUMBER).description("페이지 수"),
 						//                                        fieldWithPath("data.pageable.pageSize").type(JsonFieldType.NUMBER).description("페이지 크기"),
@@ -159,7 +156,7 @@ class UserControllerTest extends RestDocsTestSupport {
 			.storeId(1L)
 			.storeName("칠기마라탕")
 			.visitTimes(1)
-			.visitedAt(LocalDate.of(2024,1,11))
+			.visitedAt(LocalDate.of(2024, 1, 11))
 			.categoryName("중식")
 			.rating(5)
 			.imageUrl("https://image.com/1.jpg")
@@ -170,7 +167,7 @@ class UserControllerTest extends RestDocsTestSupport {
 			.storeId(1L)
 			.storeName("칠기마라탕")
 			.visitTimes(2)
-			.visitedAt(LocalDate.of(2024,1,13))
+			.visitedAt(LocalDate.of(2024, 1, 13))
 			.categoryName("중식")
 			.rating(4)
 			.imageUrl("https://image.com/2.jpg")
@@ -181,7 +178,7 @@ class UserControllerTest extends RestDocsTestSupport {
 			.storeId(2L)
 			.storeName("알베르")
 			.visitTimes(1)
-			.visitedAt(LocalDate.of(2024,1,3))
+			.visitedAt(LocalDate.of(2024, 1, 3))
 			.categoryName("카페")
 			.rating(5)
 			.imageUrl(null)
@@ -218,7 +215,9 @@ class UserControllerTest extends RestDocsTestSupport {
 						fieldWithPath("data.content[].storeName").type(JsonFieldType.STRING).description("가게 이름"),
 						fieldWithPath("data.content[].rating").type(JsonFieldType.NUMBER).description("평점"),
 						fieldWithPath("data.content[].categoryName").type(JsonFieldType.STRING).description("카테고리 이름"),
-						fieldWithPath("data.content[].imageUrl").type(JsonFieldType.STRING).description("이미지 URL").optional(),
+						fieldWithPath("data.content[].imageUrl").type(JsonFieldType.STRING)
+							.description("이미지 URL")
+							.optional(),
 						fieldWithPath("data.content[].visitTimes").type(JsonFieldType.NUMBER).description("방문 횟수"),
 						fieldWithPath("data.content[].visitedAt").type(JsonFieldType.STRING).description("방문 일시"),
 						fieldWithPath("data.content[].description").type(JsonFieldType.STRING).description("리뷰 내용"),

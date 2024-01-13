@@ -45,16 +45,24 @@ operation::common-doc-controller-test/error-sample[snippets='http-response,respo
 == Store API
 
 [[get-store]]
-=== 핀 클릭시 음식점 바텀시트 조회
+=== 1. 핀 클릭시 음식점 바텀시트 조회
 operation::store-controller-test/get-store[]
 
 [[get-store-report]]
-=== 또잇 리포트 및 음식점 상세 페이지 상단 이미지
+=== 2. 또잇 리포트 및 음식점 상세 페이지 상단 이미지
 operation::store-controller-test/get-store-report[]
 
 [[get-store-list]]
-=== 리뷰 조회
+=== 3. 리뷰 조회
 operation::store-controller-test/get-store-review[]
+
+[[create-exist-store-review]]
+=== 4-1. 리뷰 작성 (기존에 존재하는 가게)
+operation::store-controller-test/create-exist-store-review[]
+
+[[create-new-store-review]]
+=== 4-2. 리뷰 작성 (새로운 가게)
+operation::store-controller-test/create-new-store-review[]
 
 == User API
 
