@@ -59,6 +59,7 @@ operation::store-controller-test/get-store-review[]
 == Store Search API
 
 [[get-store-search]]
+=== 음식점, 카페 통합 검색
 operation::store-search-controller-test/search[]
 
 
