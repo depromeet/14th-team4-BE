@@ -79,6 +79,13 @@ operation::user-controller-test/get-my-bookmarks[]
 operation::user-controller-test/get-my-reviews[]
 
 
+== Store Search API
+
+[[get-store-search]]
+=== 음식점, 카페 통합 검색
+operation::store-search-controller-test/search[]
+
+
 == Test API
 
 [[test-api-create]]
@@ -106,4 +113,3 @@ operation::test-controller-test/delete[]
 [[test-api-enum]]
 === enums
 operation::test-controller-test/enum-test[]
-
