@@ -3,6 +3,7 @@ package com.depromeet.domains.user.entity;
 import com.depromeet.domains.common.entity.BaseTimeEntity;
 import com.depromeet.enums.Role;
 import com.depromeet.enums.SocialType;
+import com.depromeet.enums.UserLevel;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -44,6 +45,13 @@ public class User extends BaseTimeEntity {
 	@Column(nullable = false)
 	private String socialId;
 
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private UserLevel level = UserLevel.LEVEL1;
+
+	@Column(nullable = false)
+	private Integer reviewCount = 0;
+
 	@Builder
 	public User(SocialType socialType, String profileImageUrl, String nickName, String email, Role userRole,
 		String socialId) {
@@ -53,5 +61,25 @@ public class User extends BaseTimeEntity {
 		this.email = email;
 		this.userRole = userRole;
 		this.socialId = socialId;
+	}
+
+	public void updateUserRole() {
+		this.userRole = Role.USER;
+	}
+
+	public void updateNickname(String nickName) {
+		this.nickName = nickName;
+	}
+
+	public void updateUserLevel(UserLevel level) {
+		this.level = level;
+	}
+
+	public void increaseReviewCount() {
+		this.reviewCount++;
+	}
+
+	public void decreaseReviewCount() {
+		this.reviewCount = Math.max(0, this.reviewCount - 1);
 	}
 }

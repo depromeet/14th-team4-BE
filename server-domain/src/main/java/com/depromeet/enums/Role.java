@@ -1,13 +1,21 @@
 package com.depromeet.enums;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@Getter
 @RequiredArgsConstructor
-public enum Role {
+public enum Role implements EnumType {
 
-	USER("ROLE_USER"), ADMIN("ROLE_ADMIN");;
+	GUEST("ROLE_GUEST"), USER("ROLE_USER"), ADMIN("ROLE_ADMIN");
 
-	private final String key;
+	private final String description;
+
+	@Override
+	public String getName() {
+		return this.name();
+	}
+
+	@Override
+	public String getDescription() {
+		return this.description;
+	}
 }

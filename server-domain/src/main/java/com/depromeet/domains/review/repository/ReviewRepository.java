@@ -3,6 +3,9 @@ package com.depromeet.domains.review.repository;
 import com.depromeet.domains.review.entity.Review;
 import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.user.entity.User;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -34,6 +37,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     // 사진 리뷰만 조회
     List<Review> findByImageUrlIsNotNullOrderByCreatedAtDesc();
 
+    boolean existsByStoreAndUser(Store store, User user);
 
+    Slice<Review> findByUser(User user, Pageable pageable);
     List<Review> findByStore(Store store);
 }

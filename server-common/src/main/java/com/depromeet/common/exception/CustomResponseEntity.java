@@ -43,6 +43,14 @@ public class CustomResponseEntity<T> {
                 .build();
     }
 
+    public static <T> CustomResponseEntity<T> created(T data) {
+        return CustomResponseEntity.<T>builder()
+            .code(Result.CREATED.getCode())
+            .message(Result.CREATED.getMessage())
+            .data(data)
+            .build();
+    }
+
     @Builder
     public CustomResponseEntity(int code, String message, T data) {
         this.code = code;

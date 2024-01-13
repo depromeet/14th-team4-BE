@@ -65,7 +65,7 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
 	List<Object[]> findByStoresWithNumberOfRevisitedUser(@Param("storeIdList") List<Long> storeIdList);
 
 
-	Boolean existsByStoreNameAndStoreAddress(String storeName, String storeAddress);
+	Boolean existsByStoreNameAndAddress(String storeName, String address);
 
 
 	Store findByKakaoStoreId(Long kakaoStoreId);

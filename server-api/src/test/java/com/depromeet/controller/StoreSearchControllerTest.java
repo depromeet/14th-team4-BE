@@ -91,8 +91,8 @@ public class StoreSearchControllerTest extends RestDocsTestSupport {
                                         parameterWithName("query").description("검색 키워드"),
                                         parameterWithName("x").description("경도"),
                                         parameterWithName("y").description("위도"),
-                                        parameterWithName("storePage").description("음식점 페이지").optional(),
-                                        parameterWithName("cafePage").description("카페 페이지").optional()
+                                        parameterWithName("storePage").description("음식점 페이지 - optional").optional(),
+                                        parameterWithName("cafePage").description("카페 페이지 - optional").optional()
                                 ),
                                 requestHeaders(
                                         headerWithName("Authorization").description("accessToken")

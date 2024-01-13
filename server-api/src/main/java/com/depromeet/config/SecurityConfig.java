@@ -1,11 +1,9 @@
 package com.depromeet.config;
 
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -25,8 +23,9 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 	private static final String[] PATTERNS = {
 		"/", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**",
-			"/docs/index.html", "/common/*.html", "/jwt-test", "/auth/refresh", "/auth/logout", "/api/v1/auth/token/reissue",
+			"/docs/index.html", "/common/*.html", "/jwt-test", "/api/v1/auth/**"
 	};
+
 	private final JwtService jwtTokenProvider;
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
@@ -44,6 +43,7 @@ public class SecurityConfig {
 			)
 			.authorizeHttpRequests(request -> request
 				.requestMatchers(PATTERNS).permitAll()
+				.requestMatchers("/api/v1/auth/signup").hasRole("GUEST")
 				.anyRequest().authenticated()
 			)
 			.oauth2Login(oauth2Login ->
