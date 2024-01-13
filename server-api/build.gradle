@@ -94,24 +94,12 @@ asciidoctor { // asciidoctor 작업 구성
     dependsOn test // test task를 의존하도록 하여, 문서 생성 전에 test를 수행하도록 함
 }
 
-bootJar{ //springboot를 이용한 jar 파일 생성 시 필요한 설정 task
+bootJar { //springboot를 이용한 jar 파일 생성 시 필요한 설정 task
     dependsOn asciidoctor //asciidoctor 를 의존하도록 하여, bootJar 생성 전에 asciidoctor task를 수행하도록 함
     // (jar 파일 생성 시, 문서 생성을 보장 함)
-    from("build/docs/asciidoc"){ //문서 생성 시, Jar 파일 내 static/docs 에도 복사되도록 함
-        into 'BOOT-INF/classes/static/docs'
+    from("build/docs/asciidoc") { //문서 생성 시, Jar 파일 내 static/docs 에도 복사되도록 함
+        into 'BOOT-INF/classes/static/docs' // jar 내부에 복사
     }
-}
-
-// asccidoctor 작업 이후 생성된 HTML 파일을 static/docs 로 copy
-task copyDocument(type: Copy) {
-    dependsOn asciidoctor
-    from file("build/docs/asciidoc")
-    into file("src/main/resources/static/docs")
-}
-
-// build 의 의존작업 명시
-build {
-    dependsOn copyDocument
 }
 
 jacocoTestReport {
