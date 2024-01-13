@@ -116,7 +116,7 @@ public class StoreSearchService {
                     // storeName + address 조합후 DB 검색시 존재하지 않으면 새로운 음식점이므로 revisitedCount = 0,
                     // 존재하면 revisitedCount = 해당 음식점의 revisitedCount
                     log.info("db에서 revisitedCount 조회");
-                    if (storeRepository.existsByStoreNameAndStoreAddress(storeName, address)){
+                    if (storeRepository.existsByStoreNameAndAddress(storeName, address)){
                         Store store = storeRepository.findByKakaoStoreId(kakaoStoreId);
                         log.info("store: {}", store);
                         revisitedCount = store.getRevisitedCount();
