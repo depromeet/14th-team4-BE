@@ -11,6 +11,7 @@ import lombok.Getter;
 public class StoreReviewResponse {
 
     private Long userId;
+    private Long reviewId;
     private String nickName;
     private Integer rating;
     private String imageUrl;
@@ -19,10 +20,11 @@ public class StoreReviewResponse {
     private String description;
 	private Boolean isMine;
 
-    public static StoreReviewResponse of(Long userId, String nickName, Integer rating, String imageUrl,
+    public static StoreReviewResponse of(Long userId, Long reviewId, String nickName, Integer rating, String imageUrl,
         Integer visitTimes, LocalDate visitedAt, String description, Boolean isMine) {
         return StoreReviewResponse.builder()
                 .userId(userId)
+                .reviewId(reviewId)
                 .nickName(nickName)
                 .rating(rating)
                 .imageUrl(imageUrl)

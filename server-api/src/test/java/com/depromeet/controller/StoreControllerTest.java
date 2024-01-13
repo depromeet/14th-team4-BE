@@ -140,6 +140,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 		// given
 		StoreReviewResponse storeReviewResponse1 = StoreReviewResponse.builder()
 			.userId(1L)
+			.reviewId(1L)
 			.nickName("김철수")
 			.rating(4)
 			.imageUrl("https://image.com/1.jpg")
@@ -151,6 +152,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 
 		StoreReviewResponse storeReviewResponse2 = StoreReviewResponse.builder()
 			.userId(2L)
+			.reviewId(2L)
 			.nickName("김길동")
 			.rating(2)
 			.imageUrl("https://image.com/2.jpg")
@@ -162,6 +164,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 
 		StoreReviewResponse storeReviewResponse3 = StoreReviewResponse.builder()
 			.userId(3L)
+			.reviewId(3L)
 			.nickName("맛있는 음식을보면 짖는 개")
 			.rating(3)
 			.imageUrl(null)

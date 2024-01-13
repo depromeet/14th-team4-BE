@@ -42,7 +42,7 @@ public class StoreSearchControllerTest extends RestDocsTestSupport {
         StoreSearchResult storeSearchResult1 = StoreSearchResult.builder()
                 .storeId(720401104L)
                 .storeName("티컵 스타필드 코엑스몰점")
-                .categoryName("음식점 > 카페")
+                .categoryName("카페")
                 .address("서울 강남구 삼성동 159")
                 .distance(389)
                 .revisitedCount(3L)
@@ -53,7 +53,7 @@ public class StoreSearchControllerTest extends RestDocsTestSupport {
         StoreSearchResult storeSearchResult2 = StoreSearchResult.builder()
                 .storeId(21417356L)
                 .storeName("스타가든")
-                .categoryName("음식점 > 카페 > 커피전문점")
+                .categoryName("카페")
                 .address("서울 강남구 역삼동 737")
                 .distance(2810)
                 .revisitedCount(0L)
@@ -103,7 +103,7 @@ public class StoreSearchControllerTest extends RestDocsTestSupport {
                                         fieldWithPath("data.storeSearchResult[]").type(JsonFieldType.ARRAY).description("리뷰 목록"),
                                         fieldWithPath("data.storeSearchResult[].storeId").type(JsonFieldType.NUMBER).description("카카오 DB상 음식점 ID"),
                                         fieldWithPath("data.storeSearchResult[].storeName").type(JsonFieldType.STRING).description("음식점 명"),
-                                        fieldWithPath("data.storeSearchResult[].categoryName").type(JsonFieldType.STRING).description("음식점 카테고리 - 2 depth 값을 사용"),
+                                        fieldWithPath("data.storeSearchResult[].categoryName").type(JsonFieldType.STRING).description("음식점 카테고리"),
                                         fieldWithPath("data.storeSearchResult[].address").type(JsonFieldType.STRING).description("음식점 주소"),
                                         fieldWithPath("data.storeSearchResult[].distance").type(JsonFieldType.NUMBER).description("현재 위치와 음식점과의 거리"),
                                         fieldWithPath("data.storeSearchResult[].revisitedCount").type(JsonFieldType.NUMBER).description("재방문한 인원수 (N명 재방문)"),
