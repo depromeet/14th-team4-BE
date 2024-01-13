@@ -245,7 +245,7 @@ class StoreControllerTest extends RestDocsTestSupport {
         given(storeService.createStoreReview(any(), any(ReviewRequest.class))).willReturn(reviewAddResponse);
         // when & then
         mockMvc.perform(
-                post("/stores/reviews")
+                post("/api/v1/stores/reviews")
                     .with(csrf()) // Spring Security Test에서 csrf로 발생하는 403을  해결하기 위해
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", "Bearer accessToken")
@@ -306,7 +306,7 @@ class StoreControllerTest extends RestDocsTestSupport {
         given(storeService.createStoreReview(any(), any(ReviewRequest.class))).willReturn(reviewAddResponse);
         // when & then
         mockMvc.perform(
-                post("/stores/reviews")
+                post("/api/v1/stores/reviews")
                     .with(csrf()) // Spring Security Test에서 csrf로 발생하는 403을  해결하기 위해
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", "Bearer accessToken")
