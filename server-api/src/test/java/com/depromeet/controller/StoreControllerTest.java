@@ -9,7 +9,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,6 +24,9 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import com.depromeet.document.RestDocsTestSupport;
+import com.depromeet.domains.store.dto.request.NewStoreRequest;
+import com.depromeet.domains.store.dto.request.ReviewRequest;
+import com.depromeet.domains.store.dto.response.ReviewAddResponse;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
 import com.depromeet.domains.store.dto.response.StoreReportResponse;
 import com.depromeet.domains.store.dto.response.StoreReviewResponse;
@@ -136,30 +139,30 @@ class StoreControllerTest extends RestDocsTestSupport {
 		StoreReviewResponse storeReviewResponse1 = StoreReviewResponse.builder()
 			.userId(1L)
 			.nickName("김철수")
-			.rating(4F)
+			.rating(4)
 			.imageUrl("https://image.com/1.jpg")
 			.visitTimes(3)
-			.visitedAt(LocalDateTime.now())
+			.visitedAt(LocalDate.now())
 			.description("맛있어요")
 			.build();
 
 		StoreReviewResponse storeReviewResponse2 = StoreReviewResponse.builder()
 			.userId(2L)
 			.nickName("김길동")
-			.rating(2F)
+			.rating(2)
 			.imageUrl("https://image.com/2.jpg")
 			.visitTimes(1)
-			.visitedAt(LocalDateTime.now())
+			.visitedAt(LocalDate.now())
 			.description("맛있어요")
 			.build();
 
 		StoreReviewResponse storeReviewResponse3 = StoreReviewResponse.builder()
 			.userId(3L)
 			.nickName("맛있는 음식을보면 짖는 개")
-			.rating(3F)
+			.rating(3)
 			.imageUrl(null)
 			.visitTimes(1)
-			.visitedAt(LocalDateTime.now())
+			.visitedAt(LocalDate.now())
 			.description("왈왈왈왈왈왈왈")
 			.build();
 
@@ -223,5 +226,121 @@ class StoreControllerTest extends RestDocsTestSupport {
 				)
 			);
 	}
+
+	@Test
+    public void createExistStoreReview() throws Exception {
+        // given
+        // storeId가 있는 경우
+        ReviewRequest requestWithStoreId = ReviewRequest.builder()
+            .storeId(1L)
+            .rating(5)
+            .visitedAt("2024.01.10")
+            .imageUrl("https://exampleimageurl.com")
+            .description("맛있어요")
+            .build();
+
+        ReviewAddResponse reviewAddResponse = ReviewAddResponse.of(7L, 1L);
+
+        //        given(testService.create(any(TestRequest.class))).willReturn(testResponse); 되는 코드 꼭 any로 해줘야함. 그냥 값 넣으면 response data가 안찍힘
+        given(storeService.createStoreReview(any(), any(ReviewRequest.class))).willReturn(reviewAddResponse);
+        // when & then
+        mockMvc.perform(
+                post("/api/v1/stores/reviews")
+                    .with(csrf()) // Spring Security Test에서 csrf로 발생하는 403을  해결하기 위해
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer accessToken")
+                    .content(objectMapper.writeValueAsString(requestWithStoreId)))
+            .andExpect(status().isOk())
+            .andDo(
+                restDocs.document(
+                    requestHeaders(
+                        headerWithName("Authorization").description("accessToken")
+                    ),
+                    requestFields(
+                        fieldWithPath("storeId").type(JsonFieldType.NUMBER).description("가게 ID").optional(),
+                        fieldWithPath("newStore").type(JsonFieldType.OBJECT).description("새로운 가게 정보").optional(),
+                        fieldWithPath("newStore.storeName")
+                            .type(JsonFieldType.STRING)
+                            .description("가게 이름"),
+                        fieldWithPath("newStore.latitude").type(JsonFieldType.NUMBER).description("위도"),
+                        fieldWithPath("newStore.longitude").type(JsonFieldType.NUMBER).description("경도"),
+                        fieldWithPath("newStore.categoryId").type(JsonFieldType.NUMBER).description("카테고리 타입"),
+                        fieldWithPath("newStore.address").type(JsonFieldType.STRING).description("가게 주소"),
+                        fieldWithPath("rating").type(JsonFieldType.NUMBER).description("별점"),
+                        fieldWithPath("visitedAt").type(JsonFieldType.STRING).description("방문 날짜"),
+                        fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("첨부된 이미지 url").optional(),
+                        fieldWithPath("description").type(JsonFieldType.STRING).description("리뷰 내용")
+                    ),
+                    responseFields(
+                        fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
+                        fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+                        fieldWithPath("data.reviewId").type(JsonFieldType.NUMBER).description("생성된 리뷰 ID"),
+                        fieldWithPath("data.storeId").type(JsonFieldType.NUMBER).description("생성된/기존 가게 ID")
+                    )
+                )
+            )
+        ;
+    }
+
+    @Test
+    public void createNewStoreReview() throws Exception {
+        // given
+        ReviewRequest requestWithNewStore = ReviewRequest.builder()
+            .newStore(
+                NewStoreRequest.builder()
+                    .storeName("칠기마라탕")
+                    .latitude(127.239487)
+                    .longitude(37.29472)
+                    .categoryId(1L)
+                    .address("서울시 강남구 역삼동 123-123")
+                    .build())
+            .rating(5)
+            .visitedAt("2024.01.10")
+            .imageUrl("https://exampleimageurl.com")
+            .description("맛있어요")
+            .build();
+
+        ReviewAddResponse reviewAddResponse = ReviewAddResponse.of(7L, 3L);
+
+        //        given(testService.create(any(TestRequest.class))).willReturn(testResponse); 되는 코드 꼭 any로 해줘야함. 그냥 값 넣으면 response data가 안찍힘
+        given(storeService.createStoreReview(any(), any(ReviewRequest.class))).willReturn(reviewAddResponse);
+        // when & then
+        mockMvc.perform(
+                post("/api/v1/stores/reviews")
+                    .with(csrf()) // Spring Security Test에서 csrf로 발생하는 403을  해결하기 위해
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer accessToken")
+                    .content(objectMapper.writeValueAsString(requestWithNewStore)))
+            .andExpect(status().isOk())
+            .andDo(
+                restDocs.document(
+                    requestHeaders(
+                        headerWithName("Authorization").description("accessToken")
+                    ),
+                    requestFields(
+                        fieldWithPath("storeId").type(JsonFieldType.NUMBER).description("가게 ID").optional(),
+                        fieldWithPath("newStore").type(JsonFieldType.OBJECT).description("새로운 가게 정보"),
+                        fieldWithPath("newStore.storeName")
+                            .type(JsonFieldType.STRING)
+                            .description("가게 이름"),
+                        fieldWithPath("newStore.latitude").type(JsonFieldType.NUMBER).description("위도"),
+                        fieldWithPath("newStore.longitude").type(JsonFieldType.NUMBER).description("경도"),
+                        fieldWithPath("newStore.categoryId").type(JsonFieldType.NUMBER).description("카테고리 타입"),
+                        fieldWithPath("newStore.address").type(JsonFieldType.STRING).description("가게 주소"),
+                        fieldWithPath("rating").type(JsonFieldType.NUMBER).description("별점"),
+                        fieldWithPath("visitedAt").type(JsonFieldType.STRING).description("방문 날짜"),
+                        fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("첨부된 이미지 url").optional(),
+                        fieldWithPath("description").type(JsonFieldType.STRING).description("리뷰 내용")
+                    ),
+                    responseFields(
+                        fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
+                        fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+                        fieldWithPath("data.reviewId").type(JsonFieldType.NUMBER).description("생성된 리뷰 ID"),
+                        fieldWithPath("data.storeId").type(JsonFieldType.NUMBER).description("생성된 가게 ID").optional()
+                    )
+                )
+            )
+        ;
+    }
 
 }

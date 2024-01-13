@@ -28,7 +28,7 @@ public class AuthService {
 		}
 
 		Long userId = jwtService.getUserIdFromToken(refreshToken);
-		User user = userRepository.findByUserId(userId)
+		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new CustomException(Result.FAIL));
 
 		// Redis에서 저장된 Refresh Token 값을 가져옴

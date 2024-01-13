@@ -139,6 +139,6 @@ public class JwtService {
 
 	private User getUserFromToken(String token) {
 		Claims claims = getClaims(token);
-		return userRepository.findByUserId(Long.valueOf(claims.get("userId", Integer.class))).orElseThrow(() -> new CustomException(Result.FAIL));
+		return userRepository.findById(Long.valueOf(claims.get("userId", Integer.class))).orElseThrow(() -> new CustomException(Result.FAIL));
 	}
 }
