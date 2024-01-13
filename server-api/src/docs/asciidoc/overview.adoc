@@ -1,19 +1,6 @@
 [[overview]]
 == Overview
 
-[[overview-host]]
-=== Host
-
-|===
-| 환경 | Host
-
-| Beta
-| `beta-backtony.github.io`
-
-| Production
-| `backtony.github.io`
-|===
-
 [[overview-http-status-codes]]
 === HTTP status codes
 

@@ -6,11 +6,14 @@ import java.util.Map;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 
+import com.depromeet.enums.Role;
+
 import lombok.Getter;
 
 @Getter
 public class CustomOAuth2User extends DefaultOAuth2User {
-	private final String userId;
+	private final Long userId;
+	private final Role userRole;
 
 	/**
 	 * Constructs a {@code DefaultOAuth2User} using the provided parameters.
@@ -21,8 +24,9 @@ public class CustomOAuth2User extends DefaultOAuth2User {
 	 *                         {@link #getAttributes()}
 	 */
 	public CustomOAuth2User(Collection<? extends GrantedAuthority> authorities,
-		Map<String, Object> attributes, String nameAttributeKey, String userId) {
+		Map<String, Object> attributes, String nameAttributeKey, Long userId, Role userRole) {
 		super(authorities, attributes, nameAttributeKey);
 		this.userId = userId;
+		this.userRole = userRole;
 	}
 }

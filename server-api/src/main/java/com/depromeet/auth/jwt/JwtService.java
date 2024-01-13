@@ -5,10 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 
-import com.depromeet.common.exception.CustomException;
-import com.depromeet.common.exception.Result;
-import com.depromeet.domains.user.entity.User;
-import com.depromeet.domains.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,9 +12,15 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
-import com.depromeet.enums.Role;
+import com.depromeet.common.exception.CustomException;
+import com.depromeet.common.exception.Result;
+import com.depromeet.auth.service.RedisService;
+import com.depromeet.domains.user.entity.User;
+import com.depromeet.domains.user.repository.UserRepository;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -52,6 +54,7 @@ public class JwtService {
 
 	private Key key;
 
+	private final RedisService redisService;
 	private final UserRepository userRepository;
 
 	@PostConstruct
@@ -63,7 +66,7 @@ public class JwtService {
 	/*
 	AccessToken 생성
 	 */
-	public String createAccessToken(String userId) {
+	public String createAccessToken(Long userId) {
 		Date now = new Date();
 		return Jwts.builder()
 			.setSubject(ACCESS_TOKEN_SUBJECT)
@@ -76,48 +79,66 @@ public class JwtService {
 	/*
 	RefreshToken 생성
 	 */
-	public String createRefreshToken(String userId) {
+	public String createRefreshToken(Long userId) {
 		var now = new Date();
-		return Jwts.builder()
+		String refreshToken = Jwts.builder()
 			.setSubject(REFRESH_TOKEN_SUBJECT)
+			.claim("userId", userId)
 			.setExpiration(new Date(now.getTime() + refreshTokenExpirationPeriod))
 			.signWith(key, SignatureAlgorithm.HS512)
 			.compact();
+
+		redisService.setValues(String.valueOf(userId), refreshToken, refreshTokenExpirationPeriod);
+		return refreshToken;
 	}
 
 	/*
 	토큰 유효성 검사
 	 */
-	public Boolean validateToken(String token) {
-		Claims claims = parseToken(token);
-		return claims.getExpiration().getTime() >= new Date().getTime();
+	public boolean isValidToken(String token) {
+		try {
+			Claims claims = getClaims(token);
+			return !claims.getExpiration().before(new Date());
+		} catch (ExpiredJwtException e) {
+			throw new CustomException(Result.BAD_REQUEST);
+		} catch (JwtException e) {
+			throw new CustomException(Result.BAD_REQUEST);
+		}
+	}
+
+	private Claims getClaims(String token) {
+		try {
+			return Jwts.parserBuilder()
+				.setSigningKey(key)
+				.build()
+				.parseClaimsJws(token)
+				.getBody();
+		} catch (JwtException e) {
+			throw new CustomException(Result.BAD_REQUEST);
+		}
 	}
 
 	public Authentication getAuthentication(String token) {
+		User user = getUserFromToken(token);
 		return new UsernamePasswordAuthenticationToken(
-			getUserFromToken(token),
+			user,
 			null,
-			getAuthorities(token)
+			getAuthorities(user)
 		);
 	}
 
-	private Collection<GrantedAuthority> getAuthorities(String token) {
-		Claims claims = parseToken(token);
+	public Long getUserIdFromToken(String token) {
+		return Long.valueOf(getClaims(token).get("userId", Integer.class));
+	}
+
+	private Collection<GrantedAuthority> getAuthorities(User user) {
 		return Collections.singletonList(
-			new SimpleGrantedAuthority(Role.USER.toString())
+			new SimpleGrantedAuthority("ROLE_" + user.getUserRole().toString())
 		);
-	}
-
-	private Claims parseToken(String token) {
-		return Jwts.parserBuilder()
-			.setSigningKey(key)
-			.build()
-			.parseClaimsJws(token)
-			.getBody();
 	}
 
 	private User getUserFromToken(String token) {
-		Claims claims = parseToken(token);
-		return userRepository.findById(Long.valueOf(claims.get("userId", String.class))).orElseThrow(() -> new CustomException(Result.FAIL));
+		Claims claims = getClaims(token);
+		return userRepository.findById(Long.valueOf(claims.get("userId", Integer.class))).orElseThrow(() -> new CustomException(Result.FAIL));
 	}
 }
