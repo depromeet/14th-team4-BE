@@ -16,9 +16,10 @@ public class StoreReviewResponse {
 	private Integer visitTimes;
 	private LocalDateTime visitedAt;
 	private String description;
+	private Boolean isMine;
 
 	public static StoreReviewResponse of(Long userId, String nickName, Float rating, String imageUrl,
-		Integer visitTimes, LocalDateTime visitedAt, String description) {
+		Integer visitTimes, LocalDateTime visitedAt, String description, Boolean isMine) {
 		return StoreReviewResponse.builder()
 			.userId(userId)
 			.nickName(nickName)
@@ -27,6 +28,7 @@ public class StoreReviewResponse {
 			.visitTimes(visitTimes)
 			.visitedAt(visitedAt)
 			.description(description)
+			.isMine(isMine)
 			.build();
 	}
 
