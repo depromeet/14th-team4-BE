@@ -17,11 +17,11 @@ public class StorePreviewResponse {
 	private Long totalReviewCount;
 	private List<String> reviewImageUrls;
 	private Long userId;
-	private Long revisitedCount; // 자신이 재방문한 횟수(N번 방문)
+	private Long myRevisitedCount; // 자신이 재방문한 횟수(N번 방문)
 	private Long totalRevisitedCount; // 전체 재방문 인원 수(00명이 재방문했어요)
 
 	public static StorePreviewResponse of(Long storeId, String categoryName, String storeName, String address,
-		Float totalRating, Long totalReviewCount, List<String> reviewImageUrls, Long userId, Long revisitedCount,
+		Float totalRating, Long totalReviewCount, List<String> reviewImageUrls, Long userId, Long myRevisitedCount,
 		Long totalRevisitedCount) {
 		return StorePreviewResponse.builder()
 			.storeId(storeId)
@@ -32,7 +32,7 @@ public class StorePreviewResponse {
 			.totalReviewCount(totalReviewCount)
 			.reviewImageUrls(reviewImageUrls)
 			.userId(userId)
-			.revisitedCount(revisitedCount)
+			.myRevisitedCount(myRevisitedCount)
 			.totalRevisitedCount(totalRevisitedCount)
 			.build();
 	}

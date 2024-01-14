@@ -51,7 +51,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.totalReviewCount(10L)
 			.reviewImageUrls(List.of("https://image.com/1.jpg", "https://image.com/2.jpg"))
 			.userId(1L)
-			.revisitedCount(5L)
+			.myRevisitedCount(5L)
 			.totalRevisitedCount(2L)
 			.build();
 
