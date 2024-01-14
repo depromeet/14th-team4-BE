@@ -98,7 +98,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 		// given
 		StoreReportResponse storeReportResponse = StoreReportResponse.builder()
 			.storeId(1L)
-			.storeMainImageUrl("https://image.com/1.jpg")
+			.thumbnailUrl("https://image.com/1.jpg")
 			.mostVisitedCount(15L)
 			.totalRevisitedCount(100L)
 			.build();
