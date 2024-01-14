@@ -27,17 +27,17 @@ public class StoreLocationRangeResponse {
 		private Double longitude;
 		private Double latitude;
 		private boolean isBookMark;
-		private int revisitUserNumbers;
+		private int totalRevisitedCount;
 
 		public static LocationRangeResponse of(Long storeId, String storeName, Double longitude, Double latitude,
-			boolean isBookMark, int revisitUserNumbers) {
+			boolean isBookMark, int totalRevisitedCount) {
 			return LocationRangeResponse.builder()
 				.storeId(storeId)
 				.storeName(storeName)
 				.longitude(longitude)
 				.latitude(latitude)
 				.isBookMark(isBookMark)
-				.revisitUserNumbers(revisitUserNumbers)
+				.totalRevisitedCount(totalRevisitedCount)
 				.build();
 		}
 	}

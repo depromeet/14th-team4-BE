@@ -1,8 +1,8 @@
 package com.depromeet.domains.store.dto.request;
 
 import com.depromeet.domains.category.entity.Category;
+import com.depromeet.domains.store.entity.Location;
 import com.depromeet.domains.store.entity.Store;
-import com.depromeet.domains.store.entity.StoreLocation;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -25,7 +25,7 @@ public class NewStoreRequest {
 
 		return Store.builder()
 			.storeName(this.storeName)
-			.storeLocation(new StoreLocation(this.latitude, this.longitude))
+			.location(new Location(this.latitude, this.longitude))
 			.address(this.address)
 			.category(category)
 			.totalRating(0.0F)

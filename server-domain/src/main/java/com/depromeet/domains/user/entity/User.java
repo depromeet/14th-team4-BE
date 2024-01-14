@@ -31,12 +31,8 @@ public class User extends BaseTimeEntity {
 	@Column(nullable = false)
 	private SocialType socialType;
 
-	private String profileImageUrl;
-
 	@Column(nullable = false)
 	private String nickName;
-
-	private String email;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -50,15 +46,12 @@ public class User extends BaseTimeEntity {
 	private UserLevel level = UserLevel.LEVEL1;
 
 	@Column(nullable = false)
-	private Integer reviewCount = 0;
+	private Integer myReviewCount = 0;
 
 	@Builder
-	public User(SocialType socialType, String profileImageUrl, String nickName, String email, Role userRole,
-		String socialId) {
+	public User(SocialType socialType, String nickName, Role userRole, String socialId) {
 		this.socialType = socialType;
-		this.profileImageUrl = profileImageUrl;
 		this.nickName = nickName;
-		this.email = email;
 		this.userRole = userRole;
 		this.socialId = socialId;
 	}
@@ -75,11 +68,11 @@ public class User extends BaseTimeEntity {
 		this.level = level;
 	}
 
-	public void increaseReviewCount() {
-		this.reviewCount++;
+	public void increaseMyReviewCount() {
+		this.myReviewCount++;
 	}
 
-	public void decreaseReviewCount() {
-		this.reviewCount = Math.max(0, this.reviewCount - 1);
+	public void decreaseMyReviewCount() {
+		this.myReviewCount = Math.max(0, this.myReviewCount - 1);
 	}
 }
