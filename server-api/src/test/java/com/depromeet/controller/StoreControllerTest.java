@@ -79,11 +79,11 @@ class StoreControllerTest extends RestDocsTestSupport {
 						fieldWithPath("data.categoryName").type(JsonFieldType.STRING).description("카테고리 명"),
 						fieldWithPath("data.storeName").type(JsonFieldType.STRING).description("음식점 명"),
 						fieldWithPath("data.address").type(JsonFieldType.STRING).description("음식점 주소"),
-						fieldWithPath("data.starRating").type(JsonFieldType.NUMBER).description("음식점 별점"),
-						fieldWithPath("data.reviewCount").type(JsonFieldType.NUMBER).description("리뷰 개수"),
+						fieldWithPath("data.totalRating").type(JsonFieldType.NUMBER).description("음식점 별점"),
+						fieldWithPath("data.totalReviewCount").type(JsonFieldType.NUMBER).description("리뷰 개수"),
 						fieldWithPath("data.reviewImageUrls").type(JsonFieldType.ARRAY).description("리뷰 이미지 URL"),
 						fieldWithPath("data.userId").type(JsonFieldType.NUMBER).description("사용자 ID"),
-						fieldWithPath("data.revisitedCount").type(JsonFieldType.NUMBER)
+						fieldWithPath("data.myRevisitedCount").type(JsonFieldType.NUMBER)
 							.description("자신이 재방문한 횟수(N번 방문)"),
 						fieldWithPath("data.totalRevisitedCount").type(JsonFieldType.NUMBER)
 							.description("전체 재방문 인원 수(00명이 재방문했어요)")
@@ -124,7 +124,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
 						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
 						fieldWithPath("data.storeId").type(JsonFieldType.NUMBER).description("음식점 ID"),
-						fieldWithPath("data.storeMainImageUrl").type(JsonFieldType.STRING)
+						fieldWithPath("data.thumbnailUrl").type(JsonFieldType.STRING)
 							.description("음식점 대표 이미지 URL"),
 						fieldWithPath("data.mostVisitedCount").type(JsonFieldType.NUMBER)
 							.description("가장 많이 유저의 방문한 횟수"),
