@@ -7,17 +7,18 @@ import lombok.Getter;
 @Builder
 public class StoreReportResponse {
 
-    private Long storeId;
-    private String storeMainImageUrl;
-    private Long mostVisitedCount;
-    private Long totalRevisitedCount;
+	private Long storeId;
+	private String thumbnailUrl;
+	private Long mostVisitedCount;
+	private Long totalRevisitedCount;
 
-    public static StoreReportResponse of(Long storeId, String storeMainImageUrl, Long mostVisitedCount, Long totalRevisitedCount) {
-        return StoreReportResponse.builder()
-                .storeId(storeId)
-                .storeMainImageUrl(storeMainImageUrl)
-                .mostVisitedCount(mostVisitedCount)
-                .totalRevisitedCount(totalRevisitedCount)
-                .build();
-    }
+	public static StoreReportResponse of(Long storeId, String thumbnailUrl, Long mostVisitedCount,
+		Long totalRevisitedCount) {
+		return StoreReportResponse.builder()
+			.storeId(storeId)
+			.thumbnailUrl(thumbnailUrl)
+			.mostVisitedCount(mostVisitedCount)
+			.totalRevisitedCount(totalRevisitedCount)
+			.build();
+	}
 }

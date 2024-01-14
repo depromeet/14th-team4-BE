@@ -1,5 +1,6 @@
 package com.depromeet.config;
 
+import org.apache.catalina.filters.CorsFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,7 +37,9 @@ public class SecurityConfig {
 	private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
 	private final CustomOAuth2FailureHandler customOAuth2FailureHandler;
 
-	// cors
+	/*
+	 * CORS 설정
+	 */
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();

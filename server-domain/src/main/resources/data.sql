@@ -3,32 +3,38 @@ VALUES (1, '일식', NOW());
 INSERT INTO Category (categoryId, categoryName, createdAt)
 VALUES (2, '카페', NOW());
 
-INSERT INTO User (socialType, profileImageUrl, nickName, email, userRole, socialId, level, reviewCount, createdAt)
-VALUES ('KAKAO', 'http://example.com/profile1.jpg', '김철수', 'kim@example.com', 'USER', 'kakao1234','LEVEL1', 0, NOW());
+INSERT INTO User (socialType, nickName, userRole, socialId, level, myReviewCount, createdAt)
+VALUES ('KAKAO', '김철수', 'USER', 'kakao1234', 'LEVEL1', 0, NOW());
 
-INSERT INTO User (socialType, profileImageUrl, nickName, email, userRole, socialId, level, reviewCount, createdAt)
-VALUES ('KAKAO', 'http://example.com/profile2.jpg', '이영희', 'lee@example.com', 'USER', 'KAKAO11','LEVEL2', 3, NOW());
+INSERT INTO User (socialType, nickName, userRole, socialId, level, myReviewCount, createdAt)
+VALUES ('KAKAO', '이영희', 'USER', 'KAKAO11', 'LEVEL2', 3, NOW());
 
-INSERT INTO User (socialType, profileImageUrl, nickName, email, userRole, socialId, level, reviewCount, createdAt)
-VALUES ('APPLE', 'http://example.com/profile3.jpg', '김동현', 'email', 'USER', 'kakao123411','LEVEL3', 11, NOW());
+INSERT INTO User (socialType, nickName, userRole, socialId, level, myReviewCount, createdAt)
+VALUES ('APPLE', '김동현', 'USER', 'kakao123411', 'LEVEL3', 11, NOW());
 
-INSERT INTO User (socialType, profileImageUrl, nickName, email, userRole, socialId, level, reviewCount, createdAt)
-VALUES ('APPLE', 'http://example.com/profile4.jpg', '김나다', 'email', 'USER', 'kakao12341111','LEVEL4', 21, NOW());
+INSERT INTO User (socialType, nickName, userRole, socialId, level, myReviewCount, createdAt)
+VALUES ('APPLE', '김나다', 'USER', 'kakao12341111', 'LEVEL4', 21, NOW());
 
-INSERT INTO Store (category_id, storeName, latitude, longitude, thumbnailUrl, address, totalRating, totalReviewCount, revisitedCount, createdAt, updatedAt)
+INSERT INTO Store (category_id, storeName, latitude, longitude, thumbnailUrl, address, totalRating, totalReviewCount,
+                   myRevisitedCount, createdAt, updatedAt)
 VALUES (1, '맛집1', 37.3665, 123.9780, 'thumbnail1.jpg', '서울특별시 중구 세종대로 110', 4.5, 100, 3,
         NOW(), NOW());
-INSERT INTO Store (category_id, storeName, latitude, longitude, thumbnailUrl, address, totalRating, totalReviewCount, createdAt, updatedAt)
+INSERT INTO Store (category_id, storeName, latitude, longitude, thumbnailUrl, address, totalRating, totalReviewCount,
+                   createdAt, updatedAt)
 VALUES (2, '카페2', 37.6651, 126.98955, 'thumbnail2.jpg', '서울특별시 중구 청계천로 100', 4.0, 80,
         NOW(), NOW());
-INSERT INTO Store (category_id, storeName, latitude, longitude, thumbnailUrl, address, totalRating, totalReviewCount, createdAt, updatedAt)
+INSERT INTO Store (category_id, storeName, latitude, longitude, thumbnailUrl, address, totalRating, totalReviewCount,
+                   createdAt, updatedAt)
 VALUES (1, '맛집2', 43.5665, 130.9780, 'thumbnail3.jpg', '서울특별시 관악구 봉천동 62-1', 3.5, 100,
         NOW(), NOW());
-INSERT INTO Store (category_id, storeName, latitude, longitude, thumbnailUrl, address, totalRating, totalReviewCount, createdAt, updatedAt)
+INSERT INTO Store (category_id, storeName, latitude, longitude, thumbnailUrl, address, totalRating, totalReviewCount,
+                   createdAt, updatedAt)
 VALUES (2, '카페2', 45.5651, 131.98955, 'thumbnail4.jpg', '서울특별시 강남구 테헤란로 21-10', 4.0,
         70, NOW(), NOW());
-INSERT INTO Store (category_id, storeName, latitude, longitude, thumbnailUrl, address, totalRating, totalReviewCount, revisitedCount, kakaoStoreId, createdAt, updatedAt)
-VALUES (1, '티컵 스타필드 코엑스몰점', 37.5126847515106, 127.058938708812, 'thumbnail1.jpg', '서울 강남구 삼성동 159', 4.5, 100, 3, 720401104,
+INSERT INTO Store (category_id, storeName, latitude, longitude, thumbnailUrl, address, totalRating, totalReviewCount,
+                   myRevisitedCount, kakaoStoreId, createdAt, updatedAt)
+VALUES (1, '티컵 스타필드 코엑스몰점', 37.5126847515106, 127.058938708812, 'thumbnail1.jpg', '서울 강남구 삼성동 159', 4.5, 100, 3,
+        720401104,
         NOW(), NOW());
 
 
