@@ -31,8 +31,6 @@ public class User extends BaseTimeEntity {
 	@Column(nullable = false)
 	private SocialType socialType;
 
-	private String profileImageUrl;
-
 	@Column(nullable = false)
 	private String nickName;
 
@@ -53,10 +51,9 @@ public class User extends BaseTimeEntity {
 	private Integer reviewCount = 0;
 
 	@Builder
-	public User(SocialType socialType, String profileImageUrl, String nickName, String email, Role userRole,
+	public User(SocialType socialType, String nickName, String email, Role userRole,
 		String socialId) {
 		this.socialType = socialType;
-		this.profileImageUrl = profileImageUrl;
 		this.nickName = nickName;
 		this.email = email;
 		this.userRole = userRole;
