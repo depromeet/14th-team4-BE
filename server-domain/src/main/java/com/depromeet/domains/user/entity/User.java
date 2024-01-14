@@ -46,7 +46,7 @@ public class User extends BaseTimeEntity {
 	private UserLevel level = UserLevel.LEVEL1;
 
 	@Column(nullable = false)
-	private Integer reviewCount = 0;
+	private Integer myReviewCount = 0;
 
 	@Builder
 	public User(SocialType socialType, String nickName, Role userRole, String socialId) {
@@ -68,11 +68,11 @@ public class User extends BaseTimeEntity {
 		this.level = level;
 	}
 
-	public void increaseReviewCount() {
-		this.reviewCount++;
+	public void increaseMyReviewCount() {
+		this.myReviewCount++;
 	}
 
-	public void decreaseReviewCount() {
-		this.reviewCount = Math.max(0, this.reviewCount - 1);
+	public void decreaseMyReviewCount() {
+		this.myReviewCount = Math.max(0, this.myReviewCount - 1);
 	}
 }
