@@ -51,7 +51,7 @@ public class Store extends BaseTimeEntity {
 
 	private Long kakaoStoreId;
 
-	private Long revisitedCount;
+	private Long myRevisitedCount;
 
 	public void updateStoreSummary(Integer rating) {
 		float totalRatingSum = this.totalRating * this.totalReviewCount;
