@@ -34,8 +34,6 @@ public class User extends BaseTimeEntity {
 	@Column(nullable = false)
 	private String nickName;
 
-	private String email;
-
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private Role userRole;
@@ -51,11 +49,9 @@ public class User extends BaseTimeEntity {
 	private Integer reviewCount = 0;
 
 	@Builder
-	public User(SocialType socialType, String nickName, String email, Role userRole,
-		String socialId) {
+	public User(SocialType socialType, String nickName, Role userRole, String socialId) {
 		this.socialType = socialType;
 		this.nickName = nickName;
-		this.email = email;
 		this.userRole = userRole;
 		this.socialId = socialId;
 	}
