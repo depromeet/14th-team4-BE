@@ -3,7 +3,16 @@ package com.depromeet.domains.store.entity;
 import com.depromeet.domains.category.entity.Category;
 import com.depromeet.domains.common.entity.BaseTimeEntity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +39,7 @@ public class Store extends BaseTimeEntity {
 	private String storeName;
 
 	@Embedded
-	private StoreLocation storeLocation;
+	private Location location;
 
 	private String address;
 
@@ -43,6 +52,7 @@ public class Store extends BaseTimeEntity {
 	private Long kakaoStoreId;
 
 	private Long revisitedCount;
+
 	public void updateStoreSummary(Integer rating) {
 		float totalRatingSum = this.totalRating * this.totalReviewCount;
 		totalRatingSum += rating;
