@@ -12,19 +12,19 @@ public class StoreSearchResult {
 	private String categoryName;
 	private String address;
 	private Integer distance;
-	private Long revisitedCount;
+	private Long totalRevisitedCount;
 	private Double latitude;
 	private Double longitude;
 
 	public static StoreSearchResult of(Long storeId, String storeName, String categoryName
-		, String address, Integer distance, Long revisitedCount, Double latitude, Double longitude) {
+		, String address, Integer distance, Long totalRevisitedCount, Double latitude, Double longitude) {
 		return StoreSearchResult.builder()
 			.storeId(storeId)
 			.storeName(storeName)
 			.categoryName(categoryName)
 			.address(address)
 			.distance(distance)
-			.revisitedCount(revisitedCount)
+			.totalRevisitedCount(totalRevisitedCount)
 			.latitude(latitude)
 			.longitude(longitude)
 			.build();
