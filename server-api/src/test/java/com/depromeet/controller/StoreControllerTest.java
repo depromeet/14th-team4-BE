@@ -48,7 +48,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.storeName("칠기마라탕")
 			.address("서울시 강남구 역삼동 123-123")
 			.totalRating(4.1F)
-			.reviewCount(10L)
+			.totalReviewCount(10L)
 			.reviewImageUrls(List.of("https://image.com/1.jpg", "https://image.com/2.jpg"))
 			.userId(1L)
 			.revisitedCount(5L)
