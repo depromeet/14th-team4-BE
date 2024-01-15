@@ -2,6 +2,8 @@ package com.depromeet.domains.user.dto.response;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Builder;
 import lombok.Getter;
 
@@ -11,6 +13,7 @@ public class UserReviewResponse {
 	private Long storeId;
 	private String storeName;
 	private Integer visitTimes;
+	@JsonFormat(pattern = "yyyy.MM.dd")
 	private LocalDate visitedAt;
 	private String categoryName;
 	private Integer rating;

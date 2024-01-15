@@ -15,6 +15,7 @@ import com.depromeet.domains.review.entity.Review;
 import com.depromeet.domains.review.repository.ReviewRepository;
 import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.user.dto.response.UserBookmarkResponse;
+import com.depromeet.domains.user.dto.response.UserProfileResponse;
 import com.depromeet.domains.user.dto.response.UserReviewResponse;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.repository.UserRepository;
@@ -35,9 +36,9 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public String getUserProfile(Long userId) {
-		User user = findUserById(userId);
-		return user.getNickName();
+	public UserProfileResponse getUserProfile(User user) {
+		User existUser = findUserById(user.getUserId());
+		return UserProfileResponse.of(existUser.getNickName(), existUser.getLevel().getDescription());
 	}
 
 	@Transactional(readOnly = true)
