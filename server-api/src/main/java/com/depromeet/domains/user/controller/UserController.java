@@ -12,9 +12,9 @@ import com.depromeet.annotation.AuthUser;
 import com.depromeet.common.exception.CustomResponseEntity;
 import com.depromeet.domains.user.dto.request.NicknameRequest;
 import com.depromeet.domains.user.dto.response.UserBookmarkResponse;
+import com.depromeet.domains.user.dto.response.UserProfileResponse;
 import com.depromeet.domains.user.dto.response.UserReviewResponse;
 import com.depromeet.domains.user.entity.User;
-import com.depromeet.domains.user.repository.UserRepository;
 import com.depromeet.domains.user.service.UserService;
 
 import jakarta.validation.Valid;
@@ -39,8 +39,8 @@ public class UserController {
 	 * 마이페이지 유저 닉네임, 등급 조회
 	 */
 	@GetMapping("/profile")
-	public CustomResponseEntity<String> getUserProfile(@AuthUser User user) {
-		return CustomResponseEntity.success(userService.getUserProfile(user.getUserId()));
+	public CustomResponseEntity<UserProfileResponse> getUserProfile(@AuthUser User user) {
+		return CustomResponseEntity.success(userService.getUserProfile(user));
 	}
 
 	/**
