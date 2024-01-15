@@ -3,16 +3,7 @@ package com.depromeet.domains.store.entity;
 import com.depromeet.domains.category.entity.Category;
 import com.depromeet.domains.common.entity.BaseTimeEntity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,6 +25,10 @@ public class Store extends BaseTimeEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
 	private Category category;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "store_meta_id")
+	private StoreMeta storeMeta;
 
 	@Column(nullable = false)
 	private String storeName;
