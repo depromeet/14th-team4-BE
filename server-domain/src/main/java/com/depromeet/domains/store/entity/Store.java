@@ -45,20 +45,7 @@ public class Store extends BaseTimeEntity {
 
 	private String thumbnailUrl;
 
-	private Float totalRating;
-
-	private Long totalReviewCount;
-
 	private Long kakaoStoreId;
-
-	private Long myRevisitedCount;
-
-	public void updateStoreSummary(Integer rating) {
-		float totalRatingSum = this.totalRating * this.totalReviewCount;
-		totalRatingSum += rating;
-		this.totalReviewCount = this.totalReviewCount + 1;
-		this.totalRating = totalRatingSum / this.totalReviewCount;
-	}
 
 	// 기존에 썸네일 없었던 경우에만 업데이트
 	public void updateThumnailUrl(String thumbnailUrl) {
