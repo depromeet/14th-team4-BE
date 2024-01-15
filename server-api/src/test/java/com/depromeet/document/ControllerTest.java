@@ -1,5 +1,7 @@
 package com.depromeet.document;
 
+import com.depromeet.domains.bookmark.controller.BookmarkController;
+import com.depromeet.domains.bookmark.service.BookmarkService;
 import com.depromeet.domains.home.controller.HomeController;
 import com.depromeet.domains.store.controller.StoreController;
 import com.depromeet.domains.store.controller.StoreSearchController;
@@ -24,7 +26,8 @@ import org.springframework.test.web.servlet.MockMvc;
         TestController.class,
         StoreController.class,
         StoreSearchController.class,
-        UserController.class
+        UserController.class,
+        BookmarkController.class
 })
 public abstract class ControllerTest {
 
@@ -43,6 +46,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected UserService userService;
+
+    @MockBean
+    protected BookmarkService bookmarkService;
 
     // @MockBean으로 필요한 레포지토리, 서비스로직을 정의
 
