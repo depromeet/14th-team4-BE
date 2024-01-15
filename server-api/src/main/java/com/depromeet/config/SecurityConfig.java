@@ -22,6 +22,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -43,20 +44,33 @@ public class SecurityConfig {
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedHeaders(Collections.singletonList("*"));
-		config.setAllowedMethods(Collections.singletonList("*"));
-		config.setAllowedOriginPatterns(Collections.singletonList("/**")); // 허용할 origin
+		config.addAllowedOrigin("http://localhost:3000");
+		config.addAllowedOrigin("https://www.ddoeat.site");
+		config.addAllowedHeader("*");
+		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+		config.addExposedHeader("Authorization");
+		config.addExposedHeader("Authorization-refresh");
 		config.setAllowCredentials(true);
+
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", config);
 		return source;
+
+
+//		config.setAllowedHeaders(Collections.singletonList("*"));
+//		config.setAllowedMethods(Collections.singletonList("*"));
+//		config.setAllowedOriginPatterns(Collections.singletonList("/**")); // 허용할 origin
+//		config.setAllowCredentials(true);
+//		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//		source.registerCorsConfiguration("/**", config);
+//		return source;
 	}
 
 	@Bean
 	protected SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
 		http
 			.csrf(AbstractHttpConfigurer::disable) //csrf 비활성
-			.cors(AbstractHttpConfigurer::disable)
+			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 			.formLogin(AbstractHttpConfigurer::disable) //폼 로그인 비활성
 			.httpBasic(AbstractHttpConfigurer::disable) //HTTP 기본인증 비활성
 			.sessionManagement((sessionManagement) ->
