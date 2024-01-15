@@ -1,6 +1,5 @@
 package com.depromeet.auth.controller;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,17 +31,20 @@ public class AuthController {
 	 * Refresh Token으로 사용자 Access Token 갱신 요청
 	 */
 	@PostMapping("/token/reissue")
-	public ResponseEntity<TokenResponse> refreshToken(
-		@RequestHeader(value = "Authorization-refresh") String refreshToken
+	public CustomResponseEntity<Object> refreshToken(
+		@RequestHeader(value = "Authorization-refresh") String refreshToken, HttpServletResponse response
 	) throws IllegalAccessException {
-		TokenResponse response = authService.reissueToken(refreshToken);
-		return ResponseEntity.ok(response);
+		TokenResponse tokenResponse = authService.reissueToken(refreshToken);
+		// 응답 헤더에 쿠키 추가
+		response.addCookie(cookieService.createAccessTokenCookie(tokenResponse.getAccessToken()));
+		response.addCookie(cookieService.createRefreshTokenCookie(tokenResponse.getRefreshToken()));
+		return CustomResponseEntity.success();
 	}
 
 	@PostMapping("/signup")
 	public CustomResponseEntity<Object> signup(@AuthUser User user, HttpServletResponse response
 	) throws IllegalAccessException {
-		TokenResponse tokenResponse = authService.signup(user.getUserId());
+		TokenResponse tokenResponse = authService.signup(user);
 		// 응답 헤더에 쿠키 추가
 		response.addCookie(cookieService.createAccessTokenCookie(tokenResponse.getAccessToken()));
 		response.addCookie(cookieService.createRefreshTokenCookie(tokenResponse.getRefreshToken()));
@@ -54,10 +56,10 @@ public class AuthController {
 	 * 운영시 삭제 예정
 	 */
 	@GetMapping("/access-token/{userId}")
-	public TokenResponse getTokenByUserId(@PathVariable("userId") Long userId) {
+	public CustomResponseEntity<TokenResponse> getTestTokenByUserId(@PathVariable("userId") Long userId) {
 		String accessToken = jwtService.createAccessToken(userId);
 		String refreshToken = jwtService.createRefreshToken(userId);
 
-		return new TokenResponse(accessToken, refreshToken);
+		return CustomResponseEntity.success(new TokenResponse(accessToken, refreshToken));
 	}
 }

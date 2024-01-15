@@ -1,6 +1,15 @@
 package com.depromeet.document;
 
-import com.depromeet.domains.home.controller.HomeController;
+import org.junit.jupiter.api.Disabled;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+import com.depromeet.auth.controller.AuthController;
+import com.depromeet.auth.jwt.JwtService;
+import com.depromeet.auth.service.AuthService;
+import com.depromeet.auth.service.CookieService;
 import com.depromeet.domains.store.controller.StoreController;
 import com.depromeet.domains.store.controller.StoreSearchController;
 import com.depromeet.domains.store.service.StoreSearchService;
@@ -11,11 +20,6 @@ import com.depromeet.domains.user.controller.UserController;
 import com.depromeet.domains.user.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Disabled;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
 
 @Disabled
 @WebMvcTest({
@@ -24,7 +28,8 @@ import org.springframework.test.web.servlet.MockMvc;
         TestController.class,
         StoreController.class,
         StoreSearchController.class,
-        UserController.class
+    UserController.class,
+    AuthController.class
 })
 public abstract class ControllerTest {
 
@@ -43,6 +48,15 @@ public abstract class ControllerTest {
 
     @MockBean
     protected UserService userService;
+
+    @MockBean
+    protected AuthService authService;
+
+    @MockBean
+    protected CookieService cookieService;
+
+    @MockBean
+    protected JwtService jwtService;
 
     // @MockBean으로 필요한 레포지토리, 서비스로직을 정의
 

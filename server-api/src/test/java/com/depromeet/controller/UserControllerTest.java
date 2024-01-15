@@ -26,6 +26,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import com.depromeet.document.RestDocsTestSupport;
 import com.depromeet.domains.user.dto.request.NicknameRequest;
 import com.depromeet.domains.user.dto.response.UserBookmarkResponse;
+import com.depromeet.domains.user.dto.response.UserProfileResponse;
 import com.depromeet.domains.user.dto.response.UserReviewResponse;
 
 @AutoConfigureMockMvc
@@ -63,6 +64,28 @@ class UserControllerTest extends RestDocsTestSupport {
 
 	@Test
 	void getUserProfile() throws Exception {
+		UserProfileResponse userProfileResponse = UserProfileResponse.of("닉네임","배고픈");
+		given(userService.getUserProfile(any())).willReturn(userProfileResponse);
+
+		// when
+		mockMvc.perform(
+				get("/api/v1/users/profile")
+					.contentType(MediaType.APPLICATION_JSON)
+					.header("Authorization", "Bearer accessToken"))
+			.andExpect(status().isOk())
+			.andDo(
+				restDocs.document(
+					requestHeaders(
+						headerWithName("Authorization").description("accessToken")
+					),
+					responseFields(
+						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
+						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+						subsectionWithPath("data").type(JsonFieldType.OBJECT).description("프로필"),
+						fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("유저 닉네임"),
+						fieldWithPath("data.level").type(JsonFieldType.STRING).description("유저 레벨 이름 (배고픈, 맨밥이, 또밥이, 또또밥이)"))
+				)
+			);
 	}
 
 	@Test
