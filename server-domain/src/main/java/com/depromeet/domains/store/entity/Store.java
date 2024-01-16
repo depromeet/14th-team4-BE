@@ -26,7 +26,7 @@ public class Store extends BaseTimeEntity {
 	@JoinColumn(name = "category_id")
 	private Category category;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "store_meta_id")
 	private StoreMeta storeMeta;
 
@@ -42,10 +42,11 @@ public class Store extends BaseTimeEntity {
 
 	private Long kakaoStoreId;
 
-	// 기존에 썸네일 없었던 경우에만 업데이트
-	public void updateThumnailUrl(String thumbnailUrl) {
-		if (this.thumbnailUrl == null) {
-			this.thumbnailUrl = thumbnailUrl;
-		}
+	public void setStoreMeta(StoreMeta storeMeta) {
+		this.storeMeta = storeMeta;
+	}
+
+	public void setThumbnailUrl(String imageUrl) {
+		this.thumbnailUrl = imageUrl;
 	}
 }
