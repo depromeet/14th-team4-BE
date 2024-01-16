@@ -42,7 +42,6 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 		String redirectUrl = determineRedirectUrl(requestEnv);
 
 		CustomOAuth2User oAuth2User = (CustomOAuth2User)authentication.getPrincipal();
-		System.out.println(oAuth2User.getUserRole());
 		if (oAuth2User.getUserRole() == Role.GUEST) {
 			String accessToken = jwtService.createAccessToken(oAuth2User.getUserId());
 			String refreshToken = jwtService.createRefreshToken(oAuth2User.getUserId());

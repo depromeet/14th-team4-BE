@@ -19,7 +19,7 @@ public class CustomAuthenticationRequestFilter extends OncePerRequestFilter {
 			if (queryString != null) {
 				String[] keyValuePair = queryString.split("=");
 				String requestEnv = "dev";
-				if (keyValuePair[0].equals("app") && keyValuePair.length > 1) {
+				if (keyValuePair[0].equals("env") && keyValuePair.length > 1) {
 					requestEnv = keyValuePair[1];
 				}
 				request.getSession().setAttribute("request_env", requestEnv);
