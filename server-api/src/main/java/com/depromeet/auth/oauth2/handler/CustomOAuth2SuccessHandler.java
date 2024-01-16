@@ -15,6 +15,7 @@ import com.depromeet.enums.Role;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -23,39 +24,58 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 	private final JwtService jwtService;
 	private final CookieService cookieService;
 
-	@Value("${front.url}")
-	private String frontUrl;
+	@Value("${front.dev.url}")
+	private String frontDevUrl;
+
+	@Value("${front.local.url}")
+	private String frontLocalUrl;
 
 	@Value("${jwt.access.expiration}")
 	private Long accessTokenExpirationPeriod;
 
+
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 		Authentication authentication) throws IOException, ServletException {
+		HttpSession session = request.getSession(false);
+		String requestEnv = (String) session.getAttribute("request_env");
+		String redirectUrl = determineRedirectUrl(requestEnv);
+
 		CustomOAuth2User oAuth2User = (CustomOAuth2User)authentication.getPrincipal();
 		System.out.println(oAuth2User.getUserRole());
 		if (oAuth2User.getUserRole() == Role.GUEST) {
 			String accessToken = jwtService.createAccessToken(oAuth2User.getUserId());
+			String refreshToken = jwtService.createRefreshToken(oAuth2User.getUserId());
+
 			response.addCookie(cookieService.createAccessTokenCookie(accessToken));
+			response.addCookie(cookieService.createRefreshTokenCookie(refreshToken));
+			// response.addHeader("Set-Cookie", cookieService.createAccessTokenCookie(accessToken).toString());
+			// response.addHeader("Set-Cookie", cookieService.createRefreshTokenCookie(refreshToken).toString());
 
-			// 약관 동의 페이지로 리다이렉트
-			String targetUrl = frontUrl + "/terms";
+			String targetUrl = redirectUrl + "/terms" + "?accessToken=" +accessToken + "&refreshToken=" + refreshToken ;
 			response.sendRedirect(targetUrl);
-
 		} else {
-			loginSuccess(response, oAuth2User);
+			loginSuccess(response, oAuth2User, redirectUrl);
 		}
 	}
 
-	private void loginSuccess(HttpServletResponse response, CustomOAuth2User oAuth2User) throws IOException {
+	private String determineRedirectUrl(String requestEnv) {
+		return switch (requestEnv) {
+			case "dev" -> frontDevUrl;
+			case "local" -> frontLocalUrl;
+			default -> frontDevUrl; // Default URL
+		};
+	}
+
+	private void loginSuccess(HttpServletResponse response, CustomOAuth2User oAuth2User, String redirectUrl) throws IOException {
 
 		String accessToken = jwtService.createAccessToken(oAuth2User.getUserId());
 		String refreshToken = jwtService.createRefreshToken(oAuth2User.getUserId());
 
 		// 응답 헤더에 쿠키 추가
-		response.addCookie(cookieService.createAccessTokenCookie(accessToken));
-		response.addCookie(cookieService.createRefreshTokenCookie(refreshToken));
-
-		response.sendRedirect(frontUrl);
+		response.addHeader("Set-Cookie", cookieService.createAccessTokenCookie(accessToken).toString());
+		response.addHeader("Set-Cookie", cookieService.createRefreshTokenCookie(refreshToken).toString());
+		String targetUrl = redirectUrl + "?accessToken=" +accessToken + "&refreshToken=" + refreshToken ;
+		response.sendRedirect(targetUrl);
 	}
 }
