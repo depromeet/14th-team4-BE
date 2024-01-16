@@ -6,10 +6,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.depromeet.S3.S3UploaderService;
 import com.depromeet.auth.controller.AuthController;
 import com.depromeet.auth.jwt.JwtService;
 import com.depromeet.auth.service.AuthService;
 import com.depromeet.auth.service.CookieService;
+import com.depromeet.domains.image.controller.ImageController;
 import com.depromeet.domains.store.controller.StoreController;
 import com.depromeet.domains.store.controller.StoreSearchController;
 import com.depromeet.domains.store.service.StoreSearchService;
@@ -24,12 +26,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Disabled
 @WebMvcTest({
         // 테스트 하고자 하는 컨트롤러를 명시
-        CommonDocController.class,
-        TestController.class,
-        StoreController.class,
-        StoreSearchController.class,
+    CommonDocController.class,
+    TestController.class,
+    StoreController.class,
+    StoreSearchController.class,
     UserController.class,
-    AuthController.class
+    AuthController.class,
+    ImageController.class
 })
 public abstract class ControllerTest {
 
@@ -58,6 +61,8 @@ public abstract class ControllerTest {
     @MockBean
     protected JwtService jwtService;
 
+    @MockBean
+    protected S3UploaderService s3UploaderService;
     // @MockBean으로 필요한 레포지토리, 서비스로직을 정의
 
     protected String createJson(Object dto) throws JsonProcessingException {
