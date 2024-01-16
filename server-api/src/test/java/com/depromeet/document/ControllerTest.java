@@ -1,8 +1,5 @@
 package com.depromeet.document;
 
-import com.depromeet.domains.bookmark.controller.BookmarkController;
-import com.depromeet.domains.bookmark.service.BookmarkService;
-import com.depromeet.domains.home.controller.HomeController;
 import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -14,6 +11,8 @@ import com.depromeet.auth.controller.AuthController;
 import com.depromeet.auth.jwt.JwtService;
 import com.depromeet.auth.service.AuthService;
 import com.depromeet.auth.service.CookieService;
+import com.depromeet.domains.bookmark.controller.BookmarkController;
+import com.depromeet.domains.bookmark.service.BookmarkService;
 import com.depromeet.domains.image.controller.ImageController;
 import com.depromeet.domains.store.controller.StoreController;
 import com.depromeet.domains.store.controller.StoreSearchController;
