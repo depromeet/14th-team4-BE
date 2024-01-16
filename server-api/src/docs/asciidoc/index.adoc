@@ -122,6 +122,9 @@ operation::user-controller-test/get-my-reviews[]
 === 음식점, 카페 통합 검색
 operation::store-search-controller-test/search[]
 
+== Image API
+=== presigned url 발급
+operation::image-controller-test/get-presigned-url[snippets='curl-request,http-request,http-response,query-parameters,request-headers,response-fields']
 
 == Test API
 
