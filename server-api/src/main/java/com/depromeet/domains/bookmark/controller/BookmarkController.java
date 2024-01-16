@@ -7,13 +7,11 @@ import com.depromeet.domains.bookmark.service.BookmarkService;
 import com.depromeet.domains.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/v1")
 public class BookmarkController {
 
     private final BookmarkService bookmarkService;
@@ -24,7 +22,7 @@ public class BookmarkController {
     }
 
     @DeleteMapping("/bookmarks/{bookmarkId}")
-    public CustomResponseEntity<BookmarkingResponse> deleteBookmark(@PathVariable Long bookmarkId, @AuthUser User user) {
+    public CustomResponseEntity<Void> deleteBookmark(@PathVariable Long bookmarkId, @AuthUser User user) {
         return CustomResponseEntity.success(bookmarkService.deleteBookmark(bookmarkId, user));
     }
 }

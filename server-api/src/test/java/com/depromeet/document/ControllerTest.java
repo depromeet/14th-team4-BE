@@ -1,5 +1,8 @@
 package com.depromeet.document;
 
+import com.depromeet.domains.bookmark.controller.BookmarkController;
+import com.depromeet.domains.bookmark.service.BookmarkService;
+import com.depromeet.domains.home.controller.HomeController;
 import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -26,13 +29,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Disabled
 @WebMvcTest({
         // 테스트 하고자 하는 컨트롤러를 명시
-    CommonDocController.class,
-    TestController.class,
-    StoreController.class,
-    StoreSearchController.class,
-    UserController.class,
-    AuthController.class,
-    ImageController.class
+        CommonDocController.class,
+        TestController.class,
+        StoreController.class,
+        StoreSearchController.class,
+        UserController.class,
+        BookmarkController.class,
+        AuthController.class,
+        ImageController.class
 })
 public abstract class ControllerTest {
 
@@ -51,6 +55,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected UserService userService;
+
+    @MockBean
+    protected BookmarkService bookmarkService;
 
     @MockBean
     protected AuthService authService;

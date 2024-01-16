@@ -33,7 +33,7 @@ public class BookmarkService {
         return BookmarkingResponse.of(savedBookmark.getBookmarkId(), user.getUserId());
     }
 
-    public BookmarkingResponse deleteBookmark(Long bookmarkId, User user) {
+    public Void deleteBookmark(Long bookmarkId, User user) {
         Bookmark bookmark = bookmarkRepository.findById(bookmarkId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_BOOKMARK));
 
         if (!bookmark.getUser().getUserId().equals(user.getUserId())) {
@@ -41,6 +41,6 @@ public class BookmarkService {
         }
 
         bookmarkRepository.delete(bookmark);
-        return BookmarkingResponse.of(bookmark.getBookmarkId(), user.getUserId());
+        return null;
     }
 }
