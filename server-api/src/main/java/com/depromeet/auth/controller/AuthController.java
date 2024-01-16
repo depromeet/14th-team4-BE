@@ -36,18 +36,15 @@ public class AuthController {
 	) throws IllegalAccessException {
 		TokenResponse tokenResponse = authService.reissueToken(refreshToken);
 		// 응답 헤더에 쿠키 추가
-		response.addCookie(cookieService.createAccessTokenCookie(tokenResponse.getAccessToken()));
-		response.addCookie(cookieService.createRefreshTokenCookie(tokenResponse.getRefreshToken()));
+		response.addHeader("Set-Cookie", cookieService.createAccessTokenCookie(tokenResponse.getAccessToken()).toString());
+		response.addHeader("Set-Cookie", cookieService.createRefreshTokenCookie(tokenResponse.getRefreshToken()).toString());
 		return CustomResponseEntity.success();
 	}
 
 	@PostMapping("/signup")
-	public CustomResponseEntity<Object> signup(@AuthUser User user, HttpServletResponse response
+	public CustomResponseEntity<Void> signup(@AuthUser User user, HttpServletResponse response
 	) throws IllegalAccessException {
-		TokenResponse tokenResponse = authService.signup(user);
-		// 응답 헤더에 쿠키 추가
-		response.addCookie(cookieService.createAccessTokenCookie(tokenResponse.getAccessToken()));
-		response.addCookie(cookieService.createRefreshTokenCookie(tokenResponse.getRefreshToken()));
+		authService.signup(user);
 		return CustomResponseEntity.success();
 	}
 
