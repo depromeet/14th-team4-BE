@@ -38,7 +38,8 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 		Authentication authentication) throws IOException, ServletException {
 		HttpSession session = request.getSession(false);
-		String requestEnv = (String) session.getAttribute("request_env");
+		// String requestEnv = (String) session.getAttribute("request_env");
+		String requestEnv = (session != null) ? (String) session.getAttribute("request_env") : "default";
 		String redirectUrl = determineRedirectUrl(requestEnv);
 
 		CustomOAuth2User oAuth2User = (CustomOAuth2User)authentication.getPrincipal();
