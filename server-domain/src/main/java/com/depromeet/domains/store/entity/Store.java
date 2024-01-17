@@ -48,5 +48,11 @@ public class Store extends BaseTimeEntity {
 
 	public void setThumbnailUrl(String imageUrl) {
 		this.thumbnailUrl = imageUrl;
+
+	// 기존에 썸네일 없었던 경우에만 업데이트
+	public void updateThumnailUrl(String thumbnailUrl) {
+		if (this.thumbnailUrl == null) {
+			this.thumbnailUrl = thumbnailUrl;
+		}
 	}
 }

@@ -1,4 +1,4 @@
-package com.depromeet.auth.controller;
+package com.depromeet.controller;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
@@ -17,6 +17,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 
 import com.depromeet.auth.dto.TokenResponse;
 import com.depromeet.document.RestDocsTestSupport;
+import com.depromeet.domains.test.dto.request.TestRequest;
 
 import jakarta.servlet.http.Cookie;
 
@@ -55,7 +56,9 @@ class AuthControllerTest extends RestDocsTestSupport {
 					responseFields(
 						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
 						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
-						fieldWithPath("data").type(JsonFieldType.NULL).description("NULL")
+						fieldWithPath("data").type(JsonFieldType.OBJECT).description("토큰 값"),
+						fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("엑세스토큰"),
+						fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("리프레쉬토큰")
 					)
 				)
 			);
@@ -65,8 +68,7 @@ class AuthControllerTest extends RestDocsTestSupport {
 	void signup() throws Exception {
 		// given
 		TokenResponse tokenResponse = new TokenResponse("access_token", "refresh_token");
-
-		given(authService.signup(any())).willReturn(tokenResponse);
+		doNothing().when(authService).signup(any());
 
 		// when
 		mockMvc.perform(
