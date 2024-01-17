@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.depromeet.domains.category.repository.CategoryRepository;
+import com.depromeet.domains.store.entity.StoreMeta;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -16,7 +17,6 @@ import org.springframework.util.ObjectUtils;
 import com.depromeet.common.exception.CustomException;
 import com.depromeet.common.exception.Result;
 import com.depromeet.domains.category.entity.Category;
-import com.depromeet.domains.category.repository.CategoryRepository;
 import com.depromeet.domains.review.entity.Review;
 import com.depromeet.domains.review.repository.ReviewRepository;
 import com.depromeet.domains.store.dto.StoreLocationDto;
@@ -43,39 +43,44 @@ public class StoreService {
 	private final ReviewRepository reviewRepository;
 	private final CategoryRepository categoryRepository;
 
+	// 음식점 프리뷰 조회(바텀 시트)
 	@Transactional(readOnly = true)
 	public StorePreviewResponse getStore(Long storeId, User user) {
 
 		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 		List<Review> reviews = reviewRepository.findTop10ByStoreOrderByCreatedAtDesc(store);
 
-		ArrayList<String> logImageUrls = new ArrayList<>();
+		ArrayList<String> reviewImageUrls = new ArrayList<>();
 		for (Review review : reviews) {
-			logImageUrls.add(review.getImageUrl());
+			reviewImageUrls.add(review.getImageUrl());
 		}
 
-		Long revisitedCount = reviewRepository.countByStoreAndUser(store, user);
-		Long totalRevisitedCount = reviewRepository.countTotalRevisitedCount(store);
+		Long myRevisitedCount = reviewRepository.countByStoreAndUser(store, user);
+		StoreMeta storeMeta = store.getStoreMeta();
+		Long totalRevisitedCount = storeMeta.getTotalRevisitedCount();
 
 		return StorePreviewResponse.of(
 			store.getStoreId(),
 			store.getCategory().getCategoryName(),
 			store.getStoreName(),
 			store.getAddress(),
-			store.getTotalRating(),
-			store.getTotalReviewCount(),
-			logImageUrls,
+			storeMeta.getTotalRating(),
+			storeMeta.getTotalReviewCount(),
+			reviewImageUrls,
 			user.getUserId(),
-			revisitedCount,
+			myRevisitedCount,
 			totalRevisitedCount);
 	}
 
+	// 음식점 상세조회시 또잇 리포트 조회
 	@Transactional(readOnly = true)
 	public StoreReportResponse getStoreReport(Long storeId) {
 		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 
-		Long mostVisitedCount = reviewRepository.maxReviewCount(store);
-		Long totalRevisitedCount = reviewRepository.countTotalRevisitedCount(store);
+		StoreMeta storeMeta = store.getStoreMeta();
+
+		Long mostVisitedCount = storeMeta.getMostVisitedCount();
+		Long totalRevisitedCount = storeMeta.getTotalRevisitedCount();
 
 		return StoreReportResponse.of(
 			store.getStoreId(),
@@ -84,10 +89,11 @@ public class StoreService {
 			totalRevisitedCount);
 	}
 
+	// 음식점 리뷰 조회(타입별 조회)
 	@Transactional(readOnly = true)
 	public Slice<StoreReviewResponse> getStoreReview(User user, Long storeId, Optional<ReviewType> reviewType, Pageable pageable) {
 
-		Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+		Sort sort = Sort.by(Sort.Direction.DESC, "visitedAt");
 		PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
 		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
@@ -254,4 +260,15 @@ public class StoreService {
 		reviewRepository.save(review);
 		return review;
 	}
+
+//	public void deleteStoreReview(User user, Long storeId, Long reviewId) {
+//		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
+//		Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_REVIEW));
+//
+//		if (!review.getUser().getUserId().equals(user.getUserId())) {
+//			throw new CustomException(Result.UNAUTHORIZED_USER);
+//		}
+//		reviewRepository.delete(review);
+//		store.updateStoreSummary(-review.getRating());
+//	}
 }

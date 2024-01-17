@@ -3,16 +3,7 @@ package com.depromeet.domains.store.entity;
 import com.depromeet.domains.category.entity.Category;
 import com.depromeet.domains.common.entity.BaseTimeEntity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,6 +26,10 @@ public class Store extends BaseTimeEntity {
 	@JoinColumn(name = "category_id")
 	private Category category;
 
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "store_meta_id")
+	private StoreMeta storeMeta;
+
 	@Column(nullable = false)
 	private String storeName;
 
@@ -45,20 +40,7 @@ public class Store extends BaseTimeEntity {
 
 	private String thumbnailUrl;
 
-	private Float totalRating;
-
-	private Long totalReviewCount;
-
 	private Long kakaoStoreId;
-
-	private Long myRevisitedCount;
-
-	public void updateStoreSummary(Integer rating) {
-		float totalRatingSum = this.totalRating * this.totalReviewCount;
-		totalRatingSum += rating;
-		this.totalReviewCount = this.totalReviewCount + 1;
-		this.totalRating = totalRatingSum / this.totalReviewCount;
-	}
 
 	// 기존에 썸네일 없었던 경우에만 업데이트
 	public void updateThumnailUrl(String thumbnailUrl) {

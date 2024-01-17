@@ -119,6 +119,7 @@ public class StoreSearchService {
 	private List<StoreSearchResult> convertToStoreSearchResults(List<Map<String, Object>> documents) {
 		return documents.stream()
 			.map(doc -> {
+				Long storeId = null;
 				Long kakaoStoreId = Long.parseLong(doc.get("id").toString());
 				Integer distance = Integer.parseInt(doc.get("distance").toString());
 				String storeName = doc.get("place_name").toString();
@@ -133,11 +134,13 @@ public class StoreSearchService {
 				log.info("db에서 revisitedCount 조회");
 				if (storeRepository.existsByStoreNameAndAddress(storeName, address)) {
 					Store store = storeRepository.findByKakaoStoreId(kakaoStoreId);
+					storeId = store.getStoreId();
 					log.info("store: {}", store);
-					revisitedCount = store.getMyRevisitedCount();
+					revisitedCount = store.getStoreMeta().getTotalRevisitedCount();
 				}
 
 				return StoreSearchResult.of(
+					storeId,
 					kakaoStoreId, // 카카오 스토어 ID
 					storeName,
 					category,

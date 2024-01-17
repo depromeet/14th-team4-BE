@@ -8,6 +8,7 @@ import lombok.Getter;
 public class StoreSearchResult {
 
 	private Long storeId;
+	private Long kakaoStoreId;
 	private String storeName;
 	private String categoryName;
 	private String address;
@@ -16,10 +17,11 @@ public class StoreSearchResult {
 	private Double latitude;
 	private Double longitude;
 
-	public static StoreSearchResult of(Long storeId, String storeName, String categoryName
+	public static StoreSearchResult of(Long storeId, Long kakaoStoreId, String storeName, String categoryName
 		, String address, Integer distance, Long totalRevisitedCount, Double latitude, Double longitude) {
 		return StoreSearchResult.builder()
 			.storeId(storeId)
+			.kakaoStoreId(kakaoStoreId)
 			.storeName(storeName)
 			.categoryName(categoryName)
 			.address(address)
