@@ -31,23 +31,20 @@ public class AuthController {
 	 * Refresh Token으로 사용자 Access Token 갱신 요청
 	 */
 	@PostMapping("/token/reissue")
-	public CustomResponseEntity<Object> refreshToken(
+	public CustomResponseEntity<TokenResponse> refreshToken(
 		@RequestHeader(value = "Authorization-refresh") String refreshToken, HttpServletResponse response
 	) throws IllegalAccessException {
 		TokenResponse tokenResponse = authService.reissueToken(refreshToken);
 		// 응답 헤더에 쿠키 추가
 		response.addCookie(cookieService.createAccessTokenCookie(tokenResponse.getAccessToken()));
 		response.addCookie(cookieService.createRefreshTokenCookie(tokenResponse.getRefreshToken()));
-		return CustomResponseEntity.success();
+		return CustomResponseEntity.success(tokenResponse);
 	}
 
 	@PostMapping("/signup")
-	public CustomResponseEntity<Object> signup(@AuthUser User user, HttpServletResponse response
+	public CustomResponseEntity<Void> signup(@AuthUser User user, HttpServletResponse response
 	) throws IllegalAccessException {
-		TokenResponse tokenResponse = authService.signup(user);
-		// 응답 헤더에 쿠키 추가
-		response.addCookie(cookieService.createAccessTokenCookie(tokenResponse.getAccessToken()));
-		response.addCookie(cookieService.createRefreshTokenCookie(tokenResponse.getRefreshToken()));
+		authService.signup(user);
 		return CustomResponseEntity.success();
 	}
 

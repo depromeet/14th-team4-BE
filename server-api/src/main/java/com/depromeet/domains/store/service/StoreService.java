@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.depromeet.domains.category.repository.CategoryRepository;
+import com.depromeet.domains.store.entity.StoreMeta;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -19,7 +21,6 @@ import org.springframework.util.ObjectUtils;
 import com.depromeet.common.exception.CustomException;
 import com.depromeet.common.exception.Result;
 import com.depromeet.domains.category.entity.Category;
-import com.depromeet.domains.category.repository.CategoryRepository;
 import com.depromeet.domains.review.entity.Review;
 import com.depromeet.domains.review.repository.ReviewRepository;
 import com.depromeet.domains.store.dto.StoreLocationDto;
@@ -98,7 +99,7 @@ public class StoreService {
 	public Slice<StoreReviewResponse> getStoreReview(User user, Long storeId, Optional<ReviewType> reviewType,
 		Pageable pageable) {
 
-		Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+		Sort sort = Sort.by(Sort.Direction.DESC, "visitedAt");
 		PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
 		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
@@ -264,6 +265,7 @@ public class StoreService {
 		reviewRepository.save(review);
 		return review;
 	}
+
 
 	//	public void deleteStoreReview(User user, Long storeId, Long reviewId) {
 	//		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));

@@ -1,6 +1,7 @@
 package com.depromeet.config;
 
-import org.apache.catalina.filters.CorsFilter;
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,20 +10,19 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.SecurityContextHolderFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.depromeet.auth.jwt.JwtAuthenticationFilter;
 import com.depromeet.auth.jwt.JwtService;
+import com.depromeet.auth.oauth2.handler.CustomAuthenticationRequestFilter;
 import com.depromeet.auth.oauth2.handler.CustomOAuth2FailureHandler;
 import com.depromeet.auth.oauth2.handler.CustomOAuth2SuccessHandler;
 import com.depromeet.auth.oauth2.service.CustomOAuth2UserService;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Collections;
-import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -50,20 +50,13 @@ public class SecurityConfig {
 		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
 		config.addExposedHeader("Authorization");
 		config.addExposedHeader("Authorization-refresh");
+		config.addExposedHeader("Set-Cookie");
 		config.setAllowCredentials(true);
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", config);
 		return source;
 
-
-//		config.setAllowedHeaders(Collections.singletonList("*"));
-//		config.setAllowedMethods(Collections.singletonList("*"));
-//		config.setAllowedOriginPatterns(Collections.singletonList("/**")); // 허용할 origin
-//		config.setAllowCredentials(true);
-//		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//		source.registerCorsConfiguration("/**", config);
-//		return source;
 	}
 
 	@Bean
@@ -85,11 +78,13 @@ public class SecurityConfig {
 				oauth2Login
 					.authorizationEndpoint(
 						authEndpoint -> authEndpoint.baseUri("/oauth2/authorization/**")) // 이 url로 접근시 로그인을 요청한다
+
 					.redirectionEndpoint(redirectEndpoint -> redirectEndpoint.baseUri("/login/oauth2/code/**"))
 					.userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(customOAuth2UserService))
 					.successHandler(customOAuth2SuccessHandler)
 					.failureHandler(customOAuth2FailureHandler)
 			)
+			.addFilterBefore(new CustomAuthenticationRequestFilter(), SecurityContextHolderFilter.class)
 			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
