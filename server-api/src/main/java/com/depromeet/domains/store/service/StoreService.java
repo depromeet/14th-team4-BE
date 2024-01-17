@@ -93,7 +93,7 @@ public class StoreService {
 	@Transactional(readOnly = true)
 	public Slice<StoreReviewResponse> getStoreReview(User user, Long storeId, Optional<ReviewType> reviewType, Pageable pageable) {
 
-		Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+		Sort sort = Sort.by(Sort.Direction.DESC, "visitedAt");
 		PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
 		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
