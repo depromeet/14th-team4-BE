@@ -34,6 +34,7 @@ import com.depromeet.domains.store.dto.response.StoreReportResponse;
 import com.depromeet.domains.store.dto.response.StoreReviewResponse;
 import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.store.entity.StoreMeta;
+import com.depromeet.domains.store.repository.StoreMetaRepository;
 import com.depromeet.domains.store.repository.StoreRepository;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.enums.ReviewType;
@@ -45,6 +46,7 @@ import lombok.RequiredArgsConstructor;
 public class StoreService {
 
 	private final StoreRepository storeRepository;
+	private final StoreMetaRepository storeMetaRepository;
 	private final ReviewRepository reviewRepository;
 	private final CategoryRepository categoryRepository;
 
@@ -229,19 +231,70 @@ public class StoreService {
 
 	@Transactional
 	public ReviewAddResponse createStoreReview(User user, ReviewRequest reviewRequest) {
-		Store store = getOrSaveStore(reviewRequest);
+		Store store;
+		if (reviewRequest.getStoreId() != null) {
+			// 기존 StoreMeta 정보 업데이트
+			store = updateStoreMeta(reviewRequest.getStoreId(), user, reviewRequest.getRating());
+			if (store.getThumbnailUrl() == null && reviewRequest.getImageUrl() != null) {
+				store.setThumbnailUrl(reviewRequest.getImageUrl());
+			}
+		} else {
+			// 새로운 Store 생성
+			store = createNewStoreWithMeta(reviewRequest.getNewStore(), reviewRequest.getRating());
+			if (reviewRequest.getImageUrl() != null) {
+				store.setThumbnailUrl(reviewRequest.getImageUrl());
+			}
+		}
+		storeRepository.save(store);
 		Review review = saveReview(user, store, reviewRequest);
+
 		// store.updateStoreSummary(reviewRequest.getRating());
 		store.updateThumnailUrl(reviewRequest.getImageUrl());
 		return ReviewAddResponse.of(review.getReviewId(), store.getStoreId());
 	}
 
-	private Store getOrSaveStore(ReviewRequest reviewRequest) {
-		if (reviewRequest.getStoreId() != null) {
-			return storeRepository.findById(reviewRequest.getStoreId())
-				.orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
+	private Store updateStoreMeta(Long storeId, User user, Integer rating) {
+		Store store = storeRepository.findById(storeId)
+			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
+
+		StoreMeta storeMeta = store.getStoreMeta();
+
+		// 평점과 리뷰 개수 업데이트
+		storeMeta.updateTotalRating(rating);
+
+		// 사용자가 이 가게에 대해 작성한 리뷰 개수 확인
+		Long userReviewCount = reviewRepository.countByStoreAndUser(store, user);
+		if (userReviewCount == 1) {
+			// 두 번째 리뷰인 경우, 재방문 횟수 증가
+			storeMeta.incrementTotalRevisitedCount();
 		}
-		return saveStore(reviewRequest.getNewStore());
+
+		// 최다 방문자 횟수 업데이트
+		storeMeta.updateMostRevisitedCount(userReviewCount);
+		storeMetaRepository.save(storeMeta);
+		return store;
+	}
+
+	private Store createNewStoreWithMeta(NewStoreRequest newStoreRequest, Integer rating) {
+		// store 객체 만들기
+		Store store = buildNewStore(newStoreRequest);
+		// storemeta 객체 초기화
+		StoreMeta storeMeta = StoreMeta.builder()
+			.totalRevisitedCount(0L)
+			.totalReviewCount(1L)
+			.mostVisitedCount(0L)
+			.totalRating(rating.floatValue())
+			.build();
+
+		store.setStoreMeta(storeMeta);
+
+		return store;
+	}
+
+	private Store buildNewStore(NewStoreRequest newStoreRequest) {
+		Category category = categoryRepository.findById(newStoreRequest.getCategoryId())
+			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_CATEGORY));
+		return newStoreRequest.toEntity(category);
 	}
 
 	private int getVisitTimes(Long storeId, Store store, User user) {
@@ -250,23 +303,12 @@ public class StoreService {
 			: 1;
 	}
 
-	private Store saveStore(NewStoreRequest newStore) {
-		Category category = categoryRepository.findById(newStore.getCategoryId())
-			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_CATEGORY));
-		Store store = newStore.toEntity(category);
-		storeRepository.save(store);
-
-		return store;
-	}
-
 	private Review saveReview(User user, Store store, ReviewRequest reviewRequest) {
 		int visitTimes = getVisitTimes(reviewRequest.getStoreId(), store, user);
 		Review review = reviewRequest.toEntity(store, user, visitTimes);
 		reviewRepository.save(review);
 		return review;
 	}
-
-
 	//	public void deleteStoreReview(User user, Long storeId, Long reviewId) {
 	//		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 	//		Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_REVIEW));

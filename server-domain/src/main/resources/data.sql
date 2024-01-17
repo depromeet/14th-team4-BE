@@ -15,27 +15,20 @@ VALUES ('APPLE', '김동현', 'USER', 'kakao123411', 'LEVEL3', 11, NOW());
 INSERT INTO User (socialType, nickName, userRole, socialId, level, myReviewCount, createdAt)
 VALUES ('APPLE', '김나다', 'USER', 'kakao12341111', 'LEVEL4', 21, NOW());
 
-INSERT INTO Store (category_id, storeName, latitude, longitude, thumbnailUrl, address, totalRating, totalReviewCount,
-                   myRevisitedCount, createdAt, updatedAt)
-VALUES (1, '맛집1', 37.3665, 123.9780, 'thumbnail1.jpg', '서울특별시 중구 세종대로 110', 4.5, 100, 3,
-        NOW(), NOW());
-INSERT INTO Store (category_id, storeName, latitude, longitude, thumbnailUrl, address, totalRating, totalReviewCount,
-                   createdAt, updatedAt)
-VALUES (2, '카페2', 37.6651, 126.98955, 'thumbnail2.jpg', '서울특별시 중구 청계천로 100', 4.0, 80,
-        NOW(), NOW());
-INSERT INTO Store (category_id, storeName, latitude, longitude, thumbnailUrl, address, totalRating, totalReviewCount,
-                   createdAt, updatedAt)
-VALUES (1, '맛집2', 43.5665, 130.9780, 'thumbnail3.jpg', '서울특별시 관악구 봉천동 62-1', 3.5, 100,
-        NOW(), NOW());
-INSERT INTO Store (category_id, storeName, latitude, longitude, thumbnailUrl, address, totalRating, totalReviewCount,
-                   createdAt, updatedAt)
-VALUES (2, '카페2', 45.5651, 131.98955, 'thumbnail4.jpg', '서울특별시 강남구 테헤란로 21-10', 4.0,
-        70, NOW(), NOW());
-INSERT INTO Store (category_id, storeName, latitude, longitude, thumbnailUrl, address, totalRating, totalReviewCount,
-                   myRevisitedCount, kakaoStoreId, createdAt, updatedAt)
-VALUES (1, '티컵 스타필드 코엑스몰점', 37.5126847515106, 127.058938708812, 'thumbnail1.jpg', '서울 강남구 삼성동 159', 4.5, 100, 3,
-        720401104,
-        NOW(), NOW());
+INSERT INTO StoreMeta (totalRevisitedCount, totalReviewCount, mostVisitedCount,totalRating, createdAt, updatedAt)
+VALUES (5, 14, 3, 4.5, NOW(), NOW()),
+       (0, 4, 0, 5.0, NOW(), NOW()),
+       (2, 8, 2, 4.0, NOW(), NOW()),
+       (10, 50, 5, 3.5,NOW(), NOW()),
+       (1, 3, 2, 3.0, NOW(), NOW());
+-- Store 테이블에 데이터 삽입
+INSERT INTO Store (category_id, store_meta_id, storeName, latitude, longitude, address, thumbnailUrl, kakaoStoreId, createdAt, updatedAt)
+VALUES (1, 1, '맛집1', 37.3665, 123.9780, '서울특별시 중구 세종대로 110', 'thumbnail1.jpg', '234',NOW(), NOW()),
+       (2, 2, '카페2', 37.6651, 126.98955, '서울특별시 중구 청계천로 100', 'thumbnail2.jpg', '3342',NOW(), NOW()),
+       (1, 3, '맛집2', 43.5665, 130.9780, '서울특별시 관악구 봉천동 62-1', 'thumbnail3.jpg', '1234',NOW(), NOW()),
+       (2, 4, '카페2', 45.5651, 131.98955, '서울특별시 강남구 테헤란로 21-10', 'thumbnail4.jpg', '3497',NOW(), NOW()),
+       (1, 5, '티컵 스타필드 코엑스몰점', 37.5126847515106, 127.058938708812, '서울 강남구 삼성동 159', 'thumbnail1.jpg', '43234',NOW(), NOW());
+
 
 
 INSERT INTO Review (store_id, user_id, rating, visitedAt, imageUrl, visitTimes, description, createdAt)

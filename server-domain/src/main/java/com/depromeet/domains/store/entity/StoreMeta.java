@@ -30,10 +30,20 @@ public class StoreMeta extends BaseTimeEntity {
     // 음식점 별점 평균
     private Float totalRating;
 
-    public void updateStoreSummary(Integer rating) {
-        float totalRatingSum = this.totalRating * this.totalReviewCount;
-        totalRatingSum += rating;
-        this.totalReviewCount = this.totalReviewCount + 1;
-        this.totalRating = totalRatingSum / this.totalReviewCount;
+    public void updateTotalRating(Integer newRating) {
+        float newTotalRatingSum = this.totalRating * this.totalReviewCount + newRating;
+        this.totalReviewCount++; // 리뷰 개수 증가
+        this.totalRating = newTotalRatingSum / this.totalReviewCount; // 새 평균 평점 계산
+        this.totalRating = Math.round(this.totalRating * 10.0f) / 10.0f; // 반올림하여 저장
+    }
+
+    public void incrementTotalRevisitedCount() {
+        this.totalRevisitedCount++;
+    }
+
+    public void updateMostRevisitedCount(Long userReviewCount) {
+        if (userReviewCount > this.mostVisitedCount) {
+            this.mostVisitedCount = userReviewCount;
+        }
     }
 }
