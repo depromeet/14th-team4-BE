@@ -1,6 +1,10 @@
 package com.depromeet.domains.store.service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.depromeet.domains.category.repository.CategoryRepository;
@@ -29,6 +33,7 @@ import com.depromeet.domains.store.dto.response.StorePreviewResponse;
 import com.depromeet.domains.store.dto.response.StoreReportResponse;
 import com.depromeet.domains.store.dto.response.StoreReviewResponse;
 import com.depromeet.domains.store.entity.Store;
+import com.depromeet.domains.store.entity.StoreMeta;
 import com.depromeet.domains.store.repository.StoreRepository;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.enums.ReviewType;
@@ -91,7 +96,8 @@ public class StoreService {
 
 	// 음식점 리뷰 조회(타입별 조회)
 	@Transactional(readOnly = true)
-	public Slice<StoreReviewResponse> getStoreReview(User user, Long storeId, Optional<ReviewType> reviewType, Pageable pageable) {
+	public Slice<StoreReviewResponse> getStoreReview(User user, Long storeId, Optional<ReviewType> reviewType,
+		Pageable pageable) {
 
 		Sort sort = Sort.by(Sort.Direction.DESC, "visitedAt");
 		PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
@@ -99,10 +105,9 @@ public class StoreService {
 		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 
 		List<Review> reviews = new ArrayList<>();
-		if(reviewType.isEmpty()){
+		if (reviewType.isEmpty()) {
 			reviews = reviewRepository.findByStore(store);
-		}
-		else if (reviewType.get() == ReviewType.REVISITED) {
+		} else if (reviewType.get() == ReviewType.REVISITED) {
 			reviews = reviewRepository.findRevisitedReviews(store);
 		} else if (reviewType.get() == ReviewType.PHOTO) {
 			reviews = reviewRepository.findByImageUrlIsNotNullOrderByCreatedAtDesc();
@@ -117,24 +122,24 @@ public class StoreService {
 
 	private static List<StoreReviewResponse> getStoreReviewResponses(User user, List<Review> reviews) {
 		List<StoreReviewResponse> storeReviewResponse = reviews.stream()
-				.map(review -> {
-					// 현재 사용자가 리뷰 작성자와 동일한지 확인
-					Boolean isMine = review.getUser().getUserId().equals(user);
+			.map(review -> {
+				// 현재 사용자가 리뷰 작성자와 동일한지 확인
+				Boolean isMine = review.getUser().getUserId().equals(user);
 
-					// 필요한 정보를 포함하여 StoreReviewResponse 객체 생성
-					return StoreReviewResponse.of(
-							review.getUser().getUserId(),
-							review.getReviewId(),
-							review.getUser().getNickName(),
-							review.getRating(),
-							review.getImageUrl(),
-							review.getVisitTimes(),
-							review.getVisitedAt(),
-							review.getDescription(),
-							isMine
-					);
-				})
-				.collect(Collectors.toList());
+				// 필요한 정보를 포함하여 StoreReviewResponse 객체 생성
+				return StoreReviewResponse.of(
+					review.getUser().getUserId(),
+					review.getReviewId(),
+					review.getUser().getNickName(),
+					review.getRating(),
+					review.getImageUrl(),
+					review.getVisitTimes(),
+					review.getVisitedAt(),
+					review.getDescription(),
+					isMine
+				);
+			})
+			.collect(Collectors.toList());
 		return storeReviewResponse;
 	}
 
@@ -142,28 +147,29 @@ public class StoreService {
 	public StoreLocationRangeResponse getRangeStores(StoreLocationRangeRequest location1,
 		StoreLocationRangeRequest location2, Long userId) {
 
-		Double maxLatitude = Double.max(location1.getLatitude(), location2.getLatitude());
-		Double minLatitude = Double.min(location1.getLatitude(), location2.getLatitude());
-		Double maxLongitude = Double.max(location1.getLongitude(), location2.getLongitude());
-		Double minLongitude = Double.min(location1.getLongitude(), location2.getLongitude());
-
-		// 특정 위, 경도 범위 안에 있는 식당 정보 + 해당 user의 북마크 여부
-		List<Object[]> locationRangesQueryResult =
-			storeRepository.findByLocationRangesWithIsBookmark(maxLatitude, minLatitude, maxLongitude, minLongitude,
-				userId);
-
-		List<StoreLocationDto> locationWithIsBookmarkList = convertToStoreLocationDto(locationRangesQueryResult);
-
-		List<Long> storeIdListWithinRanges = locationWithIsBookmarkList.stream()
-			.map(StoreLocationDto::getStoreId)
-			.collect(Collectors.toList());
-
-		// 위에서 조회한 식당들의 재방문한 사람들의 수
-		List<Object[]> storesWithRevisitedNumberQueryResult = storeRepository.findByStoresWithNumberOfRevisitedUser(
-			storeIdListWithinRanges);
-
-		return makeStoreLocationRangeResponse(locationWithIsBookmarkList,
-			convertToRevisitedNumberMap(storesWithRevisitedNumberQueryResult));
+		// Double maxLatitude = Double.max(location1.getLatitude(), location2.getLatitude());
+		// Double minLatitude = Double.min(location1.getLatitude(), location2.getLatitude());
+		// Double maxLongitude = Double.max(location1.getLongitude(), location2.getLongitude());
+		// Double minLongitude = Double.min(location1.getLongitude(), location2.getLongitude());
+		//
+		// // 특정 위, 경도 범위 안에 있는 식당 정보 + 해당 user의 북마크 여부
+		// List<Object[]> locationRangesQueryResult =
+		// 	storeRepository.findByLocationRangesWithIsBookmark(maxLatitude, minLatitude, maxLongitude, minLongitude,
+		// 		userId);
+		//
+		// List<StoreLocationDto> locationWithIsBookmarkList = convertToStoreLocationDto(locationRangesQueryResult);
+		//
+		// List<Long> storeIdListWithinRanges = locationWithIsBookmarkList.stream()
+		// 	.map(StoreLocationDto::getStoreId)
+		// 	.collect(Collectors.toList());
+		//
+		// // 위에서 조회한 식당들의 재방문한 사람들의 수
+		// List<Object[]> storesWithRevisitedNumberQueryResult = storeRepository.findByStoresWithNumberOfRevisitedUser(
+		// 	storeIdListWithinRanges);
+		//
+		// return makeStoreLocationRangeResponse(locationWithIsBookmarkList,
+		// 	convertToRevisitedNumberMap(storesWithRevisitedNumberQueryResult));
+		return null;
 	}
 
 	private StoreLocationRangeResponse makeStoreLocationRangeResponse(List<StoreLocationDto> locationWithIsBookmarkList,
@@ -221,12 +227,11 @@ public class StoreService {
 		return result;
 	}
 
-
 	@Transactional
 	public ReviewAddResponse createStoreReview(User user, ReviewRequest reviewRequest) {
 		Store store = getOrSaveStore(reviewRequest);
 		Review review = saveReview(user, store, reviewRequest);
-		store.updateStoreSummary(reviewRequest.getRating());
+		// store.updateStoreSummary(reviewRequest.getRating());
 		store.updateThumnailUrl(reviewRequest.getImageUrl());
 		return ReviewAddResponse.of(review.getReviewId(), store.getStoreId());
 	}
@@ -261,14 +266,15 @@ public class StoreService {
 		return review;
 	}
 
-//	public void deleteStoreReview(User user, Long storeId, Long reviewId) {
-//		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
-//		Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_REVIEW));
-//
-//		if (!review.getUser().getUserId().equals(user.getUserId())) {
-//			throw new CustomException(Result.UNAUTHORIZED_USER);
-//		}
-//		reviewRepository.delete(review);
-//		store.updateStoreSummary(-review.getRating());
-//	}
+
+	//	public void deleteStoreReview(User user, Long storeId, Long reviewId) {
+	//		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
+	//		Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_REVIEW));
+	//
+	//		if (!review.getUser().getUserId().equals(user.getUserId())) {
+	//			throw new CustomException(Result.UNAUTHORIZED_USER);
+	//		}
+	//		reviewRepository.delete(review);
+	//		store.updateStoreSummary(-review.getRating());
+	//	}
 }
