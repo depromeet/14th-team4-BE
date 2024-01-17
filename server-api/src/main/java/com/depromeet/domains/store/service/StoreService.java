@@ -249,7 +249,7 @@ public class StoreService {
 		Review review = saveReview(user, store, reviewRequest);
 
 		// store.updateStoreSummary(reviewRequest.getRating());
-		store.updateThumnailUrl(reviewRequest.getImageUrl());
+		store.updateThumbnailUrl(reviewRequest.getImageUrl());
 		return ReviewAddResponse.of(review.getReviewId(), store.getStoreId());
 	}
 
