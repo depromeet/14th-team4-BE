@@ -27,8 +27,8 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 	@Value("${front.dev.url}")
 	private String frontDevUrl;
 
-//	@Value("${front.local.url}")
-	private String frontLocalUrl = "http://172.30.1.13:3000";
+	@Value("${front.local.url}")
+	private String frontLocalUrl;
 
 	@Value("${jwt.access.expiration}")
 	private Long accessTokenExpirationPeriod;
