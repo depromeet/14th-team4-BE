@@ -141,6 +141,10 @@ operation::image-controller-test/get-presigned-url[snippets='curl-request,http-r
 
 == Test API
 
+[[test-token]]
+=== 1. 테스트용 토큰 발급
+operation::auth-controller-test/get-test-token[]
+
 [[test-api-create]]
 === Create a test
 operation::test-controller-test/create[]
