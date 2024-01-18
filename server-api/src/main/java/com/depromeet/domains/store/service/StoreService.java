@@ -309,14 +309,53 @@ public class StoreService {
 		reviewRepository.save(review);
 		return review;
 	}
-	//	public void deleteStoreReview(User user, Long storeId, Long reviewId) {
-	//		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
-	//		Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_REVIEW));
-	//
-	//		if (!review.getUser().getUserId().equals(user.getUserId())) {
-	//			throw new CustomException(Result.UNAUTHORIZED_USER);
-	//		}
-	//		reviewRepository.delete(review);
-	//		store.updateStoreSummary(-review.getRating());
-	//	}
+
+	public void deleteStoreReview(User user, Long reviewId) {
+		Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_REVIEW));
+
+		if (!review.getUser().getUserId().equals(user.getUserId())) {
+			throw new CustomException(Result.UNAUTHORIZED_USER);
+		}
+
+		Store store = review.getStore();
+		StoreMeta storeMeta = store.getStoreMeta();
+
+		// 해당 음식점에 몇번 방문했는지 확인
+		Long myRevisitedCount = reviewRepository.countByStoreAndUser(store, user);
+
+		// 해당 음식점 최다 방문자인지 확인
+		if (storeMeta.getMostVisitedCount() ==  myRevisitedCount) {
+			// 촤다 방문자가 겹치는 경우에 몇명이나 최다 방문자가 있는지 확인
+			Long duplicateMostVisitedCount = reviewRepository.countByVisitTimes(myRevisitedCount);
+			if (duplicateMostVisitedCount > 1) { // 최다 방문자가 여러명인 경우
+				if (myRevisitedCount >= 3) { // 내가 쓴 리뷰의 개수가 3개 이상이면
+					// 최다 방문자의 재방문 횟수는 그대로 유지, 재방문 인원의 수도 유지, 리뷰 개수 1감소, 별점 평균 재계산
+					storeMeta.deletedReviewFromVisitedThreeOrMoreIfMostVisitorDuplicate(review.getRating());
+				} else { // 내가 쓴 리뷰가 2개 이하인 경우
+					// 최다 방문자의 재방문 횟수는 그대로 유지, 재방문 인원의 수 1감소, 리뷰 개수 1감소, 별점 평균 재계산
+					storeMeta.deletedReviewFromVisitedTwoOrLessIfMostVisitorDuplicate(review.getRating());
+				}
+			}
+			else { // 최다 방문자가 나 혼자인 경우
+				if (myRevisitedCount >= 3) { // 내가 쓴 리뷰의 개수가 3개 이상이면
+					// 최다 방문자의 재방문 횟수는 1 감소, 재방문 인원의 수도 유지, 리뷰 개수 1감소, 별점 평균 재계산
+					storeMeta.deleteReviewFromVisitedThreeOrMoreIfMostVisitorMe(review.getRating());
+				} else { // 내가 쓴 리뷰가 2개 이하인 경우
+					// 최다 방문자의 재방문 횟수, 재방문 인원의 수, 리뷰 개수 모두 1감소, 별점 평균 재계산
+					storeMeta.deletedReviewFromVisitedTwoOrLessIfMostVisitorMe(review.getRating());
+				}
+			}
+		}
+		else{ // 최다 방문자가 아닌 경우
+				if (myRevisitedCount>=3){ // 내가 쓴 리뷰의 개수가 3개 이상이면
+					// 재방문 인원의 수는 유지, 리뷰 개수 1감소, 별점 평균 재계산
+					storeMeta.deleteReviewFromVisitedThreeOrMore(review.getRating());
+				}
+				else {// 내가 쓴 리뷰의 개수가 2개 이하인 경우
+					// 재방문 인원의 수, 리뷰 개수 모두 1 감소, 별점 평균 재계산
+					storeMeta.deleteReviewFromVisitedTwoOrLess(review.getRating());
+				}
+			}
+		reviewRepository.delete(review);
+	}
 }
