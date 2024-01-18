@@ -67,13 +67,13 @@ public class UserService {
 	private UserBookmarkResponse getUserBookemarkResponse(Bookmark bookmark) {
 		Store store = bookmark.getStore();
 		boolean isVisited = reviewRepository.existsByStoreAndUser(store, bookmark.getUser());
-		Long totalRevisitedCount = reviewRepository.countTotalRevisitedCount(store);
 
 		return UserBookmarkResponse.of(
+			bookmark.getBookmarkId(),
 			store.getStoreId(),
 			store.getStoreName(),
 			store.getAddress(),
-			totalRevisitedCount,
+			store.getStoreMeta().getTotalRevisitedCount(),
 			store.getCategory().getCategoryName(),
 			isVisited
 		);
@@ -81,6 +81,7 @@ public class UserService {
 
 	private UserReviewResponse getUserReviewResponse(Review review) {
 		return UserReviewResponse.of(
+			review.getReviewId(),
 			review.getStore().getStoreId(),
 			review.getStore().getStoreName(),
 			review.getVisitTimes(),
