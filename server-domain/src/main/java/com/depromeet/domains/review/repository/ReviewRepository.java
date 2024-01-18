@@ -41,4 +41,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     Slice<Review> findByUser(User user, Pageable pageable);
     List<Review> findByStore(Store store);
+
+    Long countByVisitTimes(Long visitTimes);
 }
