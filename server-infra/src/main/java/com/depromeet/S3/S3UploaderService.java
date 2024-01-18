@@ -23,11 +23,9 @@ public class S3UploaderService {
 
 	private final AmazonS3 amazonS3;
 
-	public String getPreSignedUrl(String prefix, String fileName) {
-		if (!prefix.isEmpty()) {
-			fileName = prefix + "/" + fileName + "_" + UUID.randomUUID();
-		}
-		GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePreSignedUrlRequest(fileName);
+	public String getPreSignedUrl(String fileName) {
+		String saveName = fileName + "_" + UUID.randomUUID();
+		GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePreSignedUrlRequest(saveName);
 		URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
 		return url.toString();
 	}

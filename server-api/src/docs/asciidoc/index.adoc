@@ -42,6 +42,56 @@
 === HTTP Error Response
 operation::common-doc-controller-test/error-sample[snippets='http-response,response-fields']
 
+== Auth API
+[[login]]
+=== 1. 로그인
+* "accessToken", "refreshToken"으로 쿠키에 토큰 담아 반환
+
+Request
+[source,http]
+----
+GET /oauth2/authorization/{provider}?env=local HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json;charset=UTF-8
+----
+Path Parameter
+[cols="1,2,3", options="header"]
+|===
+| Parameter
+| Description
+| Example Values
+
+| provider
+| 소셜로그인 종류
+| apple, kakao
+
+|===
+
+Query Parameter
+[cols="1,2,3", options="header"]
+|===
+| Parameter
+| Description
+| Example Values
+
+| env
+| 프론트 요청 환경
+| local, dev (쿼리 스트링 없이 보낸 경우 dev로 리다이렉트 됩니다)
+
+|===
+
+[[signup]]
+=== 2. 약관동의 후 회원가입
+* 리다이렉트 쿼리스트링으로 "accessToken", "refreshToken" 반환
+
+operation::auth-controller-test/signup[snippets='curl-request,http-request,request-headers,http-response']
+
+[[refresh-token]]
+=== 3. 토큰 재발급
+* refresh token으로 access token을 재발급합니다.
+
+operation::auth-controller-test/refresh-token[snippets='curl-request,http-request,request-headers,http-response']
+
 == Store API
 
 [[get-store]]
@@ -70,7 +120,7 @@ operation::store-controller-test/create-new-store-review[]
 operation::user-controller-test/update-user-nickname[]
 
 === 2. 유저 프로필 조회
-operation::user-controller-test/
+operation::user-controller-test/get-user-profile[]
 
 === 3. 유저 북마크 조회
 operation::user-controller-test/get-my-bookmarks[]
@@ -85,8 +135,15 @@ operation::user-controller-test/get-my-reviews[]
 === 음식점, 카페 통합 검색
 operation::store-search-controller-test/search[]
 
+== Image API
+=== presigned url 발급
+operation::image-controller-test/get-presigned-url[snippets='curl-request,http-request,http-response,query-parameters,request-headers,response-fields']
 
 == Test API
+
+[[test-token]]
+=== 1. 테스트용 토큰 발급
+operation::auth-controller-test/get-test-token[]
 
 [[test-api-create]]
 === Create a test

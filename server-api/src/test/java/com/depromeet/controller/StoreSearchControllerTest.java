@@ -38,7 +38,7 @@ public class StoreSearchControllerTest extends RestDocsTestSupport {
 		Integer cafePage = 1;
 
 		StoreSearchResult storeSearchResult1 = StoreSearchResult.builder()
-			.storeId(720401104L)
+			.storeId(1L)
 			.storeName("티컵 스타필드 코엑스몰점")
 			.categoryName("카페")
 			.address("서울 강남구 삼성동 159")
@@ -46,10 +46,11 @@ public class StoreSearchControllerTest extends RestDocsTestSupport {
 			.totalRevisitedCount(3L)
 			.latitude(127.058938708812)
 			.longitude(37.5126847515106)
+			.kakaoStoreId(1234567L)
 			.build();
 
 		StoreSearchResult storeSearchResult2 = StoreSearchResult.builder()
-			.storeId(21417356L)
+			.storeId(2L)
 			.storeName("스타가든")
 			.categoryName("카페")
 			.address("서울 강남구 역삼동 737")
@@ -57,6 +58,7 @@ public class StoreSearchControllerTest extends RestDocsTestSupport {
 			.totalRevisitedCount(0L)
 			.latitude(127.036568685902)
 			.longitude(37.5000544957843)
+			.kakaoStoreId(1112233L)
 			.build();
 
 		List<StoreSearchResult> storeSearchResultList = List.of(storeSearchResult1, storeSearchResult2);
@@ -102,7 +104,7 @@ public class StoreSearchControllerTest extends RestDocsTestSupport {
 						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
 						fieldWithPath("data.storeSearchResult[]").type(JsonFieldType.ARRAY).description("리뷰 목록"),
 						fieldWithPath("data.storeSearchResult[].storeId").type(JsonFieldType.NUMBER)
-							.description("카카오 DB상 음식점 ID"),
+							.description("우리 DB상 음식점 ID"),
 						fieldWithPath("data.storeSearchResult[].storeName").type(JsonFieldType.STRING)
 							.description("음식점 명"),
 						fieldWithPath("data.storeSearchResult[].categoryName").type(JsonFieldType.STRING)
@@ -117,6 +119,8 @@ public class StoreSearchControllerTest extends RestDocsTestSupport {
 							.description("음식점 위도"),
 						fieldWithPath("data.storeSearchResult[].longitude").type(JsonFieldType.NUMBER)
 							.description("음식점 경도"),
+						fieldWithPath("data.storeSearchResult[].kakaoStoreId").type(JsonFieldType.NUMBER)
+							.description("카카오 DB상 음식점 ID"),
 						fieldWithPath("data.storeIsEnd").type(JsonFieldType.BOOLEAN)
 							.description("음식점 검색 결과 마지막 페이지 여부"),
 						fieldWithPath("data.cafeIsEnd").type(JsonFieldType.BOOLEAN).description("카페 검색 결과 마지막 페이지 여부")

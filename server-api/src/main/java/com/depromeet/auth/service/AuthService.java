@@ -44,17 +44,11 @@ public class AuthService {
 	}
 
 	@Transactional
-	public TokenResponse signup(Long userId) {
-		User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_USER));
+	public void signup(User user) {
+		User guestUser = userRepository.findById(user.getUserId()).orElseThrow(() -> new CustomException(Result.NOT_FOUND_USER));
 
-		user.updateUserRole();
-		user.updateNickname(getRandomNickname());
-
-		// 토큰 재발행
-		String accessToken = jwtService.createAccessToken(userId);
-		String refreshToken = jwtService.createRefreshToken(userId);
-
-		return new TokenResponse(accessToken, refreshToken);
+		guestUser.updateUserRole();
+		guestUser.updateNickname(getRandomNickname());
 	}
 
 	private String getRandomNickname() {

@@ -15,6 +15,7 @@ import com.depromeet.domains.review.entity.Review;
 import com.depromeet.domains.review.repository.ReviewRepository;
 import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.user.dto.response.UserBookmarkResponse;
+import com.depromeet.domains.user.dto.response.UserProfileResponse;
 import com.depromeet.domains.user.dto.response.UserReviewResponse;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.repository.UserRepository;
@@ -35,9 +36,9 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public String getUserProfile(Long userId) {
-		User user = findUserById(userId);
-		return user.getNickName();
+	public UserProfileResponse getUserProfile(User user) {
+		User existUser = findUserById(user.getUserId());
+		return UserProfileResponse.of(existUser.getNickName(), existUser.getLevel().getDescription());
 	}
 
 	@Transactional(readOnly = true)
@@ -66,13 +67,13 @@ public class UserService {
 	private UserBookmarkResponse getUserBookemarkResponse(Bookmark bookmark) {
 		Store store = bookmark.getStore();
 		boolean isVisited = reviewRepository.existsByStoreAndUser(store, bookmark.getUser());
-		Long totalRevisitedCount = reviewRepository.countTotalRevisitedCount(store);
 
 		return UserBookmarkResponse.of(
+			bookmark.getBookmarkId(),
 			store.getStoreId(),
 			store.getStoreName(),
 			store.getAddress(),
-			totalRevisitedCount,
+			store.getStoreMeta().getTotalRevisitedCount(),
 			store.getCategory().getCategoryName(),
 			isVisited
 		);
@@ -80,6 +81,7 @@ public class UserService {
 
 	private UserReviewResponse getUserReviewResponse(Review review) {
 		return UserReviewResponse.of(
+			review.getReviewId(),
 			review.getStore().getStoreId(),
 			review.getStore().getStoreName(),
 			review.getVisitTimes(),

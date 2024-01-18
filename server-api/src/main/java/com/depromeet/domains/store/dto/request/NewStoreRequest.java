@@ -28,8 +28,6 @@ public class NewStoreRequest {
 			.location(new Location(this.latitude, this.longitude))
 			.address(this.address)
 			.category(category)
-			.totalRating(0.0F)
-			.totalReviewCount(1L)
 			.build();
 	}
 }

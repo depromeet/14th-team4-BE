@@ -16,7 +16,8 @@ public enum Result {
     NOT_FOUND_USER(404, "사용자를 찾을 수 없습니다."),
     NOT_FOUND_BOOKMARK(404, "북마크를 찾을 수 없습니다."),
     NOT_FOUND_STORE(404, "가게를 찾을 수 없습니다."),
-    NOT_FOUND_CATEGORY(404, "카테고리를 찾을 수 없습니다." );
+    NOT_FOUND_CATEGORY(404, "카테고리를 찾을 수 없습니다." ),
+    NOT_FOUND_REVIEW(404, "리뷰를 찾을 수 없습니다."),;
 
 
 
