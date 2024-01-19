@@ -114,6 +114,14 @@ operation::store-controller-test/create-exist-store-review[]
 === 4-2. 리뷰 작성 (새로운 가게)
 operation::store-controller-test/create-new-store-review[]
 
+[[create-bookmark]]
+=== 5-1. 북마크 등록
+operation::bookmark-controller-test/create-bookmark[]
+
+[[delete-bookmark]]
+=== 5.2 북마크 삭제
+operation::bookmark-controller-test/delete-bookmark[]
+
 == User API
 
 === 1. 유저 닉네임 변경
