@@ -8,14 +8,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.depromeet.annotation.AuthUser;
 import com.depromeet.common.exception.CustomResponseEntity;
 import com.depromeet.domains.store.dto.request.ReviewRequest;
-import com.depromeet.domains.store.dto.request.StoreLocationRangeRequest;
 import com.depromeet.domains.store.dto.response.ReviewAddResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
@@ -23,6 +22,7 @@ import com.depromeet.domains.store.dto.response.StoreReportResponse;
 import com.depromeet.domains.store.dto.response.StoreReviewResponse;
 import com.depromeet.domains.store.service.StoreService;
 import com.depromeet.domains.user.entity.User;
+import com.depromeet.enums.CategoryType;
 import com.depromeet.enums.ReviewType;
 
 import lombok.RequiredArgsConstructor;
@@ -35,12 +35,17 @@ public class StoreController {
 	private final StoreService storeService;
 
 	@GetMapping("/stores/location-range")
-	public CustomResponseEntity<StoreLocationRangeResponse> getStores(
-		@RequestParam("location1") StoreLocationRangeRequest location1,
-		@RequestParam("location2") StoreLocationRangeRequest location2,
+	public CustomResponseEntity<StoreLocationRangeResponse> getLocationRangeStores(
+		@RequestParam(value = "latitude1") Double latitude1,
+		@RequestParam(value = "longitude1") Double longitude1,
+		@RequestParam(value = "latitude2") Double latitude2,
+		@RequestParam(value = "longitude2") Double longitude2,
+		@RequestParam(value = "level") Integer level,
+		@RequestParam(value = "type") Optional<CategoryType> categoryType,
 		@AuthUser User user) {
-		// return CustomResponseEntity.success(storeService.getRangeStores(location1, location2, user.getUserId()));
-		return CustomResponseEntity.success(null);
+		return CustomResponseEntity.success(
+			storeService.getRangeStores(latitude1, longitude1, latitude2, longitude2, level, categoryType,
+				user));
 	}
 
 	@GetMapping("/stores/{storeId}")
@@ -67,10 +72,10 @@ public class StoreController {
 		return CustomResponseEntity.created(storeService.createStoreReview(user, reviewRequest));
 	}
 
-    //    @DeleteMapping("/stores/{storeId}/reviews/{reviewId}")
-//    public CustomResponseEntity<Void> deleteStoreReview(@AuthUser User user, @PathVariable Long storeId,
-//            @PathVariable Long reviewId) {
-//        storeService.deleteStoreReview(user, storeId, reviewId);
-//        return CustomResponseEntity.success();
-//    }
+	//    @DeleteMapping("/stores/{storeId}/reviews/{reviewId}")
+	//    public CustomResponseEntity<Void> deleteStoreReview(@AuthUser User user, @PathVariable Long storeId,
+	//            @PathVariable Long reviewId) {
+	//        storeService.deleteStoreReview(user, storeId, reviewId);
+	//        return CustomResponseEntity.success();
+	//    }
 }
