@@ -461,7 +461,15 @@ class StoreControllerTest extends RestDocsTestSupport {
 						parameterWithName("latitude2").description("두번째 위도"),
 						parameterWithName("longitude2").description("두번째 경도"),
 						parameterWithName("level").description("확대/축소 레벨"),
-						parameterWithName("type").description("식당 카테고리 - optional").optional()
+						parameterWithName("type").description("식당 카테고리(optional) - "
+								+ "\nKOREAN(한식)"
+								+ "\nCHINESE(중식)"
+								+ "\nJAPANESE(일식)"
+								+ "\nWESTERN(양식)"
+								+ "\nCAFE(카페,디저트)"
+								+ "\nBARS(술집)"
+								+ "\nSCHOOLFOOD(분식)")
+							.optional()
 					),
 					responseFields(
 						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
@@ -478,7 +486,15 @@ class StoreControllerTest extends RestDocsTestSupport {
 						fieldWithPath("data.bookMarkList[].categoryName").type(JsonFieldType.STRING)
 							.description("음식점 카테고리 명"),
 						fieldWithPath("data.bookMarkList[].categoryType").type(JsonFieldType.STRING)
-							.description("음식점 카테고리 타입"),
+							.description("음식점 카테고리 타입"
+								+ "\nKOREAN(한식)"
+								+ "\nCHINESE(중식)"
+								+ "\nJAPANESE(일식)"
+								+ "\nWESTERN(양식)"
+								+ "\nCAFE(카페,디저트)"
+								+ "\nBARS(술집)"
+								+ "\nSCHOOLFOOD(분식)"
+								+ "\nETC(기타)"),
 						fieldWithPath("data.bookMarkList[].address").type(JsonFieldType.STRING).description("음식점 주소"),
 						fieldWithPath("data.bookMarkList[].longitude").type(JsonFieldType.NUMBER).description("음식점 위도"),
 						fieldWithPath("data.bookMarkList[].latitude").type(JsonFieldType.NUMBER).description("음식점 경도"),
@@ -500,7 +516,15 @@ class StoreControllerTest extends RestDocsTestSupport {
 						fieldWithPath("data.locationStoreList[].categoryName").type(JsonFieldType.STRING)
 							.description("음식점 카테고리 명"),
 						fieldWithPath("data.locationStoreList[].categoryType").type(JsonFieldType.STRING)
-							.description("음식점 카테고리 타입"),
+							.description("음식점 카테고리 타입"
+								+ "\nKOREAN(한식)"
+								+ "\nCHINESE(중식)"
+								+ "\nJAPANESE(일식)"
+								+ "\nWESTERN(양식)"
+								+ "\nCAFE(카페,디저트)"
+								+ "\nBARS(술집)"
+								+ "\nSCHOOLFOOD(분식)"
+								+ "\nETC(기타)"),
 						fieldWithPath("data.locationStoreList[].address").type(JsonFieldType.STRING)
 							.description("음식점 주소"),
 						fieldWithPath("data.locationStoreList[].longitude").type(JsonFieldType.NUMBER)
