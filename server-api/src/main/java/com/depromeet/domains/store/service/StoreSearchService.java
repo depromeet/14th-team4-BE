@@ -55,13 +55,14 @@ public class StoreSearchService {
 		List<Map<String, Object>> storeDocuments = new ArrayList<>();
 		Boolean storeIsEnd = true;
 		if (storePage.isPresent()) {
+			Integer realStorePage = storePage.get();
 			// 음식점 검색 API URI 생성
 			UriComponentsBuilder builderStore = UriComponentsBuilder.fromHttpUrl(
 					"https://dapi.kakao.com/v2/local/search/keyword.json")
 				.queryParam("category_group_code", "FD6")
 				.queryParam("x", x)
 				.queryParam("y", y)
-				.queryParam("page", storePage)
+				.queryParam("page", realStorePage)
 				.queryParam("size", size)
 				.queryParam("sort", sort);
 
@@ -78,13 +79,14 @@ public class StoreSearchService {
 		List<Map<String, Object>> cafeDocuments = new ArrayList<>();
 		Boolean cafeIsEnd = true;
 		if (cafePage.isPresent()) {
+			Integer realCafePage = cafePage.get();
 			// 카페 검색 API URI 생성
 			UriComponentsBuilder builderCafe = UriComponentsBuilder.fromHttpUrl(
 					"https://dapi.kakao.com/v2/local/search/keyword.json")
 				.queryParam("category_group_code", "CE7")
 				.queryParam("x", x)
 				.queryParam("y", y)
-				.queryParam("page", cafePage)
+				.queryParam("page", realCafePage)
 				.queryParam("size", size)
 				.queryParam("sort", sort);
 
@@ -97,6 +99,8 @@ public class StoreSearchService {
 			Map<String, Object> cafeMeta = (Map<String, Object>)resultCafe.getBody().get("meta");
 			cafeIsEnd = (Boolean)cafeMeta.get("is_end");
 		}
+
+		log.info("search kakao");
 
 		// `resultStore` 및 `resultCafe`가 가게 및 카페에 대한 JSON 응답이라고 가정
 		List<StoreSearchResult> storeResults = convertToStoreSearchResults(storeDocuments);
@@ -125,9 +129,14 @@ public class StoreSearchService {
 				String storeName = doc.get("place_name").toString();
 				String address = doc.get("address_name").toString();
 				Long revisitedCount = 0L;
-				String categoryName = doc.get("categoryName").toString();
+				String categoryName = doc.get("category_name").toString();
 				String[] categories = categoryName.split(" > ");
-				String category = categories[1];
+				String category ;
+				if (categories.length == 1){
+					category = categories[0];
+				}else{
+					category = categories[1];
+				}
 
 				// storeName + address 조합후 DB 검색시 존재하지 않으면 새로운 음식점이므로 revisitedCount = 0,
 				// 존재하면 revisitedCount = 해당 음식점의 revisitedCount
