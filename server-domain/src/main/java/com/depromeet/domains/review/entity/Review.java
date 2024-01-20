@@ -50,6 +50,7 @@ public class Review extends BaseTimeEntity {
 	@Column(nullable = false)
 	private LocalDate visitedAt;
 
+	@Column(length = 5000)
 	private String imageUrl;
 
 	@Column(nullable = false)
