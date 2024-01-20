@@ -4,8 +4,12 @@ import java.io.IOException;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.depromeet.common.exception.CustomException;
+import com.depromeet.common.exception.Result;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
+@Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private static final String AUTHORIZATION_HEADER = "Authorization";
@@ -23,10 +28,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
-		String token = resolveToken(request);
-		// 정상 토큰이면 해당 토큰으로 Authentication을 가져와서 SecurityContext에 저장
-		if (StringUtils.hasText(token) && jwtService.isValidToken(token)) {
-			setSecurityContext(token);
+		try {
+			String token = resolveToken(request);
+			if (StringUtils.hasText(token)) {
+				jwtService.isValidToken(token);
+				setSecurityContext(token);
+			}
+			request.setAttribute("error", Result.TOKEN_INVALID);
+
+		} catch (CustomException e) {
+			request.setAttribute("error", e.getResult());
+		} catch (Exception e) {
+			request.setAttribute("error", Result.FAIL);
 		}
 
 		filterChain.doFilter(request, response);

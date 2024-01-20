@@ -12,9 +12,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
+import com.depromeet.auth.service.RedisService;
 import com.depromeet.common.exception.CustomException;
 import com.depromeet.common.exception.Result;
-import com.depromeet.auth.service.RedisService;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.repository.UserRepository;
 
@@ -22,7 +22,9 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -100,9 +102,13 @@ public class JwtService {
 			Claims claims = getClaims(token);
 			return !claims.getExpiration().before(new Date());
 		} catch (ExpiredJwtException e) {
-			throw new CustomException(Result.BAD_REQUEST);
+			throw new CustomException(Result.TOKEN_EXPIRED);
+		} catch (SecurityException | MalformedJwtException e) {
+			throw new CustomException(Result.TOKEN_INVALID);
+		} catch (UnsupportedJwtException e) {
+			throw new CustomException(Result.TOKEN_NOTSUPPORTED);
 		} catch (JwtException e) {
-			throw new CustomException(Result.BAD_REQUEST);
+			throw new CustomException(Result.TOKEN_INVALID);
 		}
 	}
 
@@ -114,7 +120,7 @@ public class JwtService {
 				.parseClaimsJws(token)
 				.getBody();
 		} catch (JwtException e) {
-			throw new CustomException(Result.BAD_REQUEST);
+			throw new CustomException(Result.TOKEN_INVALID);
 		}
 	}
 
