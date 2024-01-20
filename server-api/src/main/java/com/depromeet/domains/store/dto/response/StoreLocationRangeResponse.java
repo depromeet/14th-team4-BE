@@ -8,36 +8,50 @@ import lombok.ToString;
 
 @Getter
 @Builder
-@ToString
+@ToString // 테스트
 public class StoreLocationRangeResponse {
 
-	private List<LocationRangeResponse> response;
+	private List<StoreLocationRange> bookMarkList;
+	private List<StoreLocationRange> locationStoreList;
 
-	public static StoreLocationRangeResponse of(List<LocationRangeResponse> list) {
+	public static StoreLocationRangeResponse of(List<StoreLocationRange> bookMarkList,
+		List<StoreLocationRange> locationStoreList) {
 		return StoreLocationRangeResponse.builder()
-			.response(list)
+			.bookMarkList(bookMarkList)
+			.locationStoreList(locationStoreList)
 			.build();
 	}
 
 	@Getter
 	@Builder
-	public static class LocationRangeResponse {
+	public static class StoreLocationRange {
 		private Long storeId;
+		private Long kakaoStoreId;
 		private String storeName;
+		private Long categoryId;
+		private String categoryName;
+		private String categoryType;
+		private String address;
 		private Double longitude;
 		private Double latitude;
-		private boolean isBookMark;
-		private int totalRevisitedCount;
+		private Long totalRevisitedCount;
+		private Long totalReviewCount;
 
-		public static LocationRangeResponse of(Long storeId, String storeName, Double longitude, Double latitude,
-			boolean isBookMark, int totalRevisitedCount) {
-			return LocationRangeResponse.builder()
+		public static StoreLocationRange of(Long storeId, Long kakaoStoreId, String storeName, Long categoryId,
+			String categoryName, String categoryType, String address, Double longitude, Double latitude,
+			Long totalRevisitedCount, Long totalReviewCount) {
+			return StoreLocationRange.builder()
 				.storeId(storeId)
+				.kakaoStoreId(kakaoStoreId)
 				.storeName(storeName)
+				.categoryId(categoryId)
+				.categoryName(categoryName)
+				.categoryType(categoryType)
+				.address(address)
 				.longitude(longitude)
 				.latitude(latitude)
-				.isBookMark(isBookMark)
 				.totalRevisitedCount(totalRevisitedCount)
+				.totalReviewCount(totalReviewCount)
 				.build();
 		}
 	}
