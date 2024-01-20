@@ -1,7 +1,5 @@
 package com.depromeet.common.exception;
 
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -12,8 +10,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
-
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -84,5 +84,15 @@ public class CommonRestExceptionHandler extends RuntimeException {
                 .code(-1)
                 .message("{ " + e.getRequestPartName() + " }"+ " 값을 요청받지 못했습니다.")
                 .build();
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public CustomResponseEntity<Object> handleNoHandlerFoundException(
+        NoHandlerFoundException e, HttpServletRequest request
+    ) {
+        return CustomResponseEntity.builder()
+            .code(404)
+            .message(request.getRequestURL() + " 주소가 존재하지 않습니다.")
+            .build();
     }
 }

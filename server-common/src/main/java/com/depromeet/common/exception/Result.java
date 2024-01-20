@@ -13,6 +13,9 @@ public enum Result {
     BAD_REQUEST(400,"잘못된 요청"),
     SOCIAL_LOGIN_FAIL(400, "소셜로그인 실패"),
     UNAUTHORIZED_USER(403, "권한 없는 사용자"),
+    TOKEN_EXPIRED(401, "토큰 유효 기간 만료"),
+    TOKEN_NOTSUPPORTED(401, "지원되지 않는 토큰 형식"),
+    TOKEN_INVALID(401, "잘못된 토큰 형식"),
     NOT_FOUND_USER(404, "사용자를 찾을 수 없습니다."),
     NOT_FOUND_BOOKMARK(404, "북마크를 찾을 수 없습니다."),
     NOT_FOUND_STORE(404, "가게를 찾을 수 없습니다."),
@@ -30,7 +33,7 @@ public enum Result {
         this.message = message;
     }
 
-    public Result resolve(int code) {
+    public static Result resolve(int code) {
         for (Result result : values()) {
             if (result.getCode() == code) {
                 return result;
