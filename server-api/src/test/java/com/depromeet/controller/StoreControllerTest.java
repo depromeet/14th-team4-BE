@@ -197,7 +197,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 					queryParameters(
 						parameterWithName("page").description("페이지 번호 (1번 부터)"),
 						parameterWithName("size").description("페이지 사이즈"),
-						parameterWithName("type").description("리뷰 타입 - revisited, photo").optional()
+						parameterWithName("type").description("리뷰 타입 - REVISITED, PHOTO").optional()
 					),
 					pathParameters(
 						parameterWithName("storeId").description("음식점 ID")

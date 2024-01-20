@@ -27,8 +27,9 @@ import org.hibernate.annotations.Where;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Where(clause = "deleted_at is NULL")
-@SQLDelete(sql = "UPDATE reivew SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@Where(clause = "deletedAt is NULL")
+@SQLDelete(sql = "UPDATE review SET deletedAt = CURRENT_TIMESTAMP WHERE id = ?")
+
 public class Review extends BaseTimeEntity {
 
 	@Id
