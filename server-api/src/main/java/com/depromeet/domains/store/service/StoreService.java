@@ -101,8 +101,9 @@ public class StoreService {
 	public Slice<StoreReviewResponse> getStoreReview(User user, Long storeId, Optional<ReviewType> reviewType,
 		Pageable pageable) {
 
+		Integer size = 10;
 		Sort sort = Sort.by(Sort.Direction.DESC, "visitedAt");
-		PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+		PageRequest.of(pageable.getPageNumber(), size, sort);
 
 		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 
@@ -127,14 +128,17 @@ public class StoreService {
 			.map(review -> {
 				// 현재 사용자가 리뷰 작성자와 동일한지 확인
 				Boolean isMine = review.getUser().getUserId().equals(user);
-
+				String imageUrl = "";
+				if (review.getImageUrl()!=null){
+					imageUrl=review.getImageUrl();
+				}
 				// 필요한 정보를 포함하여 StoreReviewResponse 객체 생성
 				return StoreReviewResponse.of(
 					review.getUser().getUserId(),
 					review.getReviewId(),
 					review.getUser().getNickName(),
 					review.getRating(),
-					review.getImageUrl(),
+					imageUrl,
 					review.getVisitTimes(),
 					review.getVisitedAt(),
 					review.getDescription(),
