@@ -18,8 +18,6 @@ import com.depromeet.domains.store.controller.StoreController;
 import com.depromeet.domains.store.controller.StoreSearchController;
 import com.depromeet.domains.store.service.StoreSearchService;
 import com.depromeet.domains.store.service.StoreService;
-import com.depromeet.domains.test.controller.TestController;
-import com.depromeet.domains.test.service.TestService;
 import com.depromeet.domains.user.controller.UserController;
 import com.depromeet.domains.user.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -29,7 +27,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @WebMvcTest({
         // 테스트 하고자 하는 컨트롤러를 명시
         CommonDocController.class,
-        TestController.class,
         StoreController.class,
         StoreSearchController.class,
         UserController.class,
@@ -42,9 +39,6 @@ public abstract class ControllerTest {
     @Autowired protected ObjectMapper objectMapper;
 
     @Autowired protected MockMvc mockMvc;
-
-    @MockBean
-    protected TestService testService;
 
     @MockBean
     protected StoreService storeService;

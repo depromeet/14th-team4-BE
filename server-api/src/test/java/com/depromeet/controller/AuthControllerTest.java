@@ -18,8 +18,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 
 import com.depromeet.auth.dto.TokenResponse;
 import com.depromeet.document.RestDocsTestSupport;
-import com.depromeet.domains.test.dto.request.TestRequest;
-
 import jakarta.servlet.http.Cookie;
 
 @AutoConfigureMockMvc
