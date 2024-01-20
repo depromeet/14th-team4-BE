@@ -8,8 +8,6 @@
 :sectlinks:
 :docinfo: shared-head
 
-== 아래에 adoc을 정의하면 됩니다.
-
 [[overview]]
 == Overview
 
@@ -152,29 +150,3 @@ operation::image-controller-test/get-presigned-url[snippets='curl-request,http-r
 [[test-token]]
 === 1. 테스트용 토큰 발급
 operation::auth-controller-test/get-test-token[]
-
-[[test-api-create]]
-=== Create a test
-operation::test-controller-test/create[]
-
-[[test-api-findById]]
-=== Find a test by ID
-operation::test-controller-test/find-by-id[snippets='curl-request,http-request,http-response,httpie-request,path-parameters,request-headers,response-body,response-fields']
-
-[[test-api-findByTitle]]
-
-[[test-api-findAll]]
-=== Find all
-operation::test-controller-test/find-all[]
-
-[[test-api-update]]
-=== Update
-operation::test-controller-test/update[]
-
-[[test-api-delete]]
-=== Delete
-operation::test-controller-test/delete[]
-
-[[test-api-enum]]
-=== enums
-operation::test-controller-test/enum-test[]
