@@ -1,14 +1,10 @@
 package com.depromeet.domains.store.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.depromeet.domains.category.repository.CategoryRepository;
-import com.depromeet.domains.store.entity.StoreMeta;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -16,17 +12,15 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 
 import com.depromeet.common.exception.CustomException;
 import com.depromeet.common.exception.Result;
 import com.depromeet.domains.category.entity.Category;
+import com.depromeet.domains.category.repository.CategoryRepository;
 import com.depromeet.domains.review.entity.Review;
 import com.depromeet.domains.review.repository.ReviewRepository;
-import com.depromeet.domains.store.dto.StoreLocationDto;
 import com.depromeet.domains.store.dto.request.NewStoreRequest;
 import com.depromeet.domains.store.dto.request.ReviewRequest;
-import com.depromeet.domains.store.dto.request.StoreLocationRangeRequest;
 import com.depromeet.domains.store.dto.response.ReviewAddResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
@@ -37,7 +31,9 @@ import com.depromeet.domains.store.entity.StoreMeta;
 import com.depromeet.domains.store.repository.StoreMetaRepository;
 import com.depromeet.domains.store.repository.StoreRepository;
 import com.depromeet.domains.user.entity.User;
+import com.depromeet.enums.CategoryType;
 import com.depromeet.enums.ReviewType;
+import com.depromeet.enums.ViewLevel;
 
 import lombok.RequiredArgsConstructor;
 
@@ -150,87 +146,64 @@ public class StoreService {
 	}
 
 	@Transactional(readOnly = true)
-	public StoreLocationRangeResponse getRangeStores(StoreLocationRangeRequest location1,
-		StoreLocationRangeRequest location2, Long userId) {
+	public StoreLocationRangeResponse getRangeStores(Double latitude1, Double longitude1, Double latitude2,
+		Double longitude2, Integer level, Optional<CategoryType> categoryType, User user) {
 
-		// Double maxLatitude = Double.max(location1.getLatitude(), location2.getLatitude());
-		// Double minLatitude = Double.min(location1.getLatitude(), location2.getLatitude());
-		// Double maxLongitude = Double.max(location1.getLongitude(), location2.getLongitude());
-		// Double minLongitude = Double.min(location1.getLongitude(), location2.getLongitude());
-		//
-		// // 특정 위, 경도 범위 안에 있는 식당 정보 + 해당 user의 북마크 여부
-		// List<Object[]> locationRangesQueryResult =
-		// 	storeRepository.findByLocationRangesWithIsBookmark(maxLatitude, minLatitude, maxLongitude, minLongitude,
-		// 		userId);
-		//
-		// List<StoreLocationDto> locationWithIsBookmarkList = convertToStoreLocationDto(locationRangesQueryResult);
-		//
-		// List<Long> storeIdListWithinRanges = locationWithIsBookmarkList.stream()
-		// 	.map(StoreLocationDto::getStoreId)
-		// 	.collect(Collectors.toList());
-		//
-		// // 위에서 조회한 식당들의 재방문한 사람들의 수
-		// List<Object[]> storesWithRevisitedNumberQueryResult = storeRepository.findByStoresWithNumberOfRevisitedUser(
-		// 	storeIdListWithinRanges);
-		//
-		// return makeStoreLocationRangeResponse(locationWithIsBookmarkList,
-		// 	convertToRevisitedNumberMap(storesWithRevisitedNumberQueryResult));
-		return null;
+		List<Store> bookMarkStoreList = this.storeRepository.findByUsersBookMarkList(user.getUserId());
+		List<Long> bookMarkStoreIdList = storeToIdList(bookMarkStoreList);
+
+		double maxLatitude = Double.max(latitude1, latitude2);
+		double minLatitude = Double.min(latitude1, latitude2);
+		double maxLongitude = Double.max(longitude1, longitude2);
+		double minLongitude = Double.min(longitude1, longitude2);
+
+		ViewLevel viewLevel = ViewLevel.findByLevel(level);
+		CategoryType type = categoryType.isEmpty() ?
+			null : CategoryType.findByType(categoryType.get().getType());
+
+		List<Store> storeList = this.storeRepository.findByLocationRangesWithCategory(
+			maxLatitude, minLatitude, maxLongitude, minLongitude, type, bookMarkStoreIdList);
+
+		int viewStoreListCount = calculateViewStoreListRatio(storeList.size(), viewLevel.getRatio());
+
+		return toStoreLocationRangeResponse(bookMarkStoreList, storeList.subList(0, viewStoreListCount));
 	}
 
-	private StoreLocationRangeResponse makeStoreLocationRangeResponse(List<StoreLocationDto> locationWithIsBookmarkList,
-		Map<Long, Integer> revisitedNumberMap) {
-
-		List<StoreLocationRangeResponse.LocationRangeResponse> result = locationWithIsBookmarkList.stream()
-			.map(row -> StoreLocationRangeResponse.LocationRangeResponse.of(
-				row.getStoreId(),
-				row.getStoreName(),
-				row.getLongitude(),
-				row.getLatitude(),
-				row.isBookMarked(),
-				revisitedNumberMap.get(row.getStoreId()))).collect(Collectors.toList());
-
-		return StoreLocationRangeResponse.of(result);
+	private int calculateViewStoreListRatio(int listSize, double ratio) {
+		return (int)Math.round(listSize * ratio);
 	}
 
-	private Map<Long, Integer> convertToRevisitedNumberMap(List<Object[]> storesWithRevisitedNumberQueryResult) {
-		Map<Long, Integer> revisitedNumberMap = new HashMap<>();
-
-		if (!ObjectUtils.isEmpty(storesWithRevisitedNumberQueryResult)) {
-			storesWithRevisitedNumberQueryResult.stream()
-				.forEach(row -> {
-						Long storeId = (Long)row[0];
-						int numberOfRevisitedUser = Integer.parseInt(String.valueOf(row[2]));
-
-						revisitedNumberMap.put(storeId, numberOfRevisitedUser);
-					}
-				);
-		}
-
-		return revisitedNumberMap;
+	private List<Long> storeToIdList(List<Store> storeList) {
+		return storeList.stream()
+			.map(store -> store.getStoreId())
+			.collect(Collectors.toList());
 	}
 
-	private List<StoreLocationDto> convertToStoreLocationDto(List<Object[]> nativeQueryResult) {
-		List<StoreLocationDto> result = new ArrayList<>();
-		if (!ObjectUtils.isEmpty(nativeQueryResult)) {
-			result = nativeQueryResult.stream()
-				.map(row -> {
-					Long storeId = (Long)row[0];
-					String storeName = (String)row[1];
-					Double latitude = (Double)row[2];
-					Double longitude = (Double)row[3];
-					Long isBookMarkedLongVal = (Long)row[4];
-					boolean isBookmarkedBoolean = false;
-					if (!ObjectUtils.isEmpty(isBookMarkedLongVal) && isBookMarkedLongVal.equals(1L)) {
-						isBookmarkedBoolean = true;
-					}
+	private StoreLocationRangeResponse toStoreLocationRangeResponse(List<Store> bookMarkStoreList,
+		List<Store> locationStoreList) {
 
-					return StoreLocationDto.of(storeId, storeName, latitude, longitude, isBookmarkedBoolean);
-				})
-				.collect(Collectors.toList());
-		}
+		return StoreLocationRangeResponse.builder()
+			.bookMarkList(toStoreLocationRange(bookMarkStoreList))
+			.locationStoreList(toStoreLocationRange(locationStoreList))
+			.build();
+	}
 
-		return result;
+	private List<StoreLocationRangeResponse.StoreLocationRange> toStoreLocationRange(List<Store> storeList) {
+		return storeList.stream()
+			.map(store ->
+				StoreLocationRangeResponse.StoreLocationRange.of(
+					store.getStoreId(),
+					store.getKakaoStoreId(),
+					store.getStoreName(),
+					store.getCategory().getCategoryId(),
+					store.getCategory().getCategoryName(),
+					store.getCategory().getCategoryName(),
+					store.getAddress(),
+					store.getLocation().getLongitude(),
+					store.getLocation().getLatitude(),
+					store.getStoreMeta().getTotalRevisitedCount(),
+					store.getStoreMeta().getTotalReviewCount()))
+			.collect(Collectors.toList());
 	}
 
 	@Transactional

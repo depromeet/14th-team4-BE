@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -28,9 +29,12 @@ import com.depromeet.document.RestDocsTestSupport;
 import com.depromeet.domains.store.dto.request.NewStoreRequest;
 import com.depromeet.domains.store.dto.request.ReviewRequest;
 import com.depromeet.domains.store.dto.response.ReviewAddResponse;
+import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
+import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse.StoreLocationRange;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
 import com.depromeet.domains.store.dto.response.StoreReportResponse;
 import com.depromeet.domains.store.dto.response.StoreReviewResponse;
+import com.depromeet.enums.CategoryType;
 import com.depromeet.enums.ReviewType;
 
 @AutoConfigureMockMvc
@@ -352,6 +356,188 @@ class StoreControllerTest extends RestDocsTestSupport {
 				)
 			)
 		;
+	}
+
+	@Test
+	@DisplayName("맵의 위경도 내 식당들 정보 조회")
+	public void getLocationRangeStores() throws Exception {
+
+		Double latitude1 = 30.11111;
+		Double longitude1 = 120.0000;
+		Double latitude2 = 60.11111;
+		Double longitude2 = 140.0000;
+		int level = 4;
+		CategoryType type = CategoryType.CAFE;
+		Long userId = 1L; // userId 로 하면 null
+
+		//given
+		StoreLocationRange storeLocationRange1 = StoreLocationRange.builder()
+			.storeId(1L)
+			.kakaoStoreId(2L)
+			.storeName("칠기마라탕1")
+			.categoryId(1L)
+			.categoryName("한식")
+			.categoryType("KOREAN")
+			.address("서울특별시 1")
+			.longitude(127.239487)
+			.latitude(37.29472)
+			.totalRevisitedCount(1L)
+			.totalReviewCount(1L)
+			.build();
+
+		StoreLocationRange storeLocationRange2 = StoreLocationRange.builder()
+			.storeId(2L)
+			.kakaoStoreId(2L)
+			.storeName("칠기마라탕2")
+			.categoryId(1L)
+			.categoryName("중식")
+			.categoryType("CHINESE")
+			.address("서울특별시 2")
+			.longitude(127.239487)
+			.latitude(37.29472)
+			.totalRevisitedCount(1L)
+			.totalReviewCount(1L)
+			.build();
+
+		StoreLocationRange storeLocationRange3 = StoreLocationRange.builder()
+			.storeId(3L)
+			.kakaoStoreId(3L)
+			.storeName("칠기마라탕3")
+			.categoryId(1L)
+			.categoryName("일식")
+			.categoryType("JAPANESE")
+			.address("서울특별시 3")
+			.longitude(127.239487)
+			.latitude(37.29472)
+			.totalRevisitedCount(1L)
+			.totalReviewCount(1L)
+			.build();
+
+		StoreLocationRange storeLocationRange4 = StoreLocationRange.builder()
+			.storeId(4L)
+			.kakaoStoreId(4L)
+			.storeName("칠기마라탕4")
+			.categoryId(1L)
+			.categoryName("양식")
+			.categoryType("WESTERN")
+			.address("서울특별시 4")
+			.longitude(127.239487)
+			.latitude(37.29472)
+			.totalRevisitedCount(1L)
+			.totalReviewCount(1L)
+			.build();
+
+		List<StoreLocationRange> bookMarkList = Arrays.asList(storeLocationRange1, storeLocationRange2);
+		List<StoreLocationRange> locationRangeList = Arrays.asList(storeLocationRange3, storeLocationRange4);
+
+		StoreLocationRangeResponse storeLocationRangeResponse =
+			StoreLocationRangeResponse.of(bookMarkList, locationRangeList);
+
+		given(storeService.getRangeStores(eq(latitude1), eq(longitude1), eq(latitude2)
+			, eq(longitude2), eq(level), eq(java.util.Optional.ofNullable(type)), any()))
+			.willReturn(storeLocationRangeResponse);
+
+		// when
+		mockMvc.perform(
+				get("/api/v1/stores/location-range")
+					.contentType(MediaType.APPLICATION_JSON)
+					// .with(csrf())
+					.header("Authorization", "Bearer accessToken")
+					.param("latitude1", String.valueOf(latitude1))
+					.param("longitude1", String.valueOf(longitude1))
+					.param("latitude2", String.valueOf(latitude2))
+					.param("longitude2", String.valueOf(longitude2))
+					.param("level", String.valueOf(level))
+					.param("type", String.valueOf(type.getType())))
+			.andExpect(status().isOk())
+			.andDo(
+				restDocs.document(
+					requestHeaders(
+						headerWithName("Authorization").description("accessToken")
+					),
+					queryParameters(
+						parameterWithName("latitude1").description("첫번째 위도"),
+						parameterWithName("longitude1").description("두번째 경도"),
+						parameterWithName("latitude2").description("두번째 위도"),
+						parameterWithName("longitude2").description("두번째 경도"),
+						parameterWithName("level").description("확대/축소 레벨"),
+						parameterWithName("type").description("식당 카테고리(optional) - "
+								+ "\nKOREAN(한식)"
+								+ "\nCHINESE(중식)"
+								+ "\nJAPANESE(일식)"
+								+ "\nWESTERN(양식)"
+								+ "\nCAFE(카페,디저트)"
+								+ "\nBARS(술집)"
+								+ "\nSCHOOLFOOD(분식)")
+							.optional()
+					),
+					responseFields(
+						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
+						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+						// bookMarkList
+						fieldWithPath("data.bookMarkList[]").type(JsonFieldType.ARRAY).description("북마크한 식당 목록"),
+						fieldWithPath("data.bookMarkList[].storeId").type(JsonFieldType.NUMBER)
+							.description("우리 DB상 음식점 ID"),
+						fieldWithPath("data.bookMarkList[].kakaoStoreId").type(JsonFieldType.NUMBER)
+							.description("카카오 DB상 음식점 ID"),
+						fieldWithPath("data.bookMarkList[].storeName").type(JsonFieldType.STRING).description("음식점 명"),
+						fieldWithPath("data.bookMarkList[].categoryId").type(JsonFieldType.NUMBER)
+							.description("음식점 카테고리 ID"),
+						fieldWithPath("data.bookMarkList[].categoryName").type(JsonFieldType.STRING)
+							.description("음식점 카테고리 명"),
+						fieldWithPath("data.bookMarkList[].categoryType").type(JsonFieldType.STRING)
+							.description("음식점 카테고리 타입"
+								+ "\nKOREAN(한식)"
+								+ "\nCHINESE(중식)"
+								+ "\nJAPANESE(일식)"
+								+ "\nWESTERN(양식)"
+								+ "\nCAFE(카페,디저트)"
+								+ "\nBARS(술집)"
+								+ "\nSCHOOLFOOD(분식)"
+								+ "\nETC(기타)"),
+						fieldWithPath("data.bookMarkList[].address").type(JsonFieldType.STRING).description("음식점 주소"),
+						fieldWithPath("data.bookMarkList[].longitude").type(JsonFieldType.NUMBER).description("음식점 위도"),
+						fieldWithPath("data.bookMarkList[].latitude").type(JsonFieldType.NUMBER).description("음식점 경도"),
+						fieldWithPath("data.bookMarkList[].totalRevisitedCount").type(JsonFieldType.NUMBER)
+							.description("재방문한 인원수 (N명 재방문)"),
+						fieldWithPath("data.bookMarkList[].totalReviewCount").type(JsonFieldType.NUMBER)
+							.description("총 리뷰 갯수"),
+						// locationStoreList
+						fieldWithPath("data.locationStoreList[]").type(JsonFieldType.ARRAY)
+							.description("요청한 위경도 내 식당 목록"),
+						fieldWithPath("data.locationStoreList[].storeId").type(JsonFieldType.NUMBER)
+							.description("우리 DB상 음식점 ID"),
+						fieldWithPath("data.locationStoreList[].kakaoStoreId").type(JsonFieldType.NUMBER)
+							.description("카카오 DB상 음식점 ID"),
+						fieldWithPath("data.locationStoreList[].storeName").type(JsonFieldType.STRING)
+							.description("음식점 명"),
+						fieldWithPath("data.locationStoreList[].categoryId").type(JsonFieldType.NUMBER)
+							.description("음식점 카테고리 ID"),
+						fieldWithPath("data.locationStoreList[].categoryName").type(JsonFieldType.STRING)
+							.description("음식점 카테고리 명"),
+						fieldWithPath("data.locationStoreList[].categoryType").type(JsonFieldType.STRING)
+							.description("음식점 카테고리 타입"
+								+ "\nKOREAN(한식)"
+								+ "\nCHINESE(중식)"
+								+ "\nJAPANESE(일식)"
+								+ "\nWESTERN(양식)"
+								+ "\nCAFE(카페,디저트)"
+								+ "\nBARS(술집)"
+								+ "\nSCHOOLFOOD(분식)"
+								+ "\nETC(기타)"),
+						fieldWithPath("data.locationStoreList[].address").type(JsonFieldType.STRING)
+							.description("음식점 주소"),
+						fieldWithPath("data.locationStoreList[].longitude").type(JsonFieldType.NUMBER)
+							.description("음식점 위도"),
+						fieldWithPath("data.locationStoreList[].latitude").type(JsonFieldType.NUMBER)
+							.description("음식점 경도"),
+						fieldWithPath("data.locationStoreList[].totalRevisitedCount").type(JsonFieldType.NUMBER)
+							.description("재방문한 인원수 (N명 재방문)"),
+						fieldWithPath("data.locationStoreList[].totalReviewCount").type(JsonFieldType.NUMBER)
+							.description("총 리뷰 갯수")
+					)
+				)
+			);
 	}
 
 }
