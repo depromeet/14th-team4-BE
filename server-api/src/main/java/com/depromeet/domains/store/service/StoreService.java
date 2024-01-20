@@ -103,7 +103,7 @@ public class StoreService {
 
 		Integer size = 10;
 		Sort sort = Sort.by(Sort.Direction.DESC, "visitedAt");
-		PageRequest.of(pageable.getPageNumber(), size, sort);
+		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), size, sort);
 
 		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 
@@ -120,7 +120,7 @@ public class StoreService {
 		List<StoreReviewResponse> storeReviewResponse = getStoreReviewResponses(user, reviews);
 
 		// Slice 객체 생성
-		return new SliceImpl<>(storeReviewResponse, pageable, storeReviewResponse.size() == pageable.getPageSize());
+		return new SliceImpl<>(storeReviewResponse, pageRequest, storeReviewResponse.size() == pageable.getPageSize());
 	}
 
 	private static List<StoreReviewResponse> getStoreReviewResponses(User user, List<Review> reviews) {
