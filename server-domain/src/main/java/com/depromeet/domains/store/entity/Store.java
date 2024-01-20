@@ -38,6 +38,7 @@ public class Store extends BaseTimeEntity {
 
 	private String address;
 
+	@Column(length = 5000)
 	private String thumbnailUrl;
 
 	private Long kakaoStoreId;

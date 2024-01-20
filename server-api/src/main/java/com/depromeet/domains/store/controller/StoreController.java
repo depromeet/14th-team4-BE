@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.depromeet.annotation.AuthUser;
 import com.depromeet.common.exception.CustomResponseEntity;
@@ -72,10 +73,11 @@ public class StoreController {
 		return CustomResponseEntity.created(storeService.createStoreReview(user, reviewRequest));
 	}
 
-	//    @DeleteMapping("/stores/{storeId}/reviews/{reviewId}")
-	//    public CustomResponseEntity<Void> deleteStoreReview(@AuthUser User user, @PathVariable Long storeId,
-	//            @PathVariable Long reviewId) {
-	//        storeService.deleteStoreReview(user, storeId, reviewId);
-	//        return CustomResponseEntity.success();
-	//    }
+	// 리뷰 삭제
+	@DeleteMapping("/reviews/{reviewId}")
+    public CustomResponseEntity<Void> deleteStoreReview(@AuthUser User user,
+            @PathVariable Long reviewId) {
+        storeService.deleteStoreReview(user, reviewId);
+        return CustomResponseEntity.success();
+    }
 }

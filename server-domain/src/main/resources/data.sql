@@ -32,36 +32,49 @@ VALUES (1, 1, '맛집1', 37.3665, 123.9780, '서울특별시 중구 세종대로
 
 
 INSERT INTO Review (store_id, user_id, rating, visitedAt, imageUrl, visitTimes, description, createdAt)
-VALUES (1, 1, 4, '2022-01-01T12:00:00', 'http://example.com/image1.jpg', 1, '맛있었어요', '2022-01-01T12:00:00');
+VALUES (1, 1, 4, '2022-01-01T12:00:00', 'http://example.com/image1.jpg', 1, '맛있었어요1', '2022-01-01T12:00:00');
 INSERT INTO Review (store_id, user_id, rating, visitedAt, imageUrl, visitTimes, description, createdAt)
-VALUES (1, 1, 5, '2022-01-01T13:00:00', 'http://example.com/image2.jpg', 2, '맛있었어요', '2022-01-01T13:00:00');
+VALUES (1, 1, 5, '2022-01-01T13:00:00', 'http://example.com/image2.jpg', 2, '맛있었어요2', '2022-01-01T13:00:00');
 INSERT INTO Review (store_id, user_id, rating, visitedAt, imageUrl, visitTimes, description, createdAt)
-VALUES (1, 1, 3, '2022-01-01T14:00:00', 'http://example.com/image3.jpg', 3, '맛있었어요', '2022-01-01T14:00:00');
+VALUES (1, 1, 3, '2022-01-01T14:00:00', 'http://example.com/image3.jpg', 3, '맛있었어요3', '2022-01-01T14:00:00');
 INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
 VALUES (1, 2, 4, '2022-01-04T13:00:00', 1, '괜찮았어요1', now());
 INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
 VALUES (1, 2, 4, '2022-01-05T13:00:00', 2, '괜찮았어2', now());
 INSERT INTO Review (store_id, user_id, rating, visitedAt, imageUrl, visitTimes, description, createdAt)
-VALUES (1, 3, 3, '2022-01-01T12:00:00', 'http://example.com/image3.jpg', 1, '맛있었어요', '2022-01-01T17:00:00');
+VALUES (1, 3, 3, '2022-01-01T12:00:00', 'http://example.com/image3.jpg', 1, '맛있었어요4', '2022-01-01T17:00:00');
 INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
-VALUES (2, 1, 3, '2022-01-02T13:00:00', 1, '괜찮았어요', '2022-01-01T13:00:00');
+VALUES (2, 1, 3, '2022-01-02T13:00:00', 1, '괜찮았어요3', '2022-01-01T13:00:00');
 INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
-VALUES (2, 3, 2, '2022-01-02T13:00:00', 1, '괜찮았어요', '2022-01-01T15:00:00');
+VALUES (2, 3, 2, '2022-01-02T13:00:00', 1, '괜찮았어요4', '2022-01-01T15:00:00');
 INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
-VALUES (2, 3, 4, '2022-01-02T14:00:00', 2, '괜찮았어요', '2022-01-01T12:00:00');
+VALUES (2, 3, 4, '2022-01-02T14:00:00', 2, '괜찮았어요5', '2022-01-01T12:00:00');
 INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
-VALUES (3, 1, 4, '2022-01-02T13:00:00', 1, '괜찮았어요', '2022-01-01T12:00:00');
+VALUES (3, 1, 4, '2022-01-02T13:00:00', 1, '괜찮았어요6', '2022-01-01T12:00:00');
 INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
-VALUES (3, 2, 4, '2022-01-02T13:00:00', 1, '괜찮았어요', '2022-01-01T12:00:00');
+VALUES (3, 2, 4, '2022-01-02T13:00:00', 1, '괜찮았어요7', '2022-01-01T12:00:00');
 INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
 VALUES (4, 3, 4, '2022-01-02T13:00:00', 1, '요 식당 괜찮았어요1', now());
 INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
 VALUES (4, 3, 4, '2022-01-02T14:00:00', 2, '요 식당 괜찮았어요2', now());
 INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
-VALUES (4, 4, 4, '2022-01-03T13:00:00', 1, '진짜 맛있어요', now());
+VALUES (4, 4, 4, '2022-01-03T13:00:00', 1, '진짜 맛있어요11', now());
+INSERT INTO Review (store_id, user_id, rating, visitedAt, imageUrl, visitTimes, description, createdAt)
+VALUES (1, 1, 4, '2022-01-01T12:00:00', 'http://example.com/image1.jpg', 1, '맛있었어요12222', '2022-01-01T12:00:00');
+INSERT INTO Review (store_id, user_id, rating, visitedAt, imageUrl, visitTimes, description, createdAt)
+VALUES (1, 1, 5, '2022-01-01T13:00:00', 'http://example.com/image2.jpg', 2, '맛있었어요233333', '2022-01-01T13:00:00');
+INSERT INTO Review (store_id, user_id, rating, visitedAt, imageUrl, visitTimes, description, createdAt)
+VALUES (1, 1, 3, '2022-01-01T14:00:00', 'http://example.com/image3.jpg', 3, '맛있었어요344444', '2022-01-01T14:00:00');
+INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
+VALUES (1, 2, 4, '2022-01-04T13:00:00', 1, '괜찮았어요111111', now());
+INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
+VALUES (1, 2, 4, '2022-01-05T13:00:00', 2, '괜찮았어233333', now());
+INSERT INTO Review (store_id, user_id, rating, visitedAt, imageUrl, visitTimes, description, createdAt)
+VALUES (1, 3, 3, '2022-01-01T12:00:00', 'http://example.com/image3.jpg', 1, '맛있었어요4666666', '2022-01-01T17:00:00');
+
 
 INSERT INTO Review (store_id, user_id, rating, visitedAt, imageUrl, visitTimes, description, createdAt)
-VALUES (1, 1, 5, '2022-01-01T12:00:00', 'http://example.com/image2.jpg', 1, '맛있었어요', '2022-01-01T11:00:00');
+VALUES (1, 1, 5, '2022-01-01T12:00:00', 'http://example.com/image2.jpg', 1, '맛있었어요121', '2022-01-01T11:00:00');
 
 INSERT INTO Bookmark (user_id, store_id, isDeleted, createdAt, updatedAt)
 VALUES (1, 1, 0, now(), now()),
@@ -74,7 +87,7 @@ VALUES (1, 1, 0, now(), now()),
        (4, 4, 0, now(), now());
 
 INSERT INTO Review (store_id, user_id, rating, visitedAt, imageUrl, visitTimes, description, createdAt)
-VALUES (1, 1, 3, '2022-01-01T12:00:00', 'http://example.com/image3.jpg', 1, '맛있었어요', '2022-01-01T17:00:00');
+VALUES (1, 1, 3, '2022-01-01T12:00:00', 'http://example.com/image3.jpg', 1, '맛있었어요13123', '2022-01-01T17:00:00');
 
 INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
-VALUES (2, 1, 4, '2022-01-02T13:00:00', 2, '괜찮았어요', '2022-01-01T12:00:00');
+VALUES (2, 1, 4, '2022-01-02T13:00:00', 2, '괜찮았어요124141', '2022-01-01T12:00:00');

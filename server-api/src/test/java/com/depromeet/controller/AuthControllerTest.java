@@ -5,6 +5,7 @@ import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -17,8 +18,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 
 import com.depromeet.auth.dto.TokenResponse;
 import com.depromeet.document.RestDocsTestSupport;
-import com.depromeet.domains.test.dto.request.TestRequest;
-
 import jakarta.servlet.http.Cookie;
 
 @AutoConfigureMockMvc
@@ -91,7 +90,33 @@ class AuthControllerTest extends RestDocsTestSupport {
 	}
 
 	@Test
-	void getTestTokenByUserId() {
+	void getTestToken() throws Exception {
+		// given
+		String accessToken = "access_token";
+		String refreshToken = "refresh_token";
+		Long userId = 1L;
+
+		given(jwtService.createAccessToken(userId)).willReturn(accessToken);
+		given(jwtService.createRefreshToken(userId)).willReturn(refreshToken);
+
+		// when
+		mockMvc.perform(
+				get("/api/v1/auth/access-token/{userId}",1L)
+					.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andDo(
+				restDocs.document(
+					pathParameters(
+						parameterWithName("userId").description("USER ID")
+					),
+					responseFields(
+						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
+						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+						fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("테스트용 accessToken"),
+						fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("테스트용 refreshToken")
+					)
+				)
+			);
 	}
 
 	@Test

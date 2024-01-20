@@ -17,9 +17,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 	private final JwtService jwtService;
 	private final CookieService cookieService;
@@ -38,8 +40,19 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 		Authentication authentication) throws IOException, ServletException {
 		HttpSession session = request.getSession(false);
-		String requestEnv = (String) session.getAttribute("request_env");
-		String redirectUrl = determineRedirectUrl(requestEnv);
+		// String requestEnv = (String) session.getAttribute("request_env")
+		log.debug("session in successhandler" + session);
+		String redirectUrl = "";
+		String requestEnv = (session != null) ? (String) session.getAttribute("request_env") : "local";
+		log.debug("requestEnv in successhandler" + requestEnv);
+
+		if (requestEnv == null) {
+			redirectUrl = frontLocalUrl;
+		} else if (requestEnv.equals("dev")) {
+			redirectUrl = frontDevUrl;
+		} else {
+			redirectUrl = frontLocalUrl;
+		}
 
 		CustomOAuth2User oAuth2User = (CustomOAuth2User)authentication.getPrincipal();
 		if (oAuth2User.getUserRole() == Role.GUEST) {
@@ -52,6 +65,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 			// response.addHeader("Set-Cookie", cookieService.createRefreshTokenCookie(refreshToken).toString());
 
 			String targetUrl = redirectUrl + "/terms" + "?accessToken=" +accessToken + "&refreshToken=" + refreshToken ;
+			log.debug(targetUrl);
 			response.sendRedirect(targetUrl);
 		} else {
 			loginSuccess(response, oAuth2User, redirectUrl);
