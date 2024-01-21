@@ -22,7 +22,7 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
 		+ " 	  AND s.location.longitude >= :minLongitude "
 		+ " 	  AND (s.category.categoryType = :categoryType or :categoryType is null) "
 		+ " 	  AND s.storeId NOT IN (:storeIdList) "
-		+ "    ORDER BY sm.totalReviewCount ")
+		+ "    ORDER BY sm.totalReviewCount DESC ")
 	List<Store> findByLocationRangesWithCategory(
 		@Param("maxLatitude") double maxLatitude,
 		@Param("minLatitude") double minLatitude,

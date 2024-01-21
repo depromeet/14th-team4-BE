@@ -125,8 +125,8 @@ public class StoreService {
 				// 현재 사용자가 리뷰 작성자와 동일한지 확인
 				Boolean isMine = review.getUser().getUserId().equals(user);
 				String imageUrl = "";
-				if (review.getImageUrl()!=null){
-					imageUrl=review.getImageUrl();
+				if (review.getImageUrl() != null) {
+					imageUrl = review.getImageUrl();
 				}
 				// 필요한 정보를 포함하여 StoreReviewResponse 객체 생성
 				return StoreReviewResponse.of(
@@ -161,12 +161,12 @@ public class StoreService {
 		CategoryType type = categoryType.isEmpty() ?
 			null : CategoryType.findByType(categoryType.get().getType());
 
-		List<Store> storeList = this.storeRepository.findByLocationRangesWithCategory(
+		List<Store> storeListWithCondition = this.storeRepository.findByLocationRangesWithCategory(
 			maxLatitude, minLatitude, maxLongitude, minLongitude, type, bookMarkStoreIdList);
 
-		int viewStoreListCount = calculateViewStoreListRatio(storeList.size(), viewLevel.getRatio());
+		int viewStoreListCount = calculateViewStoreListRatio(storeListWithCondition.size(), viewLevel.getRatio());
 
-		return toStoreLocationRangeResponse(bookMarkStoreList, storeList.subList(0, viewStoreListCount));
+		return toStoreLocationRangeResponse(bookMarkStoreList, storeListWithCondition.subList(0, viewStoreListCount));
 	}
 
 	private int calculateViewStoreListRatio(int listSize, double ratio) {
@@ -197,7 +197,7 @@ public class StoreService {
 					store.getStoreName(),
 					store.getCategory().getCategoryId(),
 					store.getCategory().getCategoryName(),
-					store.getCategory().getCategoryName(),
+					store.getCategory().getCategoryType().getName(),
 					store.getAddress(),
 					store.getLocation().getLongitude(),
 					store.getLocation().getLatitude(),
@@ -288,7 +288,8 @@ public class StoreService {
 	}
 
 	public void deleteStoreReview(User user, Long reviewId) {
-		Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_REVIEW));
+		Review review = reviewRepository.findById(reviewId)
+			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_REVIEW));
 
 		if (!review.getUser().getUserId().equals(user.getUserId())) {
 			throw new CustomException(Result.UNAUTHORIZED_USER);
@@ -301,7 +302,7 @@ public class StoreService {
 		Long myRevisitedCount = reviewRepository.countByStoreAndUser(store, user);
 
 		// 해당 음식점 최다 방문자인지 확인
-		if (storeMeta.getMostVisitedCount() ==  myRevisitedCount) {
+		if (storeMeta.getMostVisitedCount() == myRevisitedCount) {
 			// 촤다 방문자가 겹치는 경우에 몇명이나 최다 방문자가 있는지 확인
 			Long duplicateMostVisitedCount = reviewRepository.countByVisitTimes(myRevisitedCount);
 			if (duplicateMostVisitedCount > 1) { // 최다 방문자가 여러명인 경우
@@ -312,8 +313,7 @@ public class StoreService {
 					// 최다 방문자의 재방문 횟수는 그대로 유지, 재방문 인원의 수 1감소, 리뷰 개수 1감소, 별점 평균 재계산
 					storeMeta.deletedReviewFromVisitedTwoOrLessIfMostVisitorDuplicate(review.getRating());
 				}
-			}
-			else { // 최다 방문자가 나 혼자인 경우
+			} else { // 최다 방문자가 나 혼자인 경우
 				if (myRevisitedCount >= 3) { // 내가 쓴 리뷰의 개수가 3개 이상이면
 					// 최다 방문자의 재방문 횟수는 1 감소, 재방문 인원의 수도 유지, 리뷰 개수 1감소, 별점 평균 재계산
 					storeMeta.deleteReviewFromVisitedThreeOrMoreIfMostVisitorMe(review.getRating());
@@ -322,17 +322,15 @@ public class StoreService {
 					storeMeta.deletedReviewFromVisitedTwoOrLessIfMostVisitorMe(review.getRating());
 				}
 			}
-		}
-		else{ // 최다 방문자가 아닌 경우
-				if (myRevisitedCount>=3){ // 내가 쓴 리뷰의 개수가 3개 이상이면
-					// 재방문 인원의 수는 유지, 리뷰 개수 1감소, 별점 평균 재계산
-					storeMeta.deleteReviewFromVisitedThreeOrMore(review.getRating());
-				}
-				else {// 내가 쓴 리뷰의 개수가 2개 이하인 경우
-					// 재방문 인원의 수, 리뷰 개수 모두 1 감소, 별점 평균 재계산
-					storeMeta.deleteReviewFromVisitedTwoOrLess(review.getRating());
-				}
+		} else { // 최다 방문자가 아닌 경우
+			if (myRevisitedCount >= 3) { // 내가 쓴 리뷰의 개수가 3개 이상이면
+				// 재방문 인원의 수는 유지, 리뷰 개수 1감소, 별점 평균 재계산
+				storeMeta.deleteReviewFromVisitedThreeOrMore(review.getRating());
+			} else {// 내가 쓴 리뷰의 개수가 2개 이하인 경우
+				// 재방문 인원의 수, 리뷰 개수 모두 1 감소, 별점 평균 재계산
+				storeMeta.deleteReviewFromVisitedTwoOrLess(review.getRating());
 			}
+		}
 		reviewRepository.delete(review);
 	}
 }
