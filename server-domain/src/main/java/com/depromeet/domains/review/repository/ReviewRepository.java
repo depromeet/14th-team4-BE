@@ -30,12 +30,12 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     // 재방문 리뷰만 조회
     @Query("SELECT r FROM Review r WHERE r.store = :store AND r.user IN " +
-            "(SELECT u FROM Review u WHERE u.store = :store GROUP BY u.user HAVING COUNT(u) >= 2) " +
+            "(SELECT u.user FROM Review u WHERE u.store = :store GROUP BY u.user HAVING COUNT(u) >= 2) " +
             "ORDER BY r.createdAt DESC")
-    List<Review> findRevisitedReviews(@Param("store") Store store);
+    Slice<Review> findRevisitedReviews(@Param("store") Store store, Pageable pageable);
 
     // 사진 리뷰만 조회
-    List<Review> findByImageUrlIsNotNullOrderByCreatedAtDesc();
+    Slice<Review> findByStoreAndImageUrlIsNotNullOrderByCreatedAtDesc(Store store, Pageable pageable);
 
     boolean existsByStoreAndUser(Store store, User user);
 
@@ -43,4 +43,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByStore(Store store);
 
     Long countByVisitTimes(Long visitTimes);
+
+    Slice<Review> findByStore(Store store, Pageable pageable);
+
 }

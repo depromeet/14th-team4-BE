@@ -97,53 +97,51 @@ public class StoreService {
 	public Slice<StoreReviewResponse> getStoreReview(User user, Long storeId, Optional<ReviewType> reviewType,
 		Pageable pageable) {
 
+		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
+
 		Integer size = 10;
 		Sort sort = Sort.by(Sort.Direction.DESC, "visitedAt");
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), size, sort);
 
-		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
-
-		List<Review> reviews = new ArrayList<>();
+		Slice<Review> reviews = null;
 		if (reviewType.isEmpty()) {
-			reviews = reviewRepository.findByStore(store);
+			reviews = reviewRepository.findByStore(store, pageRequest);
 		} else if (reviewType.get() == ReviewType.REVISITED) {
-			reviews = reviewRepository.findRevisitedReviews(store);
+			reviews = reviewRepository.findRevisitedReviews(store,pageRequest);
 		} else if (reviewType.get() == ReviewType.PHOTO) {
-			reviews = reviewRepository.findByImageUrlIsNotNullOrderByCreatedAtDesc();
+			reviews = reviewRepository.findByStoreAndImageUrlIsNotNullOrderByCreatedAtDesc(store, pageRequest);
 		}
 
 		// Review 객체를 StoreLogResponse DTO로 변환
-		List<StoreReviewResponse> storeReviewResponse = getStoreReviewResponses(user, reviews);
+		Slice<StoreReviewResponse> storeReviewResponse = getStoreReviewResponses(user, reviews);
 
 		// Slice 객체 생성
-		return new SliceImpl<>(storeReviewResponse, pageRequest, storeReviewResponse.size() == pageable.getPageSize());
-	}
-
-	private static List<StoreReviewResponse> getStoreReviewResponses(User user, List<Review> reviews) {
-		List<StoreReviewResponse> storeReviewResponse = reviews.stream()
-			.map(review -> {
-				// 현재 사용자가 리뷰 작성자와 동일한지 확인
-				Boolean isMine = review.getUser().getUserId().equals(user);
-				String imageUrl = "";
-				if (review.getImageUrl() != null) {
-					imageUrl = review.getImageUrl();
-				}
-				// 필요한 정보를 포함하여 StoreReviewResponse 객체 생성
-				return StoreReviewResponse.of(
-					review.getUser().getUserId(),
-					review.getReviewId(),
-					review.getUser().getNickName(),
-					review.getRating(),
-					imageUrl,
-					review.getVisitTimes(),
-					review.getVisitedAt(),
-					review.getDescription(),
-					isMine
-				);
-			})
-			.collect(Collectors.toList());
 		return storeReviewResponse;
 	}
+
+	private static Slice<StoreReviewResponse> getStoreReviewResponses(User user, Slice<Review> reviews) {
+		List<StoreReviewResponse> storeReviewResponseList = reviews.getContent().stream()
+				.map(review -> {
+					// 현재 사용자가 리뷰 작성자와 동일한지 확인
+					Boolean isMine = review.getUser().getUserId().equals(user.getUserId()); // 사용자 비교 로직 수정
+					String imageUrl = review.getImageUrl() != null ? review.getImageUrl() : "";
+					// 필요한 정보를 포함하여 StoreReviewResponse 객체 생성
+					return StoreReviewResponse.of(
+							review.getUser().getUserId(),
+							review.getReviewId(),
+							review.getUser().getNickName(),
+							review.getRating(),
+							imageUrl,
+							review.getVisitTimes(),
+							review.getVisitedAt(),
+							review.getDescription(),
+							isMine
+					);
+				})
+				.collect(Collectors.toList());
+		return new SliceImpl<>(storeReviewResponseList, reviews.getPageable(), reviews.hasNext());
+	}
+
 
 	@Transactional(readOnly = true)
 	public StoreLocationRangeResponse getRangeStores(Double latitude1, Double longitude1, Double latitude2,
