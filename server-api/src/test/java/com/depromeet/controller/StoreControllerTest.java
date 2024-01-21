@@ -192,15 +192,13 @@ class StoreControllerTest extends RestDocsTestSupport {
 					//                                .with(csrf())
 					.param("type", ReviewType.REVISITED.name())
 					.param("page", "0")
-					.param("size", "20")
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer accessToken"))
 			.andExpect(status().isOk())
 			.andDo(
 				restDocs.document(
 					queryParameters(
-						parameterWithName("page").description("페이지 번호 (1번 부터)"),
-						parameterWithName("size").description("페이지 사이즈"),
+						parameterWithName("page").description("페이지 번호 (0번 부터)"),
 						parameterWithName("type").description("리뷰 타입 - REVISITED, PHOTO").optional()
 					),
 					pathParameters(
