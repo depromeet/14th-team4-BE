@@ -10,11 +10,13 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.depromeet.auth.jwt.JwtAuthenticationFilter;
+import com.depromeet.auth.oauth2.handler.CustomAuthenticationRequestFilter;
 import com.depromeet.auth.oauth2.handler.CustomOAuth2FailureHandler;
 import com.depromeet.auth.oauth2.handler.CustomOAuth2SuccessHandler;
 import com.depromeet.auth.oauth2.service.CustomOAuth2UserService;
@@ -90,7 +92,7 @@ public class SecurityConfig {
 					.authenticationEntryPoint(jwtAuthenticationEntryPoint) // 401
 					.accessDeniedHandler(jwtAccessDeniedHandler) // 403
 			)
-			// .addFilterBefore(new CustomAuthenticationRequestFilter(), SecurityContextHolderFilter.class)
+			.addFilterBefore(new CustomAuthenticationRequestFilter(), SecurityContextHolderFilter.class)
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}

@@ -35,60 +35,36 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 	@Value("${jwt.access.expiration}")
 	private Long accessTokenExpirationPeriod;
 
+	private static final String REQUEST_ENV_ATTRIBUTE = "request_env";
+	private static final String AUTH_PATH = "/auth";
+	private static final String DEV_ENVIRONMENT = "dev";
+	private static final String LOCAL_ENVIRONMENT = "local";
+	private static final String IS_FIRST_PARAM = "isFirst";
+
+
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 		Authentication authentication) throws IOException, ServletException {
 		HttpSession session = request.getSession(false);
-		// String requestEnv = (String) session.getAttribute("request_env")
-		log.debug("session in successhandler" + session);
-		String redirectUrl = "";
-		String requestEnv = (session != null) ? (String) session.getAttribute("request_env") : "local";
-		log.debug("requestEnv in successhandler" + requestEnv);
+		String requestEnv = (session != null) ? (String) session.getAttribute(REQUEST_ENV_ATTRIBUTE) : LOCAL_ENVIRONMENT;
+		String redirectUrl = (DEV_ENVIRONMENT.equals(requestEnv)) ? frontDevUrl : frontLocalUrl;
 
-		if (requestEnv == null) {
-			redirectUrl = frontLocalUrl;
-		} else if (requestEnv.equals("dev")) {
-			redirectUrl = frontDevUrl;
-		} else {
-			redirectUrl = frontLocalUrl;
-		}
-
-		CustomOAuth2User oAuth2User = (CustomOAuth2User)authentication.getPrincipal();
-		if (oAuth2User.getUserRole() == Role.GUEST) {
-			String accessToken = jwtService.createAccessToken(oAuth2User.getUserId());
-			String refreshToken = jwtService.createRefreshToken(oAuth2User.getUserId());
-
-			response.addCookie(cookieService.createAccessTokenCookie(accessToken));
-			response.addCookie(cookieService.createRefreshTokenCookie(refreshToken));
-			// response.addHeader("Set-Cookie", cookieService.createAccessTokenCookie(accessToken).toString());
-			// response.addHeader("Set-Cookie", cookieService.createRefreshTokenCookie(refreshToken).toString());
-
-			String targetUrl = redirectUrl + "/terms" + "?accessToken=" +accessToken + "&refreshToken=" + refreshToken ;
-			log.debug(targetUrl);
-			response.sendRedirect(targetUrl);
-		} else {
-			loginSuccess(response, oAuth2User, redirectUrl);
-		}
+		CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+		handleUserAuthentication(response, oAuth2User, redirectUrl);
 	}
 
-	private String determineRedirectUrl(String requestEnv) {
-		return switch (requestEnv) {
-			case "dev" -> frontDevUrl;
-			case "local" -> frontLocalUrl;
-			default -> frontDevUrl; // Default URL
-		};
-	}
-
-	private void loginSuccess(HttpServletResponse response, CustomOAuth2User oAuth2User, String redirectUrl) throws IOException {
-
+	private void handleUserAuthentication(HttpServletResponse response, CustomOAuth2User oAuth2User, String redirectUrl) throws IOException {
 		String accessToken = jwtService.createAccessToken(oAuth2User.getUserId());
 		String refreshToken = jwtService.createRefreshToken(oAuth2User.getUserId());
 
-		// 응답 헤더에 쿠키 추가
-		response.addHeader("Set-Cookie", cookieService.createAccessTokenCookie(accessToken).toString());
-		response.addHeader("Set-Cookie", cookieService.createRefreshTokenCookie(refreshToken).toString());
-		String targetUrl = redirectUrl + "?accessToken=" +accessToken + "&refreshToken=" + refreshToken ;
+		response.addCookie(cookieService.createAccessTokenCookie(accessToken));
+		response.addCookie(cookieService.createRefreshTokenCookie(refreshToken));
+
+		String isFirstValue = oAuth2User.getUserRole() == Role.GUEST ? "True" : "False";
+		String targetUrl = String.format("%s%s?accessToken=%s&refreshToken=%s&%s=%s",
+			redirectUrl, AUTH_PATH, accessToken, refreshToken, IS_FIRST_PARAM, isFirstValue);
+
 		response.sendRedirect(targetUrl);
 	}
 }
