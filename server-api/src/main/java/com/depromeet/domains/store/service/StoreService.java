@@ -51,7 +51,7 @@ public class StoreService {
 	public StorePreviewResponse getStore(Long storeId, User user) {
 
 		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
-		List<Review> reviews = reviewRepository.findTop10ByStoreOrderByCreatedAtDesc(store);
+		List<Review> reviews = reviewRepository.findTop10ByStoreOrderByVisitedAtDesc(store);
 
 		ArrayList<String> reviewImageUrls = new ArrayList<>();
 		for (Review review : reviews) {
@@ -109,7 +109,7 @@ public class StoreService {
 		} else if (reviewType.get() == ReviewType.REVISITED) {
 			reviews = reviewRepository.findRevisitedReviews(store,pageRequest);
 		} else if (reviewType.get() == ReviewType.PHOTO) {
-			reviews = reviewRepository.findByStoreAndImageUrlIsNotNullOrderByCreatedAtDesc(store, pageRequest);
+			reviews = reviewRepository.findByStoreAndImageUrlIsNotNullOrderByVisitedAtDesc(store, pageRequest);
 		}
 
 		// Review 객체를 StoreLogResponse DTO로 변환
