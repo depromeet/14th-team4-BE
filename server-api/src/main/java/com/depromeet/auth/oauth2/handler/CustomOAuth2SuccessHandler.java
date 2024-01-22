@@ -39,6 +39,8 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 	private static final String AUTH_PATH = "/auth";
 	private static final String DEV_ENVIRONMENT = "dev";
 	private static final String LOCAL_ENVIRONMENT = "local";
+	private static final String IS_FIRST_PARAM = "isFirst";
+
 
 
 	@Override
@@ -59,7 +61,10 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 		response.addCookie(cookieService.createAccessTokenCookie(accessToken));
 		response.addCookie(cookieService.createRefreshTokenCookie(refreshToken));
 
-		String targetUrl = redirectUrl + AUTH_PATH + "?accessToken=" + accessToken + "&refreshToken=" + refreshToken;
+		String isFirstValue = oAuth2User.getUserRole() == Role.GUEST ? "True" : "False";
+		String targetUrl = String.format("%s%s?accessToken=%s&refreshToken=%s&%s=%s",
+			redirectUrl, AUTH_PATH, accessToken, refreshToken, IS_FIRST_PARAM, isFirstValue);
+
 		response.sendRedirect(targetUrl);
 	}
 }
