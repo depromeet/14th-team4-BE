@@ -12,24 +12,25 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class CustomAuthenticationRequestFilter extends OncePerRequestFilter {
+	private static final String OAUTH2_AUTHORIZATION_PREFIX = "/oauth2/authorization";
+	private static final String REQUEST_ENV_SESSION_ATTRIBUTE = "request_env";
+	private static final String DEFAULT_REQUEST_ENV = "dev";
+	private static final String ENV_QUERY_PARAM = "env";
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 
-		if (request.getRequestURI().startsWith("/oauth2/authorization")) {
+		if (request.getRequestURI().startsWith(OAUTH2_AUTHORIZATION_PREFIX)) {
 			String queryString = request.getQueryString();
-			log.debug("queryString = "+ queryString);
-			if (queryString != null) {
+
+			String requestEnv = DEFAULT_REQUEST_ENV;
+			if (queryString != null && queryString.startsWith(ENV_QUERY_PARAM + "=")) {
 				String[] keyValuePair = queryString.split("=");
-				String requestEnv = "dev";
-				if (keyValuePair[0].equals("env") && keyValuePair.length > 1) {
+				if (keyValuePair.length > 1) {
 					requestEnv = keyValuePair[1];
 				}
-				log.debug("requestEnv = "+ requestEnv);
-				request.getSession().setAttribute("request_env", requestEnv);
-			} else {
-				request.getSession().setAttribute("request_env", "dev");
 			}
+			request.getSession().setAttribute(REQUEST_ENV_SESSION_ATTRIBUTE, requestEnv);
 		}
 		filterChain.doFilter(request, response);
 	}
