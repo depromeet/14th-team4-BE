@@ -6,3 +6,10 @@ GET {{host}}/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&l
 #GET {{host}}/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1&type=KOREAN
 Content-Type: application/json;charset=UTF-8
 Authorization: Bearer {{token}}
+
+### 식당 상세 페이지에서 리뷰 조회(페이징)
+GET {{host}}/api/v1/stores/1/reviews?type=&page=1
+#GET {{host}}/api/v1/stores/1/reviews?type=REVISITED&page=1
+#GET {{host}}/api/v1/stores/1/reviews?type=PHOTO&page=1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer {{token}}
