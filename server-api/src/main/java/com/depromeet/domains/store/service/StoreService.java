@@ -1,5 +1,7 @@
 package com.depromeet.domains.store.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -337,5 +339,16 @@ public class StoreService {
 			}
 		}
 		reviewRepository.delete(review);
+	}
+
+	public boolean checkUserDailyStoreReviewLimit(User user, Long storeId) {
+		Store store = storeRepository.findById(storeId)
+			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
+
+		LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+		LocalDateTime endOfDay = LocalDate.now().atTime(23, 59, 59);
+
+		int reviewCount = reviewRepository.countStoreReviewByUserForDay(user, store, startOfDay, endOfDay);
+		return reviewCount < 3;
 	}
 }

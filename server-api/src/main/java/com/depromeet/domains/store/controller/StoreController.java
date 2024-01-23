@@ -74,6 +74,12 @@ public class StoreController {
 		return CustomResponseEntity.created(storeService.createStoreReview(user, reviewRequest));
 	}
 
+	@GetMapping("/stores/{storeId}/reviews/check-limit")
+	public CustomResponseEntity<Boolean> getUserDailyStoreReviewLimit(@AuthUser User user, @PathVariable Long storeId) {
+		boolean isAvailable = storeService.checkUserDailyStoreReviewLimit(user, storeId);
+		return CustomResponseEntity.success(isAvailable);
+	}
+
 	// 리뷰 삭제
 	@DeleteMapping("/reviews/{reviewId}")
     public CustomResponseEntity<Void> deleteStoreReview(@AuthUser User user,
