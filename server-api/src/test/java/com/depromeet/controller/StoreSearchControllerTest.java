@@ -40,7 +40,8 @@ public class StoreSearchControllerTest extends RestDocsTestSupport {
 		StoreSearchResult storeSearchResult1 = StoreSearchResult.builder()
 			.storeId(1L)
 			.storeName("티컵 스타필드 코엑스몰점")
-			.categoryName("카페")
+			.kakaoCategoryName("카페")
+			.categoryType("CAFE")
 			.address("서울 강남구 삼성동 159")
 			.distance(389)
 			.totalRevisitedCount(3L)
@@ -52,7 +53,8 @@ public class StoreSearchControllerTest extends RestDocsTestSupport {
 		StoreSearchResult storeSearchResult2 = StoreSearchResult.builder()
 			.storeId(2L)
 			.storeName("스타가든")
-			.categoryName("카페")
+			.kakaoCategoryName("간식")
+			.categoryType("ETC")
 			.address("서울 강남구 역삼동 737")
 			.distance(2810)
 			.totalRevisitedCount(0L)
@@ -107,8 +109,10 @@ public class StoreSearchControllerTest extends RestDocsTestSupport {
 							.description("우리 DB상 음식점 ID"),
 						fieldWithPath("data.storeSearchResult[].storeName").type(JsonFieldType.STRING)
 							.description("음식점 명"),
-						fieldWithPath("data.storeSearchResult[].categoryName").type(JsonFieldType.STRING)
-							.description("음식점 카테고리"),
+						fieldWithPath("data.storeSearchResult[].kakaoCategoryName").type(JsonFieldType.STRING)
+							.description("카카오 카테고리"),
+						fieldWithPath("data.storeSearchResult[].categoryType").type(JsonFieldType.STRING)
+							.description("카테고리 타입 - 또잇또잇 db 기준"),
 						fieldWithPath("data.storeSearchResult[].address").type(JsonFieldType.STRING)
 							.description("음식점 주소"),
 						fieldWithPath("data.storeSearchResult[].distance").type(JsonFieldType.NUMBER)
