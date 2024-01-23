@@ -28,6 +28,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import com.depromeet.document.RestDocsTestSupport;
 import com.depromeet.domains.store.dto.request.NewStoreRequest;
 import com.depromeet.domains.store.dto.request.ReviewRequest;
+import com.depromeet.domains.store.dto.response.ReviewAddLimitResponse;
 import com.depromeet.domains.store.dto.response.ReviewAddResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse.StoreLocationRange;
@@ -547,9 +548,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 	@Test
 	void getUserDailyStoreReviewLimit() throws Exception {
 		// given
-
-
-		given(storeService.checkUserDailyStoreReviewLimit(any(),eq(1L))).willReturn(true);
+		given(storeService.checkUserDailyStoreReviewLimit(any(),eq(1L))).willReturn(ReviewAddLimitResponse.of(false));
 
 		// when
 		mockMvc.perform(
@@ -569,7 +568,8 @@ class StoreControllerTest extends RestDocsTestSupport {
 					responseFields(
 						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
 						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
-						fieldWithPath("data").type(JsonFieldType.BOOLEAN).description("리뷰 작성 가능 여부 반환")
+						fieldWithPath("data").type(JsonFieldType.OBJECT).description("리뷰 작성 가능 여부 반환"),
+						fieldWithPath("data.isAvailable").type(JsonFieldType.BOOLEAN).description("리뷰 작성 가능 여부 반환 (작성가능 : true, 작성불가 : false)")
 					)
 				)
 			);
