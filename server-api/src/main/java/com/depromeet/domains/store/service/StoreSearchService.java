@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.depromeet.enums.CategoryType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -18,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.depromeet.domains.review.repository.ReviewRepository;
 import com.depromeet.domains.store.dto.response.StoreSearchResponse;
 import com.depromeet.domains.store.dto.response.StoreSearchResult;
 import com.depromeet.domains.store.entity.Store;
@@ -37,7 +37,6 @@ public class StoreSearchService {
 	private String kakaoRestApi;
 
 	private final StoreRepository storeRepository;
-	private final ReviewRepository reviewRepository;
 
 	@Transactional(readOnly = true)
 	public StoreSearchResponse searchStoreList(User user, String query, String x, String y, Optional<Integer> storePage,
@@ -129,14 +128,16 @@ public class StoreSearchService {
 				String storeName = doc.get("place_name").toString();
 				String address = doc.get("address_name").toString();
 				Long revisitedCount = 0L;
-				String categoryName = doc.get("category_name").toString();
-				String[] categories = categoryName.split(" > ");
-				String category ;
-				if (categories.length == 1){
-					category = categories[0];
+				String CategoryName = doc.get("category_name").toString();
+				String[] kakaoCategories = CategoryName.split(" > ");
+				String kakaoCategoryName ;
+				if (kakaoCategories.length == 1){
+					kakaoCategoryName = kakaoCategories[0];
 				}else{
-					category = categories[1];
+					kakaoCategoryName = kakaoCategories[1];
 				}
+
+				String categoryType = findByDescription(kakaoCategoryName);
 
 				// storeName + address 조합후 DB 검색시 존재하지 않으면 새로운 음식점이므로 revisitedCount = 0,
 				// 존재하면 revisitedCount = 해당 음식점의 revisitedCount
@@ -152,7 +153,8 @@ public class StoreSearchService {
 					storeId,
 					kakaoStoreId, // 카카오 스토어 ID
 					storeName,
-					category,
+					kakaoCategoryName,
+					categoryType,
 					address,
 					distance, // 숫자로 변환
 					revisitedCount,
@@ -160,5 +162,14 @@ public class StoreSearchService {
 					Double.parseDouble(doc.get("y").toString()));
 			})
 			.collect(Collectors.toList());
+	}
+
+	private String findByDescription(String categoryName) {
+		for (CategoryType type : CategoryType.values()) {
+			if (type.getDescription().equals(categoryName)) {
+				return type.getDescription();
+			}
+		}
+		return CategoryType.ETC.getDescription();
 	}
 }
