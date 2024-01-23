@@ -249,7 +249,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.rating(5)
 			.visitedAt("2024.01.10")
 			.imageUrl("https://exampleimageurl.com")
-			.description("맛있어요")
+			.description("진짜진짜진짜진짜맛있어요")
 			.build();
 
 		ReviewAddResponse reviewAddResponse = ReviewAddResponse.of(7L, 1L);
@@ -277,7 +277,9 @@ class StoreControllerTest extends RestDocsTestSupport {
 							.description("가게 이름"),
 						fieldWithPath("newStore.latitude").type(JsonFieldType.NUMBER).description("위도"),
 						fieldWithPath("newStore.longitude").type(JsonFieldType.NUMBER).description("경도"),
-						fieldWithPath("newStore.categoryId").type(JsonFieldType.NUMBER).description("카테고리 타입"),
+						fieldWithPath("newStore.categoryType").type(JsonFieldType.STRING).description("또잇 카테고리 타입 (KOREAN, JAPANESE, CHINESE, CAFE, WESTERN, BARS, ETC..)"),
+						fieldWithPath("newStore.kakaoStoreId").type(JsonFieldType.NUMBER).description("카카오 가게 고유 ID"),
+						fieldWithPath("newStore.kakaoCategoryName").type(JsonFieldType.STRING).description("카카오 카테고리 분류 기준 (빵집, 뷔페 등 카카오에서 내려오는 값 저장하기 위함)"),
 						fieldWithPath("newStore.address").type(JsonFieldType.STRING).description("가게 주소"),
 						fieldWithPath("rating").type(JsonFieldType.NUMBER).description("별점"),
 						fieldWithPath("visitedAt").type(JsonFieldType.STRING).description("방문 날짜"),
@@ -304,13 +306,15 @@ class StoreControllerTest extends RestDocsTestSupport {
 					.storeName("칠기마라탕")
 					.latitude(127.239487)
 					.longitude(37.29472)
-					.categoryId(1L)
+					.categoryType("KOREAN")
+					.kakaoStoreId(1234L)
+					.kakaoCategoryName("간식")
 					.address("서울시 강남구 역삼동 123-123")
 					.build())
 			.rating(5)
 			.visitedAt("2024.01.10")
 			.imageUrl("https://exampleimageurl.com")
-			.description("맛있어요")
+			.description("진짜진짜진짜진짜맛있어요")
 			.build();
 
 		ReviewAddResponse reviewAddResponse = ReviewAddResponse.of(7L, 3L);
@@ -338,7 +342,9 @@ class StoreControllerTest extends RestDocsTestSupport {
 							.description("가게 이름"),
 						fieldWithPath("newStore.latitude").type(JsonFieldType.NUMBER).description("위도"),
 						fieldWithPath("newStore.longitude").type(JsonFieldType.NUMBER).description("경도"),
-						fieldWithPath("newStore.categoryId").type(JsonFieldType.NUMBER).description("카테고리 타입"),
+						fieldWithPath("newStore.categoryType").type(JsonFieldType.STRING).description("또잇 카테고리 타입 (KOREAN, JAPANESE, CHINESE, CAFE, WESTERN, BARS, ETC..)"),
+						fieldWithPath("newStore.kakaoStoreId").type(JsonFieldType.NUMBER).description("카카오 가게 고유 ID"),
+						fieldWithPath("newStore.kakaoCategoryName").type(JsonFieldType.STRING).description("카카오 카테고리 분류 기준 (빵집, 뷔페 등 카카오에서 내려오는 값 저장하기 위함)"),
 						fieldWithPath("newStore.address").type(JsonFieldType.STRING).description("가게 주소"),
 						fieldWithPath("rating").type(JsonFieldType.NUMBER).description("별점"),
 						fieldWithPath("visitedAt").type(JsonFieldType.STRING).description("방문 날짜"),
