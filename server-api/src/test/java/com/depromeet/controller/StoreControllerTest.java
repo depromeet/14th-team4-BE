@@ -544,4 +544,35 @@ class StoreControllerTest extends RestDocsTestSupport {
 			);
 	}
 
+	@Test
+	void getUserDailyStoreReviewLimit() throws Exception {
+		// given
+
+
+		given(storeService.checkUserDailyStoreReviewLimit(any(),eq(1L))).willReturn(true);
+
+		// when
+		mockMvc.perform(
+				get("/api/v1/stores/{storeId}/reviews/check-limit", 1L)
+					.with(csrf())
+					.contentType(MediaType.APPLICATION_JSON)
+					.header("Authorization", "Bearer accessToken"))
+			.andExpect(status().isOk())
+			.andDo(
+				restDocs.document(
+					pathParameters(
+						parameterWithName("storeId").description("음식점 ID")
+					),
+					requestHeaders(
+						headerWithName("Authorization").description("accessToken")
+					),
+					responseFields(
+						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
+						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+						fieldWithPath("data").type(JsonFieldType.BOOLEAN).description("리뷰 작성 가능 여부 반환")
+					)
+				)
+			);
+	}
+
 }
