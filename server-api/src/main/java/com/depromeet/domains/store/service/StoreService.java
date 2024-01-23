@@ -223,8 +223,6 @@ public class StoreService {
 		storeRepository.save(store);
 		Review review = saveReview(user, store, reviewRequest);
 
-		// store.updateStoreSummary(reviewRequest.getRating());
-		store.updateThumbnailUrl(reviewRequest.getImageUrl());
 		return ReviewAddResponse.of(review.getReviewId(), store.getStoreId());
 	}
 
