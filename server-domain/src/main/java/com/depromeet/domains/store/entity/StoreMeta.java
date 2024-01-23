@@ -30,6 +30,9 @@ public class StoreMeta extends BaseTimeEntity {
     // 음식점 별점 평균
     private Float totalRating;
 
+    private String kakaoCategoryName;
+
+
     public void updateTotalRating(Integer newRating) {
         float newTotalRatingSum = this.totalRating * this.totalReviewCount + newRating;
         this.totalReviewCount++; // 리뷰 개수 증가

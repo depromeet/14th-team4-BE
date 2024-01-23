@@ -223,8 +223,6 @@ public class StoreService {
 		storeRepository.save(store);
 		Review review = saveReview(user, store, reviewRequest);
 
-		// store.updateStoreSummary(reviewRequest.getRating());
-		store.updateThumbnailUrl(reviewRequest.getImageUrl());
 		return ReviewAddResponse.of(review.getReviewId(), store.getStoreId());
 	}
 
@@ -259,6 +257,7 @@ public class StoreService {
 			.totalReviewCount(1L)
 			.mostVisitedCount(0L)
 			.totalRating(rating.floatValue())
+			.kakaoCategoryName(newStoreRequest.getKakaoCategoryName())
 			.build();
 
 		store.setStoreMeta(storeMeta);
@@ -267,8 +266,16 @@ public class StoreService {
 	}
 
 	private Store buildNewStore(NewStoreRequest newStoreRequest) {
-		Category category = categoryRepository.findById(newStoreRequest.getCategoryId())
+		CategoryType categoryType;
+
+		try {
+			categoryType = CategoryType.valueOf(newStoreRequest.getCategoryType().toUpperCase());
+		} catch (IllegalArgumentException e) {
+			throw new CustomException(Result.NOT_FOUND_CATEGORY);
+		}
+		Category category = categoryRepository.findByCategoryType(categoryType)
 			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_CATEGORY));
+
 		return newStoreRequest.toEntity(category);
 	}
 

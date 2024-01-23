@@ -26,6 +26,7 @@ import com.depromeet.domains.user.entity.User;
 import com.depromeet.enums.CategoryType;
 import com.depromeet.enums.ReviewType;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequestMapping("/api/v1")
@@ -68,7 +69,7 @@ public class StoreController {
 	}
 
 	@PostMapping("/stores/reviews")
-	public CustomResponseEntity<ReviewAddResponse> createStoreReview(@AuthUser User user, @RequestBody
+	public CustomResponseEntity<ReviewAddResponse> createStoreReview(@AuthUser User user, @Valid @RequestBody
 	ReviewRequest reviewRequest) {
 		return CustomResponseEntity.created(storeService.createStoreReview(user, reviewRequest));
 	}
