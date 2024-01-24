@@ -28,6 +28,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import com.depromeet.document.RestDocsTestSupport;
 import com.depromeet.domains.store.dto.request.NewStoreRequest;
 import com.depromeet.domains.store.dto.request.ReviewRequest;
+import com.depromeet.domains.store.dto.response.ReviewAddLimitResponse;
 import com.depromeet.domains.store.dto.response.ReviewAddResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse.StoreLocationRange;
@@ -539,6 +540,36 @@ class StoreControllerTest extends RestDocsTestSupport {
 							.description("재방문한 인원수 (N명 재방문)"),
 						fieldWithPath("data.locationStoreList[].totalReviewCount").type(JsonFieldType.NUMBER)
 							.description("총 리뷰 갯수")
+					)
+				)
+			);
+	}
+
+	@Test
+	void getUserDailyStoreReviewLimit() throws Exception {
+		// given
+		given(storeService.checkUserDailyStoreReviewLimit(any(),eq(1L))).willReturn(ReviewAddLimitResponse.of(false));
+
+		// when
+		mockMvc.perform(
+				get("/api/v1/stores/{storeId}/reviews/check-limit", 1L)
+					.with(csrf())
+					.contentType(MediaType.APPLICATION_JSON)
+					.header("Authorization", "Bearer accessToken"))
+			.andExpect(status().isOk())
+			.andDo(
+				restDocs.document(
+					pathParameters(
+						parameterWithName("storeId").description("음식점 ID")
+					),
+					requestHeaders(
+						headerWithName("Authorization").description("accessToken")
+					),
+					responseFields(
+						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
+						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+						fieldWithPath("data").type(JsonFieldType.OBJECT).description("리뷰 작성 가능 여부 반환"),
+						fieldWithPath("data.isAvailable").type(JsonFieldType.BOOLEAN).description("리뷰 작성 가능 여부 반환 (작성가능 : true, 작성불가 : false)")
 					)
 				)
 			);

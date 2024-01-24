@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import com.depromeet.annotation.AuthUser;
 import com.depromeet.common.exception.CustomResponseEntity;
 import com.depromeet.domains.store.dto.request.ReviewRequest;
+import com.depromeet.domains.store.dto.response.ReviewAddLimitResponse;
 import com.depromeet.domains.store.dto.response.ReviewAddResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
@@ -72,6 +73,11 @@ public class StoreController {
 	public CustomResponseEntity<ReviewAddResponse> createStoreReview(@AuthUser User user, @Valid @RequestBody
 	ReviewRequest reviewRequest) {
 		return CustomResponseEntity.created(storeService.createStoreReview(user, reviewRequest));
+	}
+
+	@GetMapping("/stores/{storeId}/reviews/check-limit")
+	public CustomResponseEntity<ReviewAddLimitResponse> getUserDailyStoreReviewLimit(@AuthUser User user, @PathVariable Long storeId) {
+		return CustomResponseEntity.success(storeService.checkUserDailyStoreReviewLimit(user, storeId));
 	}
 
 	// 리뷰 삭제
