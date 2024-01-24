@@ -120,6 +120,10 @@ operation::bookmark-controller-test/create-bookmark[]
 === 5.2 북마크 삭제
 operation::bookmark-controller-test/delete-bookmark[]
 
+[[get-location-range-stores]]
+=== 6. 지도에서 위,경도 내에 존재하는 식당정보 조회
+operation::store-controller-test/get-location-range-stores[]
+
 == User API
 
 === 1. 유저 닉네임 변경
