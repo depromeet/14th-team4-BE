@@ -17,7 +17,7 @@ public class CookieService {
 		Cookie cookie = new Cookie("accessToken", token);
 		int accessTokenExpirationInSeconds = (int)(accessTokenExpirationPeriod / 1000);
 		cookie.setMaxAge(accessTokenExpirationInSeconds);
-		cookie.setDomain(".ddoeat.site");
+		cookie.setDomain("ddoeat.site");
 		cookie.setPath("/");
 		cookie.setHttpOnly(true);
 		cookie.setSecure(true);
@@ -28,7 +28,7 @@ public class CookieService {
 		Cookie cookie = new Cookie("refreshToken", token);
 		int refreshTokenExpirationInSeconds = (int)(refreshTokenExpirationPeriod / 1000);
 		cookie.setMaxAge(refreshTokenExpirationInSeconds);
-		cookie.setDomain(".ddoeat.site");
+		cookie.setDomain("ddoeat.site");
 		cookie.setPath("/");
 		cookie.setHttpOnly(true);
 		cookie.setSecure(true);
