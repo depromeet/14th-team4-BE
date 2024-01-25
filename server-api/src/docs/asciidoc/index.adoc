@@ -124,6 +124,10 @@ operation::bookmark-controller-test/delete-bookmark[]
 === 6. 지도에서 위,경도 내에 존재하는 식당정보 조회
 operation::store-controller-test/get-location-range-stores[]
 
+[[get-user-daily-store-review-limit]]
+=== 7. 사용자 리뷰 작성 가능 여부 체크
+operation::store-controller-test/get-user-daily-store-review-limit[]
+
 == User API
 
 === 1. 유저 닉네임 변경
