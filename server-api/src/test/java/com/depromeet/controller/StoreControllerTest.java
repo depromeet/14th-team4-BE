@@ -278,9 +278,11 @@ class StoreControllerTest extends RestDocsTestSupport {
 							.description("가게 이름"),
 						fieldWithPath("newStore.latitude").type(JsonFieldType.NUMBER).description("위도"),
 						fieldWithPath("newStore.longitude").type(JsonFieldType.NUMBER).description("경도"),
-						fieldWithPath("newStore.categoryType").type(JsonFieldType.STRING).description("또잇 카테고리 타입 (KOREAN, JAPANESE, CHINESE, CAFE, WESTERN, BARS, ETC..)"),
+						fieldWithPath("newStore.categoryType").type(JsonFieldType.STRING)
+							.description("또잇 카테고리 타입 (KOREAN, JAPANESE, CHINESE, CAFE, WESTERN, BARS, ETC..)"),
 						fieldWithPath("newStore.kakaoStoreId").type(JsonFieldType.NUMBER).description("카카오 가게 고유 ID"),
-						fieldWithPath("newStore.kakaoCategoryName").type(JsonFieldType.STRING).description("카카오 카테고리 분류 기준 (빵집, 뷔페 등 카카오에서 내려오는 값 저장하기 위함)"),
+						fieldWithPath("newStore.kakaoCategoryName").type(JsonFieldType.STRING)
+							.description("카카오 카테고리 분류 기준 (빵집, 뷔페 등 카카오에서 내려오는 값 저장하기 위함)"),
 						fieldWithPath("newStore.address").type(JsonFieldType.STRING).description("가게 주소"),
 						fieldWithPath("rating").type(JsonFieldType.NUMBER).description("별점"),
 						fieldWithPath("visitedAt").type(JsonFieldType.STRING).description("방문 날짜"),
@@ -343,9 +345,11 @@ class StoreControllerTest extends RestDocsTestSupport {
 							.description("가게 이름"),
 						fieldWithPath("newStore.latitude").type(JsonFieldType.NUMBER).description("위도"),
 						fieldWithPath("newStore.longitude").type(JsonFieldType.NUMBER).description("경도"),
-						fieldWithPath("newStore.categoryType").type(JsonFieldType.STRING).description("또잇 카테고리 타입 (KOREAN, JAPANESE, CHINESE, CAFE, WESTERN, BARS, ETC..)"),
+						fieldWithPath("newStore.categoryType").type(JsonFieldType.STRING)
+							.description("또잇 카테고리 타입 (KOREAN, JAPANESE, CHINESE, CAFE, WESTERN, BARS, ETC..)"),
 						fieldWithPath("newStore.kakaoStoreId").type(JsonFieldType.NUMBER).description("카카오 가게 고유 ID"),
-						fieldWithPath("newStore.kakaoCategoryName").type(JsonFieldType.STRING).description("카카오 카테고리 분류 기준 (빵집, 뷔페 등 카카오에서 내려오는 값 저장하기 위함)"),
+						fieldWithPath("newStore.kakaoCategoryName").type(JsonFieldType.STRING)
+							.description("카카오 카테고리 분류 기준 (빵집, 뷔페 등 카카오에서 내려오는 값 저장하기 위함)"),
 						fieldWithPath("newStore.address").type(JsonFieldType.STRING).description("가게 주소"),
 						fieldWithPath("rating").type(JsonFieldType.NUMBER).description("별점"),
 						fieldWithPath("visitedAt").type(JsonFieldType.STRING).description("방문 날짜"),
@@ -367,10 +371,10 @@ class StoreControllerTest extends RestDocsTestSupport {
 	@DisplayName("맵의 위경도 내 식당들 정보 조회")
 	public void getLocationRangeStores() throws Exception {
 
-		Double latitude1 = 30.11111;
-		Double longitude1 = 120.0000;
-		Double latitude2 = 60.11111;
-		Double longitude2 = 140.0000;
+		Double leftTopLatitude = 60.11111;
+		Double leftTopLongitude = 120.0000;
+		Double rightBottomLatitude = 30.11111;
+		Double rightBottomLongitude = 140.0000;
 		int level = 4;
 		CategoryType type = CategoryType.CAFE;
 		Long userId = 1L; // userId 로 하면 null
@@ -438,8 +442,8 @@ class StoreControllerTest extends RestDocsTestSupport {
 		StoreLocationRangeResponse storeLocationRangeResponse =
 			StoreLocationRangeResponse.of(bookMarkList, locationRangeList);
 
-		given(storeService.getRangeStores(eq(latitude1), eq(longitude1), eq(latitude2)
-			, eq(longitude2), eq(level), eq(java.util.Optional.ofNullable(type)), any()))
+		given(storeService.getRangeStores(eq(leftTopLatitude), eq(leftTopLongitude), eq(rightBottomLatitude)
+			, eq(rightBottomLongitude), eq(level), eq(java.util.Optional.ofNullable(type)), any()))
 			.willReturn(storeLocationRangeResponse);
 
 		// when
@@ -448,10 +452,10 @@ class StoreControllerTest extends RestDocsTestSupport {
 					.contentType(MediaType.APPLICATION_JSON)
 					// .with(csrf())
 					.header("Authorization", "Bearer accessToken")
-					.param("latitude1", String.valueOf(latitude1))
-					.param("longitude1", String.valueOf(longitude1))
-					.param("latitude2", String.valueOf(latitude2))
-					.param("longitude2", String.valueOf(longitude2))
+					.param("leftTopLatitude", String.valueOf(leftTopLatitude))
+					.param("leftTopLongitude", String.valueOf(leftTopLongitude))
+					.param("rightBottomLatitude", String.valueOf(rightBottomLatitude))
+					.param("rightBottomLongitude", String.valueOf(rightBottomLongitude))
 					.param("level", String.valueOf(level))
 					.param("type", String.valueOf(type.getType())))
 			.andExpect(status().isOk())
@@ -461,10 +465,10 @@ class StoreControllerTest extends RestDocsTestSupport {
 						headerWithName("Authorization").description("accessToken")
 					),
 					queryParameters(
-						parameterWithName("latitude1").description("첫번째 위도"),
-						parameterWithName("longitude1").description("두번째 경도"),
-						parameterWithName("latitude2").description("두번째 위도"),
-						parameterWithName("longitude2").description("두번째 경도"),
+						parameterWithName("leftTopLatitude").description("첫번째 위도(좌측최상단)"),
+						parameterWithName("leftTopLongitude").description("두번째 경도(좌측최상단)"),
+						parameterWithName("rightBottomLatitude").description("두번째 위도(우측최하단)"),
+						parameterWithName("rightBottomLongitude").description("두번째 경도(우측최하단)"),
 						parameterWithName("level").description("확대/축소 레벨"),
 						parameterWithName("type").description("식당 카테고리(optional) - "
 								+ "\nKOREAN(한식)"
@@ -548,7 +552,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 	@Test
 	void getUserDailyStoreReviewLimit() throws Exception {
 		// given
-		given(storeService.checkUserDailyStoreReviewLimit(any(),eq(1L))).willReturn(ReviewAddLimitResponse.of(false));
+		given(storeService.checkUserDailyStoreReviewLimit(any(), eq(1L))).willReturn(ReviewAddLimitResponse.of(false));
 
 		// when
 		mockMvc.perform(
@@ -569,7 +573,8 @@ class StoreControllerTest extends RestDocsTestSupport {
 						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
 						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
 						fieldWithPath("data").type(JsonFieldType.OBJECT).description("리뷰 작성 가능 여부 반환"),
-						fieldWithPath("data.isAvailable").type(JsonFieldType.BOOLEAN).description("리뷰 작성 가능 여부 반환 (작성가능 : true, 작성불가 : false)")
+						fieldWithPath("data.isAvailable").type(JsonFieldType.BOOLEAN)
+							.description("리뷰 작성 가능 여부 반환 (작성가능 : true, 작성불가 : false)")
 					)
 				)
 			);
