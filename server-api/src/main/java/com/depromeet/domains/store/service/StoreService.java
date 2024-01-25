@@ -110,7 +110,7 @@ public class StoreService {
 		if (reviewType.isEmpty()) {
 			reviews = reviewRepository.findByStore(store, pageRequest);
 		} else if (reviewType.get() == ReviewType.REVISITED) {
-			reviews = reviewRepository.findRevisitedReviews(store,pageRequest);
+			reviews = reviewRepository.findRevisitedReviews(store, pageRequest);
 		} else if (reviewType.get() == ReviewType.PHOTO) {
 			reviews = reviewRepository.findByStoreAndImageUrlIsNotNullOrderByVisitedAtDesc(store, pageRequest);
 		}
@@ -124,46 +124,45 @@ public class StoreService {
 
 	private static Slice<StoreReviewResponse> getStoreReviewResponses(User user, Slice<Review> reviews) {
 		List<StoreReviewResponse> storeReviewResponseList = reviews.getContent().stream()
-				.map(review -> {
-					// 현재 사용자가 리뷰 작성자와 동일한지 확인
-					Boolean isMine = review.getUser().getUserId().equals(user.getUserId()); // 사용자 비교 로직 수정
-					String imageUrl = review.getImageUrl() != null ? review.getImageUrl() : "";
-					// 필요한 정보를 포함하여 StoreReviewResponse 객체 생성
-					return StoreReviewResponse.of(
-							review.getUser().getUserId(),
-							review.getReviewId(),
-							review.getUser().getNickName(),
-							review.getRating(),
-							imageUrl,
-							review.getVisitTimes(),
-							review.getVisitedAt(),
-							review.getDescription(),
-							isMine
-					);
-				})
-				.collect(Collectors.toList());
+			.map(review -> {
+				// 현재 사용자가 리뷰 작성자와 동일한지 확인
+				Boolean isMine = review.getUser().getUserId().equals(user.getUserId()); // 사용자 비교 로직 수정
+				String imageUrl = review.getImageUrl() != null ? review.getImageUrl() : "";
+				// 필요한 정보를 포함하여 StoreReviewResponse 객체 생성
+				return StoreReviewResponse.of(
+					review.getUser().getUserId(),
+					review.getReviewId(),
+					review.getUser().getNickName(),
+					review.getRating(),
+					imageUrl,
+					review.getVisitTimes(),
+					review.getVisitedAt(),
+					review.getDescription(),
+					isMine
+				);
+			})
+			.collect(Collectors.toList());
 		return new SliceImpl<>(storeReviewResponseList, reviews.getPageable(), reviews.hasNext());
 	}
 
-
 	@Transactional(readOnly = true)
-	public StoreLocationRangeResponse getRangeStores(Double latitude1, Double longitude1, Double latitude2,
-		Double longitude2, Integer level, Optional<CategoryType> categoryType, User user) {
+	public StoreLocationRangeResponse getRangeStores(Double leftTopLatitude, Double leftTopLongitude,
+		Double rightBottomLatitude, Double rightBottomLongitude, Integer level, Optional<CategoryType> categoryType,
+		User user) {
 
 		List<Store> bookMarkStoreList = this.storeRepository.findByUsersBookMarkList(user.getUserId());
 		List<Long> bookMarkStoreIdList = storeToIdList(bookMarkStoreList);
 
-		double maxLatitude = Double.max(latitude1, latitude2);
-		double minLatitude = Double.min(latitude1, latitude2);
-		double maxLongitude = Double.max(longitude1, longitude2);
-		double minLongitude = Double.min(longitude1, longitude2);
+		double maxLatitude = Double.max(leftTopLatitude, rightBottomLatitude);
+		double minLatitude = Double.min(leftTopLatitude, rightBottomLatitude);
+		double maxLongitude = Double.max(leftTopLongitude, rightBottomLongitude);
+		double minLongitude = Double.min(leftTopLongitude, rightBottomLongitude);
 
 		ViewLevel viewLevel = ViewLevel.findByLevel(level);
-		CategoryType type = categoryType.isEmpty() ?
-			null : CategoryType.findByType(categoryType.get().getType());
+		CategoryType type = categoryType.isEmpty() ? null : CategoryType.findByType(categoryType.get().getType());
 
-		List<Store> storeListWithCondition = this.storeRepository.findByLocationRangesWithCategory(
-			maxLatitude, minLatitude, maxLongitude, minLongitude, type, bookMarkStoreIdList);
+		List<Store> storeListWithCondition = this.storeRepository.findByLocationRangesWithCategory(maxLatitude,
+			minLatitude, maxLongitude, minLongitude, type, bookMarkStoreIdList);
 
 		int viewStoreListCount = calculateViewStoreListRatio(storeListWithCondition.size(), viewLevel.getRatio());
 
