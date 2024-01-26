@@ -16,13 +16,8 @@ public class BookmarkController {
 
     private final BookmarkService bookmarkService;
 
-    @PostMapping("/bookmarks/{storeId}")
-    public CustomResponseEntity<BookmarkingResponse> createBookmark(@PathVariable Long storeId, @AuthUser User user) {
-        return CustomResponseEntity.success(bookmarkService.createBookmark(storeId, user));
-    }
-
-    @DeleteMapping("/bookmarks/{bookmarkId}")
-    public CustomResponseEntity<Void> deleteBookmark(@PathVariable Long bookmarkId, @AuthUser User user) {
-        return CustomResponseEntity.success(bookmarkService.deleteBookmark(bookmarkId, user));
+    @PatchMapping("/bookmarks/{storeId}")
+    public CustomResponseEntity<BookmarkingResponse> updateBookmark( @AuthUser User user, @PathVariable Long storeId) {
+        return CustomResponseEntity.success(bookmarkService.updateBookmark(user, storeId));
     }
 }

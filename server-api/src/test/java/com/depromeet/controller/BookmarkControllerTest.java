@@ -16,8 +16,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -31,17 +30,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class BookmarkControllerTest extends RestDocsTestSupport {
 
     @Test
-    void createBookmark() throws Exception {
+    void updateBookmark() throws Exception {
         //given
         Long storeId = 1L;
         BookmarkingResponse bookmarkingResponse = BookmarkingResponse.of(1L, 1L);
 
-        given(bookmarkService.createBookmark(eq(storeId), any()))
+        given(bookmarkService.updateBookmark(any(), eq(storeId)))
                 .willReturn(bookmarkingResponse);
 
         //when & then
         mockMvc.perform(
-                        post("/api/v1/bookmarks/{storeId}", 1L)
+                        patch("/api/v1/bookmarks/{storeId}", 1L)
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", "Bearer accessToken"))
@@ -59,37 +58,6 @@ class BookmarkControllerTest extends RestDocsTestSupport {
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
                                         fieldWithPath("data.bookmarkId").type(JsonFieldType.NUMBER).description("북마크 ID"),
                                         fieldWithPath("data.userId").type(JsonFieldType.NUMBER).description("유저 ID")
-                                )
-                        )
-                )
-        ;
-    }
-
-    @Test
-    void deleteBookmark() throws Exception {
-        //given
-        Long bookmarkId = 1L;
-        doNothing().when(bookmarkService).deleteBookmark(eq(bookmarkId), any(User.class));
-
-        //when & then
-        mockMvc.perform(
-                        delete("/api/v1/bookmarks/{bookmarkId}", bookmarkId) // HTTP 메서드를 DELETE로 변경
-                                .with(csrf())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header("Authorization", "Bearer accessToken"))
-                .andExpect(status().isOk())
-                .andDo(
-                        restDocs.document(
-                                pathParameters(
-                                        parameterWithName("bookmarkId").description("북마크 ID") // 파라미터 이름을 bookmarkId로 변경
-                                ),
-                                requestHeaders(
-                                        headerWithName("Authorization").description("accessToken")
-                                ),
-                                responseFields(
-                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
-                                        fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
-                                        fieldWithPath("data").type(JsonFieldType.NULL).description("데이터 없음")
                                 )
                         )
                 )
