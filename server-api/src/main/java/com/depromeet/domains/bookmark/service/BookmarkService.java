@@ -11,6 +11,8 @@ import com.depromeet.domains.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class BookmarkService {
@@ -18,29 +20,32 @@ public class BookmarkService {
     private final BookmarkRepository bookmarkRepository;
     private final StoreRepository storeRepository;
 
-
-    public BookmarkingResponse createBookmark(Long storeId, User user) {
+    public BookmarkingResponse updateBookmark(User user, Long storeId) {
 
         Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 
-        Bookmark bookmark = Bookmark.builder()
+        // 사용자의 현재 북마크 상태 확인
+        Optional<Bookmark> existingBookmark = bookmarkRepository.findByUserAndStore(user, store);
+
+        if (existingBookmark.isPresent()) {
+            // 이미 북마크된 음식점일 경우 북마크 제거
+            bookmarkRepository.delete(existingBookmark.get());
+            return bookmarkingResponse(existingBookmark.get().getBookmarkId(), user.getUserId());
+        }
+        // 새로운 북마크 추가
+        Bookmark newBookmark = Bookmark.builder()
                 .store(store)
                 .user(user)
                 .build();
 
-        Bookmark savedBookmark = bookmarkRepository.save(bookmark);
-
-        return BookmarkingResponse.of(savedBookmark.getBookmarkId(), user.getUserId());
+        bookmarkRepository.save(newBookmark);
+        return bookmarkingResponse(newBookmark.getBookmarkId(), user.getUserId());
     }
 
-    public Void deleteBookmark(Long bookmarkId, User user) {
-        Bookmark bookmark = bookmarkRepository.findById(bookmarkId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_BOOKMARK));
-
-        if (!bookmark.getUser().getUserId().equals(user.getUserId())) {
-            throw new CustomException(Result.UNAUTHORIZED_USER);
-        }
-
-        bookmarkRepository.delete(bookmark);
-        return null;
+    private BookmarkingResponse bookmarkingResponse(Long bookmarkId, Long userId) {
+        return BookmarkingResponse.builder()
+                .bookmarkId(bookmarkId)
+                .userId(userId)
+                .build();
     }
 }
