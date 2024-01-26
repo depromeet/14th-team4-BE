@@ -13,3 +13,8 @@ GET {{host}}/api/v1/stores/1/reviews?type=&page=1
 #GET {{host}}/api/v1/stores/1/reviews?type=PHOTO&page=1
 Content-Type: application/json;charset=UTF-8
 Authorization: Bearer {{token}}
+
+### 리뷰 삭제(본인이 작성한)
+DELETE {{host}}/api/v1/reviews/1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer {{token}}

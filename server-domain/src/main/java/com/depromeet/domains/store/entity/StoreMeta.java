@@ -50,53 +50,25 @@ public class StoreMeta extends BaseTimeEntity {
         }
     }
 
-    /*
-    최다 방문자가 겹치는 경우
-     */
-    // 3번 이상 재방문 한 사람이 리뷰 삭제시
-    public void deletedReviewFromVisitedThreeOrMoreIfMostVisitorDuplicate(Integer rating) {
-        this.totalRating = (this.totalRating * this.totalReviewCount - rating) / this.totalReviewCount - 1;
+
+    // 리뷰 삭제시 별점 계산
+    public void updateTotalRatingAfterDeletion(Integer rating) {
+        this.totalRating = (this.totalRating * this.totalReviewCount - rating) / (this.totalReviewCount - 1);
+        this.totalRating = Math.round(this.totalRating * 10.0f) / 10.0f;
+    }
+
+    // 전체 리뷰 개수 감소
+    public void decreaseTotalReviewCount() {
         this.totalReviewCount--;
     }
 
-    // 2번 이하 재방문 한 사람이 리뷰 삭제시
-    public void deletedReviewFromVisitedTwoOrLessIfMostVisitorDuplicate(Integer rating) {
-        this.totalRating = (this.totalRating * this.totalReviewCount - rating) / this.totalReviewCount - 1;
-        this.totalReviewCount--;
+    // 전체 재방문 인원 감소
+    public void decreaseTotalRevisitCount() {
         this.totalRevisitedCount--;
     }
 
-    /*
-    최다 방문자가 나 혼자인 경우
-     */
-    // 3번 이상 재방문 한 사람이 리뷰 삭제시
-    public void deleteReviewFromVisitedThreeOrMoreIfMostVisitorMe(Integer rating) {
-        this.totalRating = (this.totalRating * this.totalReviewCount - rating) / this.totalReviewCount - 1;
-        this.totalReviewCount--;
+    // 최다 방문자의 재방문 횟수 감소
+    public void decreaseMostVisitedCount() {
         this.mostVisitedCount--;
-    }
-
-    // 2번 이하 재방문 한 사람이 리뷰 삭제시
-    public void deletedReviewFromVisitedTwoOrLessIfMostVisitorMe(Integer rating) {
-        this.totalRating = (this.totalRating * this.totalReviewCount - rating) / this.totalReviewCount - 1;
-        this.totalReviewCount--;
-        this.totalRevisitedCount--;
-        this.mostVisitedCount--;
-    }
-
-    /*
-    최다 방문자가 아닌 경우
-     */
-    // 3번 이상 재방문 한 사람이 리뷰 삭제시
-    public void deleteReviewFromVisitedThreeOrMore(Integer rating) {
-        this.totalRating = (this.totalRating * this.totalReviewCount - rating) / this.totalReviewCount - 1;
-        this.totalReviewCount--;
-    }
-
-    // 2번 이하 재방문 한 사람이 리뷰 삭제시
-    public void deleteReviewFromVisitedTwoOrLess(Integer rating) {
-        this.totalRating = (this.totalRating * this.totalReviewCount - rating) / this.totalReviewCount - 1;
-        this.totalReviewCount--;
-        this.totalRevisitedCount--;
     }
 }

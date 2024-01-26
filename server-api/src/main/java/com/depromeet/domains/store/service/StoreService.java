@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.depromeet.domains.user.entity.QUser;
+import com.depromeet.domains.user.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -42,12 +45,14 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StoreService {
 
 	private final StoreRepository storeRepository;
 	private final StoreMetaRepository storeMetaRepository;
 	private final ReviewRepository reviewRepository;
 	private final CategoryRepository categoryRepository;
+	private final UserRepository userRepository;
 
 	// 음식점 프리뷰 조회(바텀 시트)
 	@Transactional(readOnly = true)
@@ -294,6 +299,7 @@ public class StoreService {
 		return review;
 	}
 
+	@Transactional
 	public void deleteStoreReview(User user, Long reviewId) {
 		Review review = reviewRepository.findById(reviewId)
 			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_REVIEW));
@@ -305,40 +311,123 @@ public class StoreService {
 		Store store = review.getStore();
 		StoreMeta storeMeta = store.getStoreMeta();
 
-		// 해당 음식점에 몇번 방문했는지 확인
-		Long myRevisitedCount = reviewRepository.countByStoreAndUser(store, user);
+		Long myRevisitedCount = reviewRepository.countByStoreAndUser(store, user); // 나의 재방문 횟수
+		Long mostVisitedCount = storeMeta.getMostVisitedCount(); // 최다 방문 유저의 방문 수
+		Long duplicateMostVisitedCount = reviewRepository.countByStoreAndReviewCount(store.getStoreId(), mostVisitedCount); // 최다 방문자의 인원수(최다 방문자가 여러명)
 
-		// 해당 음식점 최다 방문자인지 확인
-		if (storeMeta.getMostVisitedCount() == myRevisitedCount) {
-			// 촤다 방문자가 겹치는 경우에 몇명이나 최다 방문자가 있는지 확인
-			Long duplicateMostVisitedCount = reviewRepository.countByVisitTimes(myRevisitedCount);
-			if (duplicateMostVisitedCount > 1) { // 최다 방문자가 여러명인 경우
-				if (myRevisitedCount >= 3) { // 내가 쓴 리뷰의 개수가 3개 이상이면
-					// 최다 방문자의 재방문 횟수는 그대로 유지, 재방문 인원의 수도 유지, 리뷰 개수 1감소, 별점 평균 재계산
-					storeMeta.deletedReviewFromVisitedThreeOrMoreIfMostVisitorDuplicate(review.getRating());
-				} else { // 내가 쓴 리뷰가 2개 이하인 경우
-					// 최다 방문자의 재방문 횟수는 그대로 유지, 재방문 인원의 수 1감소, 리뷰 개수 1감소, 별점 평균 재계산
-					storeMeta.deletedReviewFromVisitedTwoOrLessIfMostVisitorDuplicate(review.getRating());
-				}
-			} else { // 최다 방문자가 나 혼자인 경우
-				if (myRevisitedCount >= 3) { // 내가 쓴 리뷰의 개수가 3개 이상이면
-					// 최다 방문자의 재방문 횟수는 1 감소, 재방문 인원의 수도 유지, 리뷰 개수 1감소, 별점 평균 재계산
-					storeMeta.deleteReviewFromVisitedThreeOrMoreIfMostVisitorMe(review.getRating());
-				} else { // 내가 쓴 리뷰가 2개 이하인 경우
-					// 최다 방문자의 재방문 횟수, 재방문 인원의 수, 리뷰 개수 모두 1감소, 별점 평균 재계산
-					storeMeta.deletedReviewFromVisitedTwoOrLessIfMostVisitorMe(review.getRating());
-				}
-			}
-		} else { // 최다 방문자가 아닌 경우
-			if (myRevisitedCount >= 3) { // 내가 쓴 리뷰의 개수가 3개 이상이면
-				// 재방문 인원의 수는 유지, 리뷰 개수 1감소, 별점 평균 재계산
-				storeMeta.deleteReviewFromVisitedThreeOrMore(review.getRating());
-			} else {// 내가 쓴 리뷰의 개수가 2개 이하인 경우
-				// 재방문 인원의 수, 리뷰 개수 모두 1 감소, 별점 평균 재계산
-				storeMeta.deleteReviewFromVisitedTwoOrLess(review.getRating());
-			}
+		log.info(myRevisitedCount.toString());
+		log.info(mostVisitedCount.toString());
+		log.info(duplicateMostVisitedCount.toString());
+
+		boolean isDuplicateMostVisitor = duplicateMostVisitedCount > 1; // 최다 방문자가 여러명인지 여부
+		boolean isMostVisitor = mostVisitedCount.equals(myRevisitedCount); // 내가 해당 음식점의 최다 방문자 인지 여부
+		boolean hasVisitedThreeOrMore = myRevisitedCount >= 3; // 내 재방문 횟수가 3번 이상인지
+
+		// 총 별점 및 전체 리뷰 개수 업데이트
+		storeMeta.updateTotalRatingAfterDeletion(review.getRating());
+		storeMeta.decreaseTotalReviewCount();
+
+		if (isMostVisitor && isDuplicateMostVisitor) { // 나도 최다 방문자이고, 최다 방문자가 여러명인 경우
+			log.info("나도 최다 방문자, 최다 방문자 여려명");
+			processReviewForDuplicateMostVisitor(storeMeta, hasVisitedThreeOrMore);
+			reviewRepository.delete(review);
+			return;
 		}
+
+		if (isMostVisitor) { // 나만 최다 방문자인 경우
+			log.info("나만 최다 방문자");
+			processReviewForSingleMostVisitor(storeMeta, hasVisitedThreeOrMore);
+			reviewRepository.delete(review);
+			return;
+		}
+
+		// 내가 최다방문자도 아니고, 최다 방문자가 여러명도 아닌 경우
+		log.info("내가 최다 방문자가 아니고, 최다 방문자가 여러명도 아닌 경우");
+		processReviewForNonMostVisitor(storeMeta, hasVisitedThreeOrMore);
 		reviewRepository.delete(review);
+	}
+
+	@Transactional
+		public void deleteStoreReviewTest(Long userId, Long reviewId) {
+		Review review = reviewRepository.findById(reviewId)
+				.orElseThrow(() -> new CustomException(Result.NOT_FOUND_REVIEW));
+
+		if (!review.getUser().getUserId().equals(userId)) {
+			throw new CustomException(Result.UNAUTHORIZED_USER);
+		}
+
+		User user = userRepository.findById(userId).get();
+
+		Store store = review.getStore();
+		StoreMeta storeMeta = store.getStoreMeta();
+
+		Long myRevisitedCount = reviewRepository.countByStoreAndUser(store, user); // 나의 재방문 횟수
+		Long mostVisitedCount = storeMeta.getMostVisitedCount(); // 최다 방문 유저의 방문 수
+		Long duplicateMostVisitedCount = reviewRepository.countByStoreAndReviewCount(store.getStoreId(), mostVisitedCount); // 최다 방문자의 인원수(최다 방문자가 여러명)
+
+		log.info(myRevisitedCount.toString());
+		log.info(mostVisitedCount.toString());
+		log.info(duplicateMostVisitedCount.toString());
+
+		boolean isDuplicateMostVisitor = duplicateMostVisitedCount > 1; // 최다 방문자가 여러명인지 여부
+		boolean isMostVisitor = mostVisitedCount.equals(myRevisitedCount); // 내가 해당 음식점의 최다 방문자 인지 여부
+		boolean hasVisitedThreeOrMore = myRevisitedCount >= 3; // 내 재방문 횟수가 3번 이상인지
+
+		storeMeta.updateTotalRatingAfterDeletion(review.getRating());
+		storeMeta.decreaseTotalReviewCount();
+
+		if (isMostVisitor && isDuplicateMostVisitor) { // 나도 최다 방문자이고, 최다 방문자가 여러명인 경우
+			log.info("나도 최다 방문자, 최다 방문자 여려명");
+			processReviewForDuplicateMostVisitor(storeMeta, hasVisitedThreeOrMore);
+			reviewRepository.delete(review);
+			return;
+		}
+
+		if (isMostVisitor) { // 나만 최다 방문자인 경우
+			log.info("나만 최다 방문자");
+			processReviewForSingleMostVisitor(storeMeta, hasVisitedThreeOrMore);
+			reviewRepository.delete(review);
+			return;
+		}
+
+		// 내가 최다방문자도 아니고, 최다 방문자가 여러명도 아닌 경우
+		log.info("내가 최다 방문자가 아니고, 최다 방문자가 여러명도 아닌 경우");
+		processReviewForNonMostVisitor(storeMeta, hasVisitedThreeOrMore);
+		reviewRepository.delete(review);
+	}
+
+	private void processReviewForDuplicateMostVisitor(StoreMeta storeMeta, boolean hasVisitedThreeOrMore) {
+		if (hasVisitedThreeOrMore) { // 내 재방문 횟수가 3번 이상인 경우
+			log.info("내 재방문 횟수가 3번 이상");
+		} else { // 내 재방문 횟수가 3번 이상이 아닌 경우
+			log.info("내 재방문 횟수가 3번 미만");
+			// 최다 방문자의 재방문 횟수 유지, 전체 재방문 인원의 수/전체 리뷰 개수 1감소, 별점 평균 재계산
+			storeMeta.decreaseTotalRevisitCount();
+		}
+	}
+
+	private void processReviewForSingleMostVisitor(StoreMeta storeMeta, boolean hasVisitedThreeOrMore) {
+		if (hasVisitedThreeOrMore) { // 내 재방문 횟수가 3번 이상인 경우
+			log.info("내 재방문 횟수가 3번 이상");
+			// 최다 방문자의 재방문 횟수 1감소, 전체 재방문 인원 수 유지, 전체 리뷰 개수 1감소, 별점 평균 재계산
+			storeMeta.decreaseMostVisitedCount();
+		} else { // 내 재방문 횟수가 3번 이상이 아닌 경우
+			log.info("내 재방문 횟수가 3번 미만");
+			// 최다 방문자의 재방문 횟수 1감소, 전체 재방문 인원 수 1감소, 전체 리뷰 개수 1감소, 별점 평균 재계산
+			storeMeta.decreaseMostVisitedCount();
+			storeMeta.decreaseTotalRevisitCount();
+		}
+	}
+
+	private void processReviewForNonMostVisitor(StoreMeta storeMeta, boolean hasVisitedThreeOrMore) {
+		if (hasVisitedThreeOrMore) { // 내 재방문 횟수가 3번 이상인 경우
+			log.info("내 재방문 횟수가 3번 이상");
+			// 최다 방문자의 재방문 횟수 유지, 전체 재방문 인원 수 유지, 전체 리뷰 개수 1감소, 별점 평균 재계산
+		} else { // 내 재방문 횟수가 3번 이상이 아닌 경우
+			log.info("내 재방문 횟수가 3번 미만");
+			// 최다 방문자의 재방문 횟수 유지, 전체 재방문 인원 수 1감소, 전체 리뷰 개수 1감소, 별점 평균 재계산
+			storeMeta.decreaseTotalRevisitCount();
+		}
 	}
 
 	public ReviewAddLimitResponse checkUserDailyStoreReviewLimit(User user, Long storeId) {

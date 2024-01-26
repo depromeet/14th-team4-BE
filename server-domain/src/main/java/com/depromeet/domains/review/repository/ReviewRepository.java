@@ -43,7 +43,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Slice<Review> findByUser(User user, Pageable pageable);
     List<Review> findByStore(Store store);
 
-    Long countByVisitTimes(Long visitTimes);
+    @Query(value = "SELECT COUNT(*) FROM (SELECT COUNT(reviewId) AS review_count FROM Review WHERE store_id = :storeId GROUP BY user_id) AS subquery WHERE review_count = :count", nativeQuery = true)
+    Long countByStoreAndReviewCount(@Param("storeId") Long storeId, @Param("count") Long count);
 
     Slice<Review> findByStore(Store store, Pageable pageable);
 
