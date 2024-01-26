@@ -399,11 +399,12 @@ public class StoreService {
 	private void processReviewForDuplicateMostVisitor(StoreMeta storeMeta, boolean hasVisitedThreeOrMore) {
 		if (hasVisitedThreeOrMore) { // 내 재방문 횟수가 3번 이상인 경우
 			log.info("내 재방문 횟수가 3번 이상");
-		} else { // 내 재방문 횟수가 3번 이상이 아닌 경우
-			log.info("내 재방문 횟수가 3번 미만");
-			// 최다 방문자의 재방문 횟수 유지, 전체 재방문 인원의 수/전체 리뷰 개수 1감소, 별점 평균 재계산
-			storeMeta.decreaseTotalRevisitCount();
+			return;
 		}
+		// 내 재방문 횟수가 3번 이상이 아닌 경우
+		log.info("내 재방문 횟수가 3번 미만");
+		// 최다 방문자의 재방문 횟수 유지, 전체 재방문 인원의 수/전체 리뷰 개수 1감소, 별점 평균 재계산
+		storeMeta.decreaseTotalRevisitCount();
 	}
 
 	private void processReviewForSingleMostVisitor(StoreMeta storeMeta, boolean hasVisitedThreeOrMore) {
@@ -411,23 +412,25 @@ public class StoreService {
 			log.info("내 재방문 횟수가 3번 이상");
 			// 최다 방문자의 재방문 횟수 1감소, 전체 재방문 인원 수 유지, 전체 리뷰 개수 1감소, 별점 평균 재계산
 			storeMeta.decreaseMostVisitedCount();
-		} else { // 내 재방문 횟수가 3번 이상이 아닌 경우
-			log.info("내 재방문 횟수가 3번 미만");
-			// 최다 방문자의 재방문 횟수 1감소, 전체 재방문 인원 수 1감소, 전체 리뷰 개수 1감소, 별점 평균 재계산
-			storeMeta.decreaseMostVisitedCount();
-			storeMeta.decreaseTotalRevisitCount();
+			return;
 		}
+		// 내 재방문 횟수가 3번 이상이 아닌 경우
+		log.info("내 재방문 횟수가 3번 미만");
+		// 최다 방문자의 재방문 횟수 1감소, 전체 재방문 인원 수 1감소, 전체 리뷰 개수 1감소, 별점 평균 재계산
+		storeMeta.decreaseMostVisitedCount();
+		storeMeta.decreaseTotalRevisitCount();
 	}
 
 	private void processReviewForNonMostVisitor(StoreMeta storeMeta, boolean hasVisitedThreeOrMore) {
 		if (hasVisitedThreeOrMore) { // 내 재방문 횟수가 3번 이상인 경우
 			log.info("내 재방문 횟수가 3번 이상");
 			// 최다 방문자의 재방문 횟수 유지, 전체 재방문 인원 수 유지, 전체 리뷰 개수 1감소, 별점 평균 재계산
-		} else { // 내 재방문 횟수가 3번 이상이 아닌 경우
-			log.info("내 재방문 횟수가 3번 미만");
-			// 최다 방문자의 재방문 횟수 유지, 전체 재방문 인원 수 1감소, 전체 리뷰 개수 1감소, 별점 평균 재계산
-			storeMeta.decreaseTotalRevisitCount();
+			return;
 		}
+		// 내 재방문 횟수가 3번 이상이 아닌 경우
+		log.info("내 재방문 횟수가 3번 미만");
+		// 최다 방문자의 재방문 횟수 유지, 전체 재방문 인원 수 1감소, 전체 리뷰 개수 1감소, 별점 평균 재계산
+		storeMeta.decreaseTotalRevisitCount();
 	}
 
 	public ReviewAddLimitResponse checkUserDailyStoreReviewLimit(User user, Long storeId) {
