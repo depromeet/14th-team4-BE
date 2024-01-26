@@ -32,6 +32,9 @@ public class UserService {
 	@Transactional
 	public void updateUserNickname(User user, String nickname) {
 		User existUser = findUserById(user.getUserId());
+		if (userRepository.existsByNickName(nickname)) {
+			throw new CustomException(Result.DUPLICATED_NICKNAME);
+		}
 		existUser.updateNickname(nickname);
 	}
 

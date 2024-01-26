@@ -1,8 +1,7 @@
 package com.depromeet.domains.review.repository;
 
-import com.depromeet.domains.review.entity.Review;
-import com.depromeet.domains.store.entity.Store;
-import com.depromeet.domains.user.entity.User;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -10,7 +9,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
+import com.depromeet.domains.review.entity.Review;
+import com.depromeet.domains.store.entity.Store;
+import com.depromeet.domains.user.entity.User;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
@@ -46,5 +47,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Long countByStoreAndReviewCount(@Param("storeId") Long storeId, @Param("count") Long count);
 
     Slice<Review> findByStore(Store store, Pageable pageable);
+
+    @Query("SELECT COUNT(r) FROM Review r WHERE r.store = :store AND r.user = :user AND r.createdAt BETWEEN :startOfDay AND :endOfDay")
+    int countStoreReviewByUserForDay(@Param("user") User user, @Param("store") Store store,
+        @Param("startOfDay") LocalDateTime startOfDay,
+        @Param("endOfDay") LocalDateTime endOfDay);
 
 }

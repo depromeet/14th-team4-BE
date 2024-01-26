@@ -4,10 +4,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import com.depromeet.annotation.VisitedDateFormat;
 import com.depromeet.domains.review.entity.Review;
 import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.user.entity.User;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,10 +26,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ReviewRequest {
 	private Long storeId;
+	@Valid
 	private NewStoreRequest newStore;
+	@Min(1) @Max(5)
 	private Integer rating;
+	@VisitedDateFormat
 	private String visitedAt;
 	private String imageUrl;
+	@NotBlank
+	@Size(min = 10, max = 300)
 	private String description;
 
 	public Review toEntity(Store store, User user, Integer visitTimes) {
