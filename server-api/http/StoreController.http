@@ -2,7 +2,7 @@
 GET {{host}}/api/v1/auth/access-token/1
 
 ### 맵에서 식당 정보 조회
-GET {{host}}/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1
+GET {{host}}/api/v1/stores/location-range?leftTopLatitude=50.000&leftTopLongitude=120.000&rightBottomLatitude=35.0000&rightBottomLongitude=150.000&level=1&type=CHINESE
 #GET {{host}}/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1&type=KOREAN
 Content-Type: application/json;charset=UTF-8
 Authorization: Bearer {{token}}
@@ -16,5 +16,10 @@ Authorization: Bearer {{token}}
 
 ### 음식점, 카페 통합 검색
 GET {{host}}/api/v1/stores/search?query=떡볶이&x=127.06283102249932&y=37.514322572335935&storePage=1&cafePage=1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer {{token}}
+
+### 리뷰 삭제(본인이 작성한)
+DELETE {{host}}/api/v1/reviews/1
 Content-Type: application/json;charset=UTF-8
 Authorization: Bearer {{token}}

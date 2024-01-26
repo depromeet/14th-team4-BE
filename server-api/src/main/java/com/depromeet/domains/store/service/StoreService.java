@@ -1,10 +1,15 @@
 package com.depromeet.domains.store.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.depromeet.domains.user.entity.QUser;
+import com.depromeet.domains.user.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -21,6 +26,7 @@ import com.depromeet.domains.review.entity.Review;
 import com.depromeet.domains.review.repository.ReviewRepository;
 import com.depromeet.domains.store.dto.request.NewStoreRequest;
 import com.depromeet.domains.store.dto.request.ReviewRequest;
+import com.depromeet.domains.store.dto.response.ReviewAddLimitResponse;
 import com.depromeet.domains.store.dto.response.ReviewAddResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
@@ -39,12 +45,14 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StoreService {
 
 	private final StoreRepository storeRepository;
 	private final StoreMetaRepository storeMetaRepository;
 	private final ReviewRepository reviewRepository;
 	private final CategoryRepository categoryRepository;
+	private final UserRepository userRepository;
 
 	// 음식점 프리뷰 조회(바텀 시트)
 	@Transactional(readOnly = true)
@@ -107,7 +115,7 @@ public class StoreService {
 		if (reviewType.isEmpty()) {
 			reviews = reviewRepository.findByStore(store, pageRequest);
 		} else if (reviewType.get() == ReviewType.REVISITED) {
-			reviews = reviewRepository.findRevisitedReviews(store,pageRequest);
+			reviews = reviewRepository.findRevisitedReviews(store, pageRequest);
 		} else if (reviewType.get() == ReviewType.PHOTO) {
 			reviews = reviewRepository.findByStoreAndImageUrlIsNotNullOrderByVisitedAtDesc(store, pageRequest);
 		}
@@ -121,46 +129,45 @@ public class StoreService {
 
 	private static Slice<StoreReviewResponse> getStoreReviewResponses(User user, Slice<Review> reviews) {
 		List<StoreReviewResponse> storeReviewResponseList = reviews.getContent().stream()
-				.map(review -> {
-					// 현재 사용자가 리뷰 작성자와 동일한지 확인
-					Boolean isMine = review.getUser().getUserId().equals(user.getUserId()); // 사용자 비교 로직 수정
-					String imageUrl = review.getImageUrl() != null ? review.getImageUrl() : "";
-					// 필요한 정보를 포함하여 StoreReviewResponse 객체 생성
-					return StoreReviewResponse.of(
-							review.getUser().getUserId(),
-							review.getReviewId(),
-							review.getUser().getNickName(),
-							review.getRating(),
-							imageUrl,
-							review.getVisitTimes(),
-							review.getVisitedAt(),
-							review.getDescription(),
-							isMine
-					);
-				})
-				.collect(Collectors.toList());
+			.map(review -> {
+				// 현재 사용자가 리뷰 작성자와 동일한지 확인
+				Boolean isMine = review.getUser().getUserId().equals(user.getUserId()); // 사용자 비교 로직 수정
+				String imageUrl = review.getImageUrl() != null ? review.getImageUrl() : "";
+				// 필요한 정보를 포함하여 StoreReviewResponse 객체 생성
+				return StoreReviewResponse.of(
+					review.getUser().getUserId(),
+					review.getReviewId(),
+					review.getUser().getNickName(),
+					review.getRating(),
+					imageUrl,
+					review.getVisitTimes(),
+					review.getVisitedAt(),
+					review.getDescription(),
+					isMine
+				);
+			})
+			.collect(Collectors.toList());
 		return new SliceImpl<>(storeReviewResponseList, reviews.getPageable(), reviews.hasNext());
 	}
 
-
 	@Transactional(readOnly = true)
-	public StoreLocationRangeResponse getRangeStores(Double latitude1, Double longitude1, Double latitude2,
-		Double longitude2, Integer level, Optional<CategoryType> categoryType, User user) {
+	public StoreLocationRangeResponse getRangeStores(Double leftTopLatitude, Double leftTopLongitude,
+		Double rightBottomLatitude, Double rightBottomLongitude, Integer level, Optional<CategoryType> categoryType,
+		User user) {
 
 		List<Store> bookMarkStoreList = this.storeRepository.findByUsersBookMarkList(user.getUserId());
 		List<Long> bookMarkStoreIdList = storeToIdList(bookMarkStoreList);
 
-		double maxLatitude = Double.max(latitude1, latitude2);
-		double minLatitude = Double.min(latitude1, latitude2);
-		double maxLongitude = Double.max(longitude1, longitude2);
-		double minLongitude = Double.min(longitude1, longitude2);
+		double maxLatitude = Double.max(leftTopLatitude, rightBottomLatitude);
+		double minLatitude = Double.min(leftTopLatitude, rightBottomLatitude);
+		double maxLongitude = Double.max(leftTopLongitude, rightBottomLongitude);
+		double minLongitude = Double.min(leftTopLongitude, rightBottomLongitude);
 
 		ViewLevel viewLevel = ViewLevel.findByLevel(level);
-		CategoryType type = categoryType.isEmpty() ?
-			null : CategoryType.findByType(categoryType.get().getType());
+		CategoryType type = categoryType.isEmpty() ? null : CategoryType.findByType(categoryType.get().getType());
 
-		List<Store> storeListWithCondition = this.storeRepository.findByLocationRangesWithCategory(
-			maxLatitude, minLatitude, maxLongitude, minLongitude, type, bookMarkStoreIdList);
+		List<Store> storeListWithCondition = this.storeRepository.findByLocationRangesWithCategory(maxLatitude,
+			minLatitude, maxLongitude, minLongitude, type, bookMarkStoreIdList);
 
 		int viewStoreListCount = calculateViewStoreListRatio(storeListWithCondition.size(), viewLevel.getRatio());
 
@@ -223,8 +230,6 @@ public class StoreService {
 		storeRepository.save(store);
 		Review review = saveReview(user, store, reviewRequest);
 
-		// store.updateStoreSummary(reviewRequest.getRating());
-		store.updateThumbnailUrl(reviewRequest.getImageUrl());
 		return ReviewAddResponse.of(review.getReviewId(), store.getStoreId());
 	}
 
@@ -259,6 +264,7 @@ public class StoreService {
 			.totalReviewCount(1L)
 			.mostVisitedCount(0L)
 			.totalRating(rating.floatValue())
+			.kakaoCategoryName(newStoreRequest.getKakaoCategoryName())
 			.build();
 
 		store.setStoreMeta(storeMeta);
@@ -267,8 +273,16 @@ public class StoreService {
 	}
 
 	private Store buildNewStore(NewStoreRequest newStoreRequest) {
-		Category category = categoryRepository.findById(newStoreRequest.getCategoryId())
+		CategoryType categoryType;
+
+		try {
+			categoryType = CategoryType.valueOf(newStoreRequest.getCategoryType().toUpperCase());
+		} catch (IllegalArgumentException e) {
+			throw new CustomException(Result.NOT_FOUND_CATEGORY);
+		}
+		Category category = categoryRepository.findByCategoryType(categoryType)
 			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_CATEGORY));
+
 		return newStoreRequest.toEntity(category);
 	}
 
@@ -285,6 +299,7 @@ public class StoreService {
 		return review;
 	}
 
+	@Transactional
 	public void deleteStoreReview(User user, Long reviewId) {
 		Review review = reviewRepository.findById(reviewId)
 			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_REVIEW));
@@ -296,39 +311,133 @@ public class StoreService {
 		Store store = review.getStore();
 		StoreMeta storeMeta = store.getStoreMeta();
 
-		// 해당 음식점에 몇번 방문했는지 확인
-		Long myRevisitedCount = reviewRepository.countByStoreAndUser(store, user);
+		Long myRevisitedCount = reviewRepository.countByStoreAndUser(store, user); // 나의 재방문 횟수
+		Long mostVisitedCount = storeMeta.getMostVisitedCount(); // 최다 방문 유저의 방문 수
+		Long duplicateMostVisitedCount = reviewRepository.countByStoreAndReviewCount(store.getStoreId(), mostVisitedCount); // 최다 방문자의 인원수(최다 방문자가 여러명)
 
-		// 해당 음식점 최다 방문자인지 확인
-		if (storeMeta.getMostVisitedCount() == myRevisitedCount) {
-			// 촤다 방문자가 겹치는 경우에 몇명이나 최다 방문자가 있는지 확인
-			Long duplicateMostVisitedCount = reviewRepository.countByVisitTimes(myRevisitedCount);
-			if (duplicateMostVisitedCount > 1) { // 최다 방문자가 여러명인 경우
-				if (myRevisitedCount >= 3) { // 내가 쓴 리뷰의 개수가 3개 이상이면
-					// 최다 방문자의 재방문 횟수는 그대로 유지, 재방문 인원의 수도 유지, 리뷰 개수 1감소, 별점 평균 재계산
-					storeMeta.deletedReviewFromVisitedThreeOrMoreIfMostVisitorDuplicate(review.getRating());
-				} else { // 내가 쓴 리뷰가 2개 이하인 경우
-					// 최다 방문자의 재방문 횟수는 그대로 유지, 재방문 인원의 수 1감소, 리뷰 개수 1감소, 별점 평균 재계산
-					storeMeta.deletedReviewFromVisitedTwoOrLessIfMostVisitorDuplicate(review.getRating());
-				}
-			} else { // 최다 방문자가 나 혼자인 경우
-				if (myRevisitedCount >= 3) { // 내가 쓴 리뷰의 개수가 3개 이상이면
-					// 최다 방문자의 재방문 횟수는 1 감소, 재방문 인원의 수도 유지, 리뷰 개수 1감소, 별점 평균 재계산
-					storeMeta.deleteReviewFromVisitedThreeOrMoreIfMostVisitorMe(review.getRating());
-				} else { // 내가 쓴 리뷰가 2개 이하인 경우
-					// 최다 방문자의 재방문 횟수, 재방문 인원의 수, 리뷰 개수 모두 1감소, 별점 평균 재계산
-					storeMeta.deletedReviewFromVisitedTwoOrLessIfMostVisitorMe(review.getRating());
-				}
-			}
-		} else { // 최다 방문자가 아닌 경우
-			if (myRevisitedCount >= 3) { // 내가 쓴 리뷰의 개수가 3개 이상이면
-				// 재방문 인원의 수는 유지, 리뷰 개수 1감소, 별점 평균 재계산
-				storeMeta.deleteReviewFromVisitedThreeOrMore(review.getRating());
-			} else {// 내가 쓴 리뷰의 개수가 2개 이하인 경우
-				// 재방문 인원의 수, 리뷰 개수 모두 1 감소, 별점 평균 재계산
-				storeMeta.deleteReviewFromVisitedTwoOrLess(review.getRating());
-			}
+		log.info(myRevisitedCount.toString());
+		log.info(mostVisitedCount.toString());
+		log.info(duplicateMostVisitedCount.toString());
+
+		boolean isDuplicateMostVisitor = duplicateMostVisitedCount > 1; // 최다 방문자가 여러명인지 여부
+		boolean isMostVisitor = mostVisitedCount.equals(myRevisitedCount); // 내가 해당 음식점의 최다 방문자 인지 여부
+		boolean hasVisitedThreeOrMore = myRevisitedCount >= 3; // 내 재방문 횟수가 3번 이상인지
+
+		// 총 별점 및 전체 리뷰 개수 업데이트
+		storeMeta.updateTotalRatingAfterDeletion(review.getRating());
+		storeMeta.decreaseTotalReviewCount();
+
+		if (isMostVisitor && isDuplicateMostVisitor) { // 나도 최다 방문자이고, 최다 방문자가 여러명인 경우
+			log.info("나도 최다 방문자, 최다 방문자 여려명");
+			processReviewForDuplicateMostVisitor(storeMeta, hasVisitedThreeOrMore);
+			reviewRepository.delete(review);
+			return;
 		}
+
+		if (isMostVisitor) { // 나만 최다 방문자인 경우
+			log.info("나만 최다 방문자");
+			processReviewForSingleMostVisitor(storeMeta, hasVisitedThreeOrMore);
+			reviewRepository.delete(review);
+			return;
+		}
+
+		// 내가 최다방문자도 아니고, 최다 방문자가 여러명도 아닌 경우
+		log.info("내가 최다 방문자가 아니고, 최다 방문자가 여러명도 아닌 경우");
+		processReviewForNonMostVisitor(storeMeta, hasVisitedThreeOrMore);
 		reviewRepository.delete(review);
+	}
+
+	@Transactional
+		public void deleteStoreReviewTest(Long userId, Long reviewId) {
+		Review review = reviewRepository.findById(reviewId)
+				.orElseThrow(() -> new CustomException(Result.NOT_FOUND_REVIEW));
+
+		if (!review.getUser().getUserId().equals(userId)) {
+			throw new CustomException(Result.UNAUTHORIZED_USER);
+		}
+
+		User user = userRepository.findById(userId).get();
+
+		Store store = review.getStore();
+		StoreMeta storeMeta = store.getStoreMeta();
+
+		Long myRevisitedCount = reviewRepository.countByStoreAndUser(store, user); // 나의 재방문 횟수
+		Long mostVisitedCount = storeMeta.getMostVisitedCount(); // 최다 방문 유저의 방문 수
+		Long duplicateMostVisitedCount = reviewRepository.countByStoreAndReviewCount(store.getStoreId(), mostVisitedCount); // 최다 방문자의 인원수(최다 방문자가 여러명)
+
+		log.info(myRevisitedCount.toString());
+		log.info(mostVisitedCount.toString());
+		log.info(duplicateMostVisitedCount.toString());
+
+		boolean isDuplicateMostVisitor = duplicateMostVisitedCount > 1; // 최다 방문자가 여러명인지 여부
+		boolean isMostVisitor = mostVisitedCount.equals(myRevisitedCount); // 내가 해당 음식점의 최다 방문자 인지 여부
+		boolean hasVisitedThreeOrMore = myRevisitedCount >= 3; // 내 재방문 횟수가 3번 이상인지
+
+		storeMeta.updateTotalRatingAfterDeletion(review.getRating());
+		storeMeta.decreaseTotalReviewCount();
+
+		if (isMostVisitor && isDuplicateMostVisitor) { // 나도 최다 방문자이고, 최다 방문자가 여러명인 경우
+			log.info("나도 최다 방문자, 최다 방문자 여려명");
+			processReviewForDuplicateMostVisitor(storeMeta, hasVisitedThreeOrMore);
+			reviewRepository.delete(review);
+			return;
+		}
+
+		if (isMostVisitor) { // 나만 최다 방문자인 경우
+			log.info("나만 최다 방문자");
+			processReviewForSingleMostVisitor(storeMeta, hasVisitedThreeOrMore);
+			reviewRepository.delete(review);
+			return;
+		}
+
+		// 내가 최다방문자도 아니고, 최다 방문자가 여러명도 아닌 경우
+		log.info("내가 최다 방문자가 아니고, 최다 방문자가 여러명도 아닌 경우");
+		processReviewForNonMostVisitor(storeMeta, hasVisitedThreeOrMore);
+		reviewRepository.delete(review);
+	}
+
+	private void processReviewForDuplicateMostVisitor(StoreMeta storeMeta, boolean hasVisitedThreeOrMore) {
+		if (hasVisitedThreeOrMore) { // 내 재방문 횟수가 3번 이상인 경우
+			log.info("내 재방문 횟수가 3번 이상");
+		} else { // 내 재방문 횟수가 3번 이상이 아닌 경우
+			log.info("내 재방문 횟수가 3번 미만");
+			// 최다 방문자의 재방문 횟수 유지, 전체 재방문 인원의 수/전체 리뷰 개수 1감소, 별점 평균 재계산
+			storeMeta.decreaseTotalRevisitCount();
+		}
+	}
+
+	private void processReviewForSingleMostVisitor(StoreMeta storeMeta, boolean hasVisitedThreeOrMore) {
+		if (hasVisitedThreeOrMore) { // 내 재방문 횟수가 3번 이상인 경우
+			log.info("내 재방문 횟수가 3번 이상");
+			// 최다 방문자의 재방문 횟수 1감소, 전체 재방문 인원 수 유지, 전체 리뷰 개수 1감소, 별점 평균 재계산
+			storeMeta.decreaseMostVisitedCount();
+		} else { // 내 재방문 횟수가 3번 이상이 아닌 경우
+			log.info("내 재방문 횟수가 3번 미만");
+			// 최다 방문자의 재방문 횟수 1감소, 전체 재방문 인원 수 1감소, 전체 리뷰 개수 1감소, 별점 평균 재계산
+			storeMeta.decreaseMostVisitedCount();
+			storeMeta.decreaseTotalRevisitCount();
+		}
+	}
+
+	private void processReviewForNonMostVisitor(StoreMeta storeMeta, boolean hasVisitedThreeOrMore) {
+		if (hasVisitedThreeOrMore) { // 내 재방문 횟수가 3번 이상인 경우
+			log.info("내 재방문 횟수가 3번 이상");
+			// 최다 방문자의 재방문 횟수 유지, 전체 재방문 인원 수 유지, 전체 리뷰 개수 1감소, 별점 평균 재계산
+		} else { // 내 재방문 횟수가 3번 이상이 아닌 경우
+			log.info("내 재방문 횟수가 3번 미만");
+			// 최다 방문자의 재방문 횟수 유지, 전체 재방문 인원 수 1감소, 전체 리뷰 개수 1감소, 별점 평균 재계산
+			storeMeta.decreaseTotalRevisitCount();
+		}
+	}
+
+	public ReviewAddLimitResponse checkUserDailyStoreReviewLimit(User user, Long storeId) {
+		Store store = storeRepository.findById(storeId)
+			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
+
+		LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+		LocalDateTime endOfDay = LocalDate.now().atTime(23, 59, 59);
+
+		int reviewCount = reviewRepository.countStoreReviewByUserForDay(user, store, startOfDay, endOfDay);
+		return ReviewAddLimitResponse.of(reviewCount < 3);
 	}
 }

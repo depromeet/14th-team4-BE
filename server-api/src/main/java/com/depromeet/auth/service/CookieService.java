@@ -15,19 +15,23 @@ public class CookieService {
 
 	public Cookie createAccessTokenCookie(String token) {
 		Cookie cookie = new Cookie("accessToken", token);
-		cookie.setPath("/");
 		int accessTokenExpirationInSeconds = (int)(accessTokenExpirationPeriod / 1000);
 		cookie.setMaxAge(accessTokenExpirationInSeconds);
+		cookie.setDomain("ddoeat.site");
+		cookie.setPath("/");
 		cookie.setHttpOnly(true);
+		cookie.setSecure(true);
 		return cookie;
 	}
 
 	public Cookie createRefreshTokenCookie(String token) {
 		Cookie cookie = new Cookie("refreshToken", token);
+		int refreshTokenExpirationInSeconds = (int)(refreshTokenExpirationPeriod / 1000);
+		cookie.setMaxAge(refreshTokenExpirationInSeconds);
+		cookie.setDomain("ddoeat.site");
 		cookie.setPath("/");
-		int accessTokenExpirationInSeconds = (int)(refreshTokenExpirationPeriod / 1000);
-		cookie.setMaxAge(accessTokenExpirationInSeconds);
 		cookie.setHttpOnly(true);
+		cookie.setSecure(true);
 		return cookie;
 	}
 }
