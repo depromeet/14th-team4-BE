@@ -14,6 +14,11 @@ GET {{host}}/api/v1/stores/1/reviews?type=&page=1
 Content-Type: application/json;charset=UTF-8
 Authorization: Bearer {{token}}
 
+### 음식점, 카페 통합 검색
+GET {{host}}/api/v1/stores/search?query=떡볶이&x=127.06283102249932&y=37.514322572335935&storePage=1&cafePage=1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer {{token}}
+
 ### 리뷰 삭제(본인이 작성한)
 DELETE {{host}}/api/v1/reviews/1
 Content-Type: application/json;charset=UTF-8
