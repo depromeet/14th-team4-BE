@@ -1,5 +1,8 @@
 package com.depromeet.domains.user.entity;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import com.depromeet.domains.common.entity.BaseTimeEntity;
 import com.depromeet.enums.Role;
 import com.depromeet.enums.SocialType;
@@ -20,6 +23,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Where(clause = "deletedAt is NULL")
+@SQLDelete(sql = "UPDATE USER SET deletedAt = CURRENT_TIMESTAMP WHERE user_id = ?")
 public class User extends BaseTimeEntity {
 
 	@Id
