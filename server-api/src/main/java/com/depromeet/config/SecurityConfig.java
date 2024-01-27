@@ -33,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 	private static final String[] PATTERNS = {
 		"/", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**",
-			"/docs/index.html", "/common/*.html", "/jwt-test", "/api/v1/auth/**", "/api/v1/reviews/test/**"
+		"/docs/index.html", "/common/*.html", "/jwt-test", "/api/v1/auth/**", "/api/v1/reviews/test/**"
 	};
 
 	private final CustomOAuth2UserService customOAuth2UserService;
@@ -87,8 +87,7 @@ public class SecurityConfig {
 					)
 					.tokenEndpoint(tokenEndpoint
 						-> tokenEndpoint.accessTokenResponseClient(accessTokenResponseClient()))
-					// .redirectionEndpoint(redirectEndpoint -> redirectEndpoint.baseUri("/login/oauth2/code/**"))
-					.redirectionEndpoint(redirectEndpoint -> redirectEndpoint.baseUri("/login/oauth2/code/apple"))
+					.redirectionEndpoint(redirectEndpoint -> redirectEndpoint.baseUri("/login/oauth2/code/**"))
 					.userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(customOAuth2UserService))
 					.successHandler(customOAuth2SuccessHandler)
 					.failureHandler(customOAuth2FailureHandler)
