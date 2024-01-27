@@ -114,7 +114,7 @@ operation::store-controller-test/create-new-store-review[]
 
 [[delete-review]]
 === 4-3. 리뷰 삭제(본인이 작성한 리뷰만)
-operation::store-controller-test/delete-store-review[]
+operation::store-controller-test/delete-review[]
 
 [[create-bookmark]]
 === 5. 북마크 등록 및 삭제

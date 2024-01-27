@@ -580,4 +580,36 @@ class StoreControllerTest extends RestDocsTestSupport {
 			);
 	}
 
+	@Test
+	void deleteReview() throws Exception {
+		// given
+		Long reviewId = 1L;
+
+		doNothing().when(storeService).deleteStoreReview(any(), eq(reviewId));
+
+		// when
+		mockMvc.perform(
+				delete("/api/v1/reviews/{reviewId}", reviewId)
+					.with(csrf())
+					.contentType(MediaType.APPLICATION_JSON)
+					.header("Authorization", "Bearer accessToken"))
+			.andExpect(status().isOk())
+			.andDo(
+				restDocs.document(
+					pathParameters(
+						parameterWithName("reviewId").description("리뷰 ID")
+					),
+					requestHeaders(
+						headerWithName("Authorization").description("accessToken")
+					),
+					responseFields(
+						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
+						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+						fieldWithPath("data").type(JsonFieldType.NULL).description("null")
+					)
+				)
+			);
+
+	}
+
 }
