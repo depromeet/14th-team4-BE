@@ -3,7 +3,6 @@ package com.depromeet.auth.controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,6 +14,7 @@ import com.depromeet.auth.service.CookieService;
 import com.depromeet.common.exception.CustomResponseEntity;
 import com.depromeet.domains.user.entity.User;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
@@ -32,20 +32,25 @@ public class AuthController {
 	 */
 	@PostMapping("/token/reissue")
 	public CustomResponseEntity<TokenResponse> refreshToken(
-		@RequestHeader(value = "Authorization-refresh") String refreshToken, HttpServletResponse response
+		HttpServletRequest request, HttpServletResponse response
 	) throws IllegalAccessException {
-		TokenResponse tokenResponse = authService.reissueToken(refreshToken);
+		TokenResponse tokenResponse = authService.reissueToken(request);
 		// 응답 헤더에 쿠키 추가
-		response.addCookie(cookieService.createAccessTokenCookie(tokenResponse.getAccessToken()));
 		response.addCookie(cookieService.createRefreshTokenCookie(tokenResponse.getRefreshToken()));
-		return CustomResponseEntity.success(tokenResponse);
+
+		return CustomResponseEntity.success(new TokenResponse(tokenResponse.getAccessToken()));
 	}
 
 	@PostMapping("/signup")
 	public CustomResponseEntity<Void> signup(@AuthUser User user, HttpServletResponse response
-	) throws IllegalAccessException {
+	) {
 		authService.signup(user);
 		return CustomResponseEntity.success();
+	}
+
+	@PostMapping("/logout")
+	public void logout(HttpServletRequest request, HttpServletResponse response) {
+		authService.logout(request, response);
 	}
 
 	/**
@@ -53,9 +58,13 @@ public class AuthController {
 	 * 운영시 삭제 예정
 	 */
 	@GetMapping("/access-token/{userId}")
-	public CustomResponseEntity<TokenResponse> getTestTokenByUserId(@PathVariable("userId") Long userId) {
+	public CustomResponseEntity<TokenResponse> getTestTokenByUserId(@PathVariable("userId") Long userId,
+		HttpServletResponse response) {
 		String accessToken = jwtService.createAccessToken(userId);
 		String refreshToken = jwtService.createRefreshToken(userId);
+
+		response.addCookie(cookieService.createAccessTokenCookie(accessToken));
+		response.addCookie(cookieService.createRefreshTokenCookie(refreshToken));
 
 		return CustomResponseEntity.success(new TokenResponse(accessToken, refreshToken));
 	}
