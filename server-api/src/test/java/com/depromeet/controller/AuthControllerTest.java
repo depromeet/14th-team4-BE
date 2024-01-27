@@ -19,6 +19,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import com.depromeet.auth.dto.TokenResponse;
 import com.depromeet.document.RestDocsTestSupport;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
@@ -27,8 +29,8 @@ class AuthControllerTest extends RestDocsTestSupport {
 
 	@BeforeEach
 	public void setup() {
-		Cookie mockAccessTokenCookie = new Cookie("access_token", "test_access_token");
-		Cookie mockRefreshTokenCookie = new Cookie("refresh_token", "test_refresh_token");
+		Cookie mockAccessTokenCookie = new Cookie("accessToken", "test_access_token");
+		Cookie mockRefreshTokenCookie = new Cookie("refreshToken", "test_refresh_token");
 
 		when(cookieService.createAccessTokenCookie(anyString())).thenReturn(mockAccessTokenCookie);
 		when(cookieService.createRefreshTokenCookie(anyString())).thenReturn(mockRefreshTokenCookie);
@@ -38,26 +40,24 @@ class AuthControllerTest extends RestDocsTestSupport {
 	@Test
 	void refreshToken() throws Exception {
 		// given
-		String refreshToken = "some_refresh_token";
-		TokenResponse tokenResponse = new TokenResponse("new_access_token", "new_refresh_token");
-		given(authService.reissueToken(refreshToken)).willReturn(tokenResponse);
+		TokenResponse tokenResponse = new TokenResponse("test_access_token", "test_refresh_token");
+		given(authService.reissueToken(any())).willReturn(tokenResponse);
 
 		// when
 		mockMvc.perform(
 			post("/api/v1/auth/token/reissue")
-				.header("Authorization-refresh", refreshToken))
+				)
 			.andExpect(status().isOk())
+			.andExpect(cookie().exists("refreshToken")) // 쿠키 존재 확인
+			.andExpect(cookie().value("refreshToken", "test_refresh_token")) // 쿠키 값 확인 (mock 값)
 			.andDo(
 				restDocs.document(
-					requestHeaders(
-						headerWithName("Authorization-refresh").description("refreshToken")
-					),
 					responseFields(
 						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
 						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
 						fieldWithPath("data").type(JsonFieldType.OBJECT).description("토큰 값"),
 						fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("엑세스토큰"),
-						fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("리프레쉬토큰")
+						fieldWithPath("data.refreshToken").type(JsonFieldType.NULL).description("리프레쉬토큰 (쿠키에 담겨서 보내짐)")
 					)
 				)
 			);
@@ -87,6 +87,14 @@ class AuthControllerTest extends RestDocsTestSupport {
 					)
 				)
 			);
+	}
+
+	@Test
+	public void logout() throws Exception {
+		doNothing().when(authService).logout(any(), any());
+
+		mockMvc.perform(post("/api/v1/auth/logout"))
+			.andExpect(status().isOk());
 	}
 
 	@Test
