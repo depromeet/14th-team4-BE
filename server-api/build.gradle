@@ -18,6 +18,11 @@ configurations {
     }
 }
 
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
 dependencies {
     // 컴파일시 가져올 모듈
     implementation project(":server-domain")
@@ -26,6 +31,9 @@ dependencies {
 
     // spring
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
+
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -33,6 +41,9 @@ dependencies {
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
+
+    implementation 'com.nimbusds:nimbus-jose-jwt:9.30.1'
+    implementation 'org.bouncycastle:bcpkix-jdk15on:1.70'
 
     // redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
