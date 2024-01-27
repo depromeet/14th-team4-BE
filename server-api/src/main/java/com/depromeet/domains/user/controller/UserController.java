@@ -62,7 +62,6 @@ public class UserController {
 
 	@DeleteMapping("/withdraw")
 	public void deleteUser(@AuthUser User user) {
-		System.out.println(user);
 		userService.deleteUser(user);
 	}
 }
