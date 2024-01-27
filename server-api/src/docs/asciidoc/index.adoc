@@ -112,13 +112,21 @@ operation::store-controller-test/create-exist-store-review[]
 === 4-2. 리뷰 작성 (새로운 가게)
 operation::store-controller-test/create-new-store-review[]
 
-[[create-bookmark]]
-=== 5-1. 북마크 등록
-operation::bookmark-controller-test/create-bookmark[]
+[[delete-review]]
+=== 4-3. 리뷰 삭제(본인이 작성한 리뷰만)
+operation::store-controller-test/delete-review[]
 
-[[delete-bookmark]]
-=== 5.2 북마크 삭제
-operation::bookmark-controller-test/delete-bookmark[]
+[[create-bookmark]]
+=== 5. 북마크 등록 및 삭제
+operation::bookmark-controller-test/update-bookmark[]
+
+[[get-location-range-stores]]
+=== 6. 지도에서 위,경도 내에 존재하는 식당정보 조회
+operation::store-controller-test/get-location-range-stores[]
+
+[[get-user-daily-store-review-limit]]
+=== 7. 사용자 리뷰 작성 가능 여부 체크
+operation::store-controller-test/get-user-daily-store-review-limit[]
 
 == User API
 

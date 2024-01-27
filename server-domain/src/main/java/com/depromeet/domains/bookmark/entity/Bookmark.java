@@ -15,7 +15,7 @@ import org.hibernate.annotations.Where;
 @Builder
 @AllArgsConstructor
 @Where(clause = "deletedAt is NULL")
-@SQLDelete(sql = "UPDATE bookmark SET deletedAt = CURRENT_TIMESTAMP WHERE bookmarkId = ?")
+@SQLDelete(sql = "UPDATE Bookmark SET deletedAt = CURRENT_TIMESTAMP WHERE bookmarkId = ?")
 
 public class Bookmark extends BaseTimeEntity {
 

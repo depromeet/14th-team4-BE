@@ -33,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 	private static final String[] PATTERNS = {
 		"/", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**",
-		"/docs/index.html", "/common/*.html", "/jwt-test", "/api/v1/auth/**"
+			"/docs/index.html", "/common/*.html", "/jwt-test", "/api/v1/auth/**", "/api/v1/reviews/test/**"
 	};
 
 	private final CustomOAuth2UserService customOAuth2UserService;
