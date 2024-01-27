@@ -8,11 +8,13 @@ import com.depromeet.enums.SocialType;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 각 소셜에서 받아오는 데이터가 다르므로
  * 소셜별로 데이터를 받는 데이터를 분기 처리하는 DTO 클래스
  */
+@Slf4j
 @Getter
 public class OAuth2Attribute {
 	private final Map<String, Object> attributes;
@@ -41,7 +43,7 @@ public class OAuth2Attribute {
 		if (socialType == SocialType.KAKAO) {
 			return ofKakao(userNameAttributeName, attributes);
 		}
-		return ofKakao(userNameAttributeName, attributes);
+		return ofApple(userNameAttributeName, attributes);
 	}
 
 	private static OAuth2Attribute ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
@@ -54,11 +56,17 @@ public class OAuth2Attribute {
 			.build();
 	}
 
+	private static OAuth2Attribute ofApple(String userNameAttributeName, Map<String, Object> attributes) {
+		// todo
+		log.error("--------ofApple 호출->> ");
+		return null;
+	}
+
 	public User toEntity(SocialType socialType) {
 		return User.builder()
 			.socialType(socialType)
 			.socialId(socialId)
-			.nickName("게스트"+socialId)
+			.nickName("게스트" + socialId)
 			.userRole(Role.GUEST)
 			.build();
 	}
