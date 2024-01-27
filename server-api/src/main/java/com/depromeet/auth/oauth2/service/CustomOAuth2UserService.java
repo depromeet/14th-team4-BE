@@ -1,12 +1,11 @@
 package com.depromeet.auth.oauth2.service;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
-import com.depromeet.auth.oauth2.CustomOAuth2User;
-import com.depromeet.auth.oauth2.OAuth2Attribute;
-import com.depromeet.domains.user.entity.User;
-import com.depromeet.domains.user.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -15,10 +14,18 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import com.depromeet.auth.oauth2.CustomOAuth2User;
+import com.depromeet.auth.oauth2.OAuth2Attribute;
+import com.depromeet.domains.user.entity.User;
+import com.depromeet.domains.user.repository.UserRepository;
 import com.depromeet.enums.SocialType;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
@@ -39,12 +46,23 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
 		SocialType socialType = getSocialType(registrationId);
 		String userNameAttributeName = getUserNameAttributeName(userRequest);
-		Map<String, Object> attributes = oAuth2User.getAttributes();
+		// Map<String, Object> attributes = oAuth2User.getAttributes();
+		Map<String, Object> attributes;
+
+		if (socialType.name().contains("apple")) {
+			String idToken = userRequest.getAdditionalParameters().get("id_token").toString();
+			attributes = decodeJwtTokenPayload(idToken);
+			attributes.put("id_token", idToken);
+		} else {
+			attributes = oAuth2User.getAttributes();
+		}
+
 		OAuth2Attribute extractAttributes = OAuth2Attribute.of(socialType, userNameAttributeName, attributes);
 		// 기존 가입된 유저인지 확인
 		User createdUser = getUser(extractAttributes, socialType);
 
-		return new CustomOAuth2User(Collections.singleton(new SimpleGrantedAuthority(createdUser.getUserRole().getDescription())),
+		return new CustomOAuth2User(
+			Collections.singleton(new SimpleGrantedAuthority(createdUser.getUserRole().getDescription())),
 			attributes, extractAttributes.getNameAttributeKey(), createdUser.getUserId(), createdUser.getUserRole());
 	}
 
@@ -83,5 +101,25 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	private User saveUser(OAuth2Attribute attributes, SocialType socialType) {
 		User createdUser = attributes.toEntity(socialType);
 		return userRepository.save(createdUser);
+	}
+
+	//JWT Payload부분 decode 메서드
+	public Map<String, Object> decodeJwtTokenPayload(String jwtToken) {
+		Map<String, Object> jwtClaims = new HashMap<>();
+		try {
+			String[] parts = jwtToken.split("\\.");
+			Base64.Decoder decoder = Base64.getUrlDecoder();
+
+			byte[] decodedBytes = decoder.decode(parts[1].getBytes(StandardCharsets.UTF_8));
+			String decodedString = new String(decodedBytes, StandardCharsets.UTF_8);
+			ObjectMapper mapper = new ObjectMapper();
+
+			Map<String, Object> map = mapper.readValue(decodedString, Map.class);
+			jwtClaims.putAll(map);
+
+		} catch (JsonProcessingException e) {
+			log.error("decodeJwtToken: {}-{} / jwtToken : {}", e.getMessage(), e.getCause(), jwtToken);
+		}
+		return jwtClaims;
 	}
 }
