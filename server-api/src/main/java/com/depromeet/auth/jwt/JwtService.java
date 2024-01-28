@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.depromeet.auth.service.RedisService;
 import com.depromeet.common.exception.CustomException;
@@ -28,6 +29,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,6 +53,8 @@ public class JwtService {
 	@Value("${jwt.refresh.header}")
 	private String refreshHeader;
 
+	private static final String AUTHORIZATION_HEADER = "Authorization";
+	private static final String BEARER_PREFIX = "Bearer ";
 	private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
 	private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
 
@@ -63,6 +67,15 @@ public class JwtService {
 	protected void init() {
 		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
 		this.key = Keys.hmacShaKeyFor(keyBytes);
+	}
+
+	public String resolveToken(HttpServletRequest request) {
+		String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+
+		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+			return bearerToken.substring(BEARER_PREFIX.length());
+		}
+		return null;
 	}
 
 	/*
@@ -146,5 +159,9 @@ public class JwtService {
 	private User getUserFromToken(String token) {
 		Claims claims = getClaims(token);
 		return userRepository.findById(Long.valueOf(claims.get("userId", Integer.class))).orElseThrow(() -> new CustomException(Result.FAIL));
+	}
+
+	public Long getLeftAccessTokenTTLSecond(String token) {
+		return getClaims(token).getExpiration().getTime();
 	}
 }

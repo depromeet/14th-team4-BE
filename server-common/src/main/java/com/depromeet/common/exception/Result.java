@@ -17,6 +17,7 @@ public enum Result {
     TOKEN_NOTSUPPORTED(401, "지원되지 않는 토큰 형식"),
     TOKEN_INVALID(401, "잘못된 토큰 형식"),
     DUPLICATED_NICKNAME(400, "이미 존재하는 닉네임입니다."),
+    NOT_FOUND_COOKIE(404, "존재하지 않는 쿠키"),
     NOT_FOUND_USER(404, "사용자를 찾을 수 없습니다."),
     NOT_FOUND_BOOKMARK(404, "북마크를 찾을 수 없습니다."),
     NOT_FOUND_STORE(404, "가게를 찾을 수 없습니다."),

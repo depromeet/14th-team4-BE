@@ -12,16 +12,26 @@ import com.depromeet.common.exception.Result;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.repository.UserRepository;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class AuthService {
 	private final JwtService jwtService;
 	private final RedisService redisService;
+	private final CookieService cookieService;
 	private final UserRepository userRepository;
 
-	public TokenResponse reissueToken(String refreshToken) throws IllegalAccessException {
+	public TokenResponse reissueToken(HttpServletRequest request) throws IllegalAccessException {
+		// get cookie
+		Cookie cookie = cookieService.getCookie(request, "refreshToken").orElseThrow();
+		String refreshToken = cookie.getValue();
+
 		// Refresh Token 검증
 		if (!jwtService.isValidToken(refreshToken)) {
 			throw new IllegalAccessException();
@@ -41,6 +51,35 @@ public class AuthService {
 		String newRefreshToken = jwtService.createRefreshToken(user.getUserId());
 
 		return new TokenResponse(newAccessToken, newRefreshToken);
+	}
+
+	@Transactional
+	public void logout(HttpServletRequest request, HttpServletResponse response) {
+		// 1. 엑세스 토큰에서 사용자 ID 추출
+		String accessToken = jwtService.resolveToken(request);
+		Long userId = jwtService.getUserIdFromToken(accessToken);
+
+		// 2. 리프레시 토큰 가져오기
+		Cookie cookie = cookieService.getCookie(request, "refreshToken")
+			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_COOKIE));
+		String refreshToken = cookie.getValue();
+
+		// 3. Redis에 저장된 리프레시 토큰과 비교
+		String savedRefreshToken = redisService.getValues(String.valueOf(userId));
+		if (savedRefreshToken == null || !savedRefreshToken.equals(refreshToken)) {
+			log.info("저장된 리프레쉬토큰이 없거나, 다른 토큰이 일치하지 않는 경우");
+			throw new CustomException(Result.BAD_REQUEST);
+		}
+
+		// redis에서 삭제
+		redisService.deleteValues(String.valueOf(userId));
+
+		// redis에 블랙리스트 등록
+		Long leftAccessTokenTTlSecond = jwtService.getLeftAccessTokenTTLSecond(accessToken);
+		redisService.setValues(accessToken, "logout", leftAccessTokenTTlSecond);
+
+		cookieService.deleteAccessTokenCookie(response);
+		cookieService.deleteRefreshTokenCookie(response);
 	}
 
 	@Transactional

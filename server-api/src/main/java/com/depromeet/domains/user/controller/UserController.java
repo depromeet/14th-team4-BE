@@ -2,6 +2,7 @@ package com.depromeet.domains.user.controller;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -57,5 +58,10 @@ public class UserController {
 	@GetMapping("/reviews")
 	public CustomResponseEntity<Slice<UserReviewResponse>> getMyReviews(@AuthUser User user, Pageable pageable) {
 		return CustomResponseEntity.success(userService.getUserReviews(user, pageable));
+	}
+
+	@DeleteMapping("/withdraw")
+	public void deleteUser(@AuthUser User user) {
+		userService.deleteUser(user);
 	}
 }

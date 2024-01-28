@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.depromeet.auth.service.RedisService;
 import com.depromeet.common.exception.CustomException;
 import com.depromeet.common.exception.Result;
 import com.depromeet.domains.bookmark.entity.Bookmark;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+	private final RedisService redisService;
 	private final UserRepository userRepository;
 	private final BookmarkRepository bookmarkRepository;
 	private final ReviewRepository reviewRepository;
@@ -94,5 +96,11 @@ public class UserService {
 			review.getImageUrl(),
 			review.getDescription()
 		);
+	}
+
+	@Transactional
+	public void deleteUser(User user) {
+		userRepository.deleteById(user.getUserId());
+		redisService.deleteValues(String.valueOf(user.getUserId()));
 	}
 }

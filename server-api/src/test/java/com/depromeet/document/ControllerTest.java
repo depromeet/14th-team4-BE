@@ -11,6 +11,7 @@ import com.depromeet.auth.controller.AuthController;
 import com.depromeet.auth.jwt.JwtService;
 import com.depromeet.auth.service.AuthService;
 import com.depromeet.auth.service.CookieService;
+import com.depromeet.auth.service.RedisService;
 import com.depromeet.domains.bookmark.controller.BookmarkController;
 import com.depromeet.domains.bookmark.service.BookmarkService;
 import com.depromeet.domains.image.controller.ImageController;
@@ -54,6 +55,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected AuthService authService;
+
+    @MockBean
+    protected RedisService redisService;
 
     @MockBean
     protected CookieService cookieService;

@@ -2,7 +2,6 @@ package com.depromeet.auth.service;
 
 import java.time.Duration;
 
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
@@ -37,10 +36,7 @@ public class RedisService {
 	@Transactional(readOnly = true)
 	public String getValues(String key) {
 		ValueOperations<String, String> values = redisTemplate.opsForValue();
-		if (values.get(key) == null) {
-			return "false";
-		}
-		return (String)values.get(key);
+		return values.get(key); // 키가 존재하지 않으면 null 반환
 	}
 
 	/*
