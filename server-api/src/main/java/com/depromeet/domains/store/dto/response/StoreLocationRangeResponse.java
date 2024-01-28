@@ -4,20 +4,15 @@ import java.util.List;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
 @Builder
-@ToString // 테스트
 public class StoreLocationRangeResponse {
 
-	private List<StoreLocationRange> bookMarkList;
 	private List<StoreLocationRange> locationStoreList;
 
-	public static StoreLocationRangeResponse of(List<StoreLocationRange> bookMarkList,
-		List<StoreLocationRange> locationStoreList) {
+	public static StoreLocationRangeResponse of(List<StoreLocationRange> locationStoreList) {
 		return StoreLocationRangeResponse.builder()
-			.bookMarkList(bookMarkList)
 			.locationStoreList(locationStoreList)
 			.build();
 	}
@@ -36,10 +31,11 @@ public class StoreLocationRangeResponse {
 		private Double latitude;
 		private Long totalRevisitedCount;
 		private Long totalReviewCount;
+		private Boolean isBookMarked;
 
 		public static StoreLocationRange of(Long storeId, Long kakaoStoreId, String storeName, Long categoryId,
 			String categoryName, String categoryType, String address, Double longitude, Double latitude,
-			Long totalRevisitedCount, Long totalReviewCount) {
+			Long totalRevisitedCount, Long totalReviewCount, Boolean isBookMarked) {
 			return StoreLocationRange.builder()
 				.storeId(storeId)
 				.kakaoStoreId(kakaoStoreId)
@@ -52,6 +48,7 @@ public class StoreLocationRangeResponse {
 				.latitude(latitude)
 				.totalRevisitedCount(totalRevisitedCount)
 				.totalReviewCount(totalReviewCount)
+				.isBookMarked(isBookMarked)
 				.build();
 		}
 	}

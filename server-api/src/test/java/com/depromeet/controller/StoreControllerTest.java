@@ -10,6 +10,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -392,6 +393,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.latitude(37.29472)
 			.totalRevisitedCount(1L)
 			.totalReviewCount(1L)
+			.isBookMarked(true)
 			.build();
 
 		StoreLocationRange storeLocationRange2 = StoreLocationRange.builder()
@@ -406,6 +408,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.latitude(37.29472)
 			.totalRevisitedCount(1L)
 			.totalReviewCount(1L)
+			.isBookMarked(true)
 			.build();
 
 		StoreLocationRange storeLocationRange3 = StoreLocationRange.builder()
@@ -420,6 +423,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.latitude(37.29472)
 			.totalRevisitedCount(1L)
 			.totalReviewCount(1L)
+			.isBookMarked(false)
 			.build();
 
 		StoreLocationRange storeLocationRange4 = StoreLocationRange.builder()
@@ -434,13 +438,18 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.latitude(37.29472)
 			.totalRevisitedCount(1L)
 			.totalReviewCount(1L)
+			.isBookMarked(false)
 			.build();
 
 		List<StoreLocationRange> bookMarkList = Arrays.asList(storeLocationRange1, storeLocationRange2);
 		List<StoreLocationRange> locationRangeList = Arrays.asList(storeLocationRange3, storeLocationRange4);
 
+		List<StoreLocationRange> totalList = new ArrayList<>();
+		totalList.addAll(bookMarkList);
+		totalList.addAll(locationRangeList);
+
 		StoreLocationRangeResponse storeLocationRangeResponse =
-			StoreLocationRangeResponse.of(bookMarkList, locationRangeList);
+			StoreLocationRangeResponse.of(totalList);
 
 		given(storeService.getRangeStores(eq(leftTopLatitude), eq(leftTopLongitude), eq(rightBottomLatitude)
 			, eq(rightBottomLongitude), eq(level), eq(java.util.Optional.ofNullable(type)), any()))
@@ -484,33 +493,6 @@ class StoreControllerTest extends RestDocsTestSupport {
 						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
 						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
 						// bookMarkList
-						fieldWithPath("data.bookMarkList[]").type(JsonFieldType.ARRAY).description("북마크한 식당 목록"),
-						fieldWithPath("data.bookMarkList[].storeId").type(JsonFieldType.NUMBER)
-							.description("우리 DB상 음식점 ID"),
-						fieldWithPath("data.bookMarkList[].kakaoStoreId").type(JsonFieldType.NUMBER)
-							.description("카카오 DB상 음식점 ID"),
-						fieldWithPath("data.bookMarkList[].storeName").type(JsonFieldType.STRING).description("음식점 명"),
-						fieldWithPath("data.bookMarkList[].categoryId").type(JsonFieldType.NUMBER)
-							.description("음식점 카테고리 ID"),
-						fieldWithPath("data.bookMarkList[].categoryName").type(JsonFieldType.STRING)
-							.description("음식점 카테고리 명"),
-						fieldWithPath("data.bookMarkList[].categoryType").type(JsonFieldType.STRING)
-							.description("음식점 카테고리 타입"
-								+ "\nKOREAN(한식)"
-								+ "\nCHINESE(중식)"
-								+ "\nJAPANESE(일식)"
-								+ "\nWESTERN(양식)"
-								+ "\nCAFE(카페,디저트)"
-								+ "\nBARS(술집)"
-								+ "\nSCHOOLFOOD(분식)"
-								+ "\nETC(기타)"),
-						fieldWithPath("data.bookMarkList[].address").type(JsonFieldType.STRING).description("음식점 주소"),
-						fieldWithPath("data.bookMarkList[].longitude").type(JsonFieldType.NUMBER).description("음식점 위도"),
-						fieldWithPath("data.bookMarkList[].latitude").type(JsonFieldType.NUMBER).description("음식점 경도"),
-						fieldWithPath("data.bookMarkList[].totalRevisitedCount").type(JsonFieldType.NUMBER)
-							.description("재방문한 인원수 (N명 재방문)"),
-						fieldWithPath("data.bookMarkList[].totalReviewCount").type(JsonFieldType.NUMBER)
-							.description("총 리뷰 갯수"),
 						// locationStoreList
 						fieldWithPath("data.locationStoreList[]").type(JsonFieldType.ARRAY)
 							.description("요청한 위경도 내 식당 목록"),
@@ -543,7 +525,9 @@ class StoreControllerTest extends RestDocsTestSupport {
 						fieldWithPath("data.locationStoreList[].totalRevisitedCount").type(JsonFieldType.NUMBER)
 							.description("재방문한 인원수 (N명 재방문)"),
 						fieldWithPath("data.locationStoreList[].totalReviewCount").type(JsonFieldType.NUMBER)
-							.description("총 리뷰 갯수")
+							.description("총 리뷰 갯수"),
+						fieldWithPath("data.locationStoreList[].isBookMarked").type(JsonFieldType.BOOLEAN)
+							.description("북마크 여부")
 					)
 				)
 			);
