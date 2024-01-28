@@ -119,10 +119,10 @@ public class StoreSearchControllerTest extends RestDocsTestSupport {
 							.description("현재 위치와 음식점과의 거리"),
 						fieldWithPath("data.storeSearchResult[].totalRevisitedCount").type(JsonFieldType.NUMBER)
 							.description("재방문한 인원수 (N명 재방문)"),
-						fieldWithPath("data.storeSearchResult[].latitude").type(JsonFieldType.NUMBER)
-							.description("음식점 위도"),
 						fieldWithPath("data.storeSearchResult[].longitude").type(JsonFieldType.NUMBER)
 							.description("음식점 경도"),
+						fieldWithPath("data.storeSearchResult[].latitude").type(JsonFieldType.NUMBER)
+							.description("음식점 위도"),
 						fieldWithPath("data.storeSearchResult[].kakaoStoreId").type(JsonFieldType.NUMBER)
 							.description("카카오 DB상 음식점 ID"),
 						fieldWithPath("data.storeIsEnd").type(JsonFieldType.BOOLEAN)

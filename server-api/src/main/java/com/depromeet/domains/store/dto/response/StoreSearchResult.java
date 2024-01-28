@@ -15,11 +15,11 @@ public class StoreSearchResult {
 	private String address;
 	private Integer distance;
 	private Long totalRevisitedCount;
-	private Double latitude;
 	private Double longitude;
+	private Double latitude;
 
 	public static StoreSearchResult of(Long storeId, Long kakaoStoreId, String storeName, String kakaoCategoryName
-		, String categoryType, String address, Integer distance, Long totalRevisitedCount, Double latitude, Double longitude) {
+		, String categoryType, String address, Integer distance, Long totalRevisitedCount, Double longitude, Double latitude) {
 		return StoreSearchResult.builder()
 			.storeId(storeId)
 			.kakaoStoreId(kakaoStoreId)
@@ -29,8 +29,8 @@ public class StoreSearchResult {
 			.address(address)
 			.distance(distance)
 			.totalRevisitedCount(totalRevisitedCount)
-			.latitude(latitude)
 			.longitude(longitude)
+			.latitude(latitude)
 			.build();
 	}
 
