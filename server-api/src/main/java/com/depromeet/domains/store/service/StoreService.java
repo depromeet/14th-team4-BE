@@ -278,13 +278,11 @@ public class StoreService {
 	}
 
 	private Store buildNewStore(NewStoreRequest newStoreRequest) {
-		CategoryType categoryType;
+		String categoryName = newStoreRequest.getCategoryType(); // 예: "한식"
 
-		try {
-			categoryType = CategoryType.valueOf(newStoreRequest.getCategoryType().toUpperCase());
-		} catch (IllegalArgumentException e) {
-			throw new CustomException(Result.NOT_FOUND_CATEGORY);
-		}
+		CategoryType categoryType = CategoryType.fromDescription(categoryName)
+			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_CATEGORY));
+
 		Category category = categoryRepository.findByCategoryType(categoryType)
 			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_CATEGORY));
 

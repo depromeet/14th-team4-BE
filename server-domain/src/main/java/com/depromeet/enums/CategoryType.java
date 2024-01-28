@@ -1,6 +1,7 @@
 package com.depromeet.enums;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import lombok.AllArgsConstructor;
 
@@ -25,6 +26,12 @@ public enum CategoryType implements EnumType {
 			.filter(t -> categoryType.equalsIgnoreCase(t.getType()))
 			.findFirst()
 			.orElse(CategoryType.ETC);
+	}
+
+	public static Optional<CategoryType> fromDescription(String description) {
+		return Arrays.stream(CategoryType.values())
+			.filter(type -> type.getDescription().equals(description))
+			.findFirst();
 	}
 
 	@Override
