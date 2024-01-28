@@ -137,7 +137,7 @@ public class StoreSearchService {
 					kakaoCategoryName = kakaoCategories[1];
 				}
 
-				String categoryType = findByDescription(kakaoCategoryName);
+				String categoryType = findByType(kakaoCategoryName);
 
 				// storeName + address 조합후 DB 검색시 존재하지 않으면 새로운 음식점이므로 revisitedCount = 0,
 				// 존재하면 revisitedCount = 해당 음식점의 revisitedCount
@@ -164,12 +164,12 @@ public class StoreSearchService {
 			.collect(Collectors.toList());
 	}
 
-	private String findByDescription(String categoryName) {
+	private String findByType(String categoryName) {
 		for (CategoryType type : CategoryType.values()) {
 			if (type.getDescription().equals(categoryName)) {
-				return type.getDescription();
+				return type.getType();
 			}
 		}
-		return CategoryType.ETC.getDescription();
+		return CategoryType.ETC.getType();
 	}
 }
