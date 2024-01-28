@@ -11,7 +11,7 @@ public enum CategoryType implements EnumType {
 	CHINESE("CHINESE", "중식"),
 	JAPANESE("JAPANESE", "일식"),
 	WESTERN("WESTERN", "양식"),
-	CAFE("CAFE", "카페,디저트"),
+	CAFE("CAFE", "카페"),
 	BARS("BARS", "술집"),
 	SCHOOLFOOD("SCHOOLFOOD", "분식"),
 	ETC("ETC", "기타");

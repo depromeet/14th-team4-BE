@@ -165,11 +165,11 @@ public class StoreSearchService {
 	}
 
 	private String findByType(String categoryName) {
-		for (CategoryType type : CategoryType.values()) {
-			if (type.getDescription().equals(categoryName)) {
-				return type.getType();
+		for (CategoryType categoryType : CategoryType.values()) {
+			if (categoryType.getDescription().equals(categoryName)) {
+				return categoryType.getDescription();
 			}
 		}
-		return CategoryType.ETC.getType();
+		return CategoryType.ETC.getDescription();
 	}
 }
