@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.depromeet.domains.user.entity.QUser;
-import com.depromeet.domains.user.repository.UserRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -37,11 +34,13 @@ import com.depromeet.domains.store.entity.StoreMeta;
 import com.depromeet.domains.store.repository.StoreMetaRepository;
 import com.depromeet.domains.store.repository.StoreRepository;
 import com.depromeet.domains.user.entity.User;
+import com.depromeet.domains.user.repository.UserRepository;
 import com.depromeet.enums.CategoryType;
 import com.depromeet.enums.ReviewType;
 import com.depromeet.enums.ViewLevel;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
@@ -155,6 +154,8 @@ public class StoreService {
 		Double rightBottomLatitude, Double rightBottomLongitude, Integer level, Optional<CategoryType> categoryType,
 		User user) {
 
+		List<StoreLocationRangeResponse.StoreLocationRange> totalList = new ArrayList<>();
+
 		List<Store> bookMarkStoreList = this.storeRepository.findByUsersBookMarkList(user.getUserId());
 		List<Long> bookMarkStoreIdList = storeToIdList(bookMarkStoreList);
 
@@ -171,7 +172,10 @@ public class StoreService {
 
 		int viewStoreListCount = calculateViewStoreListRatio(storeListWithCondition.size(), viewLevel.getRatio());
 
-		return toStoreLocationRangeResponse(bookMarkStoreList, storeListWithCondition.subList(0, viewStoreListCount));
+		totalList.addAll(toStoreLocationRange(bookMarkStoreList, true));
+		totalList.addAll(toStoreLocationRange(storeListWithCondition.subList(0, viewStoreListCount), false));
+
+		return toStoreLocationRangeResponse(totalList);
 	}
 
 	private int calculateViewStoreListRatio(int listSize, double ratio) {
@@ -184,16 +188,16 @@ public class StoreService {
 			.collect(Collectors.toList());
 	}
 
-	private StoreLocationRangeResponse toStoreLocationRangeResponse(List<Store> bookMarkStoreList,
-		List<Store> locationStoreList) {
+	private StoreLocationRangeResponse toStoreLocationRangeResponse(
+		List<StoreLocationRangeResponse.StoreLocationRange> locationStoreList) {
 
 		return StoreLocationRangeResponse.builder()
-			.bookMarkList(toStoreLocationRange(bookMarkStoreList))
-			.locationStoreList(toStoreLocationRange(locationStoreList))
+			.locationStoreList(locationStoreList)
 			.build();
 	}
 
-	private List<StoreLocationRangeResponse.StoreLocationRange> toStoreLocationRange(List<Store> storeList) {
+	private List<StoreLocationRangeResponse.StoreLocationRange> toStoreLocationRange(List<Store> storeList,
+		boolean isBookMarked) {
 		return storeList.stream()
 			.map(store ->
 				StoreLocationRangeResponse.StoreLocationRange.of(
@@ -207,7 +211,8 @@ public class StoreService {
 					store.getLocation().getLongitude(),
 					store.getLocation().getLatitude(),
 					store.getStoreMeta().getTotalRevisitedCount(),
-					store.getStoreMeta().getTotalReviewCount()))
+					store.getStoreMeta().getTotalReviewCount(),
+					isBookMarked))
 			.collect(Collectors.toList());
 	}
 
@@ -313,7 +318,8 @@ public class StoreService {
 
 		Long myRevisitedCount = reviewRepository.countByStoreAndUser(store, user); // 나의 재방문 횟수
 		Long mostVisitedCount = storeMeta.getMostVisitedCount(); // 최다 방문 유저의 방문 수
-		Long duplicateMostVisitedCount = reviewRepository.countByStoreAndReviewCount(store.getStoreId(), mostVisitedCount); // 최다 방문자의 인원수(최다 방문자가 여러명)
+		Long duplicateMostVisitedCount = reviewRepository.countByStoreAndReviewCount(store.getStoreId(),
+			mostVisitedCount); // 최다 방문자의 인원수(최다 방문자가 여러명)
 
 		log.info(myRevisitedCount.toString());
 		log.info(mostVisitedCount.toString());
@@ -348,9 +354,9 @@ public class StoreService {
 	}
 
 	@Transactional
-		public void deleteStoreReviewTest(Long userId, Long reviewId) {
+	public void deleteStoreReviewTest(Long userId, Long reviewId) {
 		Review review = reviewRepository.findById(reviewId)
-				.orElseThrow(() -> new CustomException(Result.NOT_FOUND_REVIEW));
+			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_REVIEW));
 
 		if (!review.getUser().getUserId().equals(userId)) {
 			throw new CustomException(Result.UNAUTHORIZED_USER);
@@ -363,7 +369,8 @@ public class StoreService {
 
 		Long myRevisitedCount = reviewRepository.countByStoreAndUser(store, user); // 나의 재방문 횟수
 		Long mostVisitedCount = storeMeta.getMostVisitedCount(); // 최다 방문 유저의 방문 수
-		Long duplicateMostVisitedCount = reviewRepository.countByStoreAndReviewCount(store.getStoreId(), mostVisitedCount); // 최다 방문자의 인원수(최다 방문자가 여러명)
+		Long duplicateMostVisitedCount = reviewRepository.countByStoreAndReviewCount(store.getStoreId(),
+			mostVisitedCount); // 최다 방문자의 인원수(최다 방문자가 여러명)
 
 		log.info(myRevisitedCount.toString());
 		log.info(mostVisitedCount.toString());
