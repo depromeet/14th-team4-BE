@@ -526,7 +526,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 							.description("재방문한 인원수 (N명 재방문)"),
 						fieldWithPath("data.locationStoreList[].totalReviewCount").type(JsonFieldType.NUMBER)
 							.description("총 리뷰 갯수"),
-						fieldWithPath("data.locationStoreList[].isBookMarked").type(JsonFieldType.NUMBER)
+						fieldWithPath("data.locationStoreList[].isBookMarked").type(JsonFieldType.BOOLEAN)
 							.description("북마크 여부")
 					)
 				)
