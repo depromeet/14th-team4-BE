@@ -395,7 +395,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.latitude(37.29472)
 			.totalRevisitedCount(1L)
 			.totalReviewCount(1L)
-			.isBookMarked(true)
+			.isBookmarked(true)
 			.build();
 
 		StoreLocationRange storeLocationRange2 = StoreLocationRange.builder()
@@ -410,7 +410,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.latitude(37.29472)
 			.totalRevisitedCount(1L)
 			.totalReviewCount(1L)
-			.isBookMarked(true)
+			.isBookmarked(true)
 			.build();
 
 		StoreLocationRange storeLocationRange3 = StoreLocationRange.builder()
@@ -425,7 +425,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.latitude(37.29472)
 			.totalRevisitedCount(1L)
 			.totalReviewCount(1L)
-			.isBookMarked(false)
+			.isBookmarked(false)
 			.build();
 
 		StoreLocationRange storeLocationRange4 = StoreLocationRange.builder()
@@ -440,7 +440,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.latitude(37.29472)
 			.totalRevisitedCount(1L)
 			.totalReviewCount(1L)
-			.isBookMarked(false)
+			.isBookmarked(false)
 			.build();
 
 		List<StoreLocationRange> bookMarkList = Arrays.asList(storeLocationRange1, storeLocationRange2);
@@ -528,7 +528,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 							.description("재방문한 인원수 (N명 재방문)"),
 						fieldWithPath("data.locationStoreList[].totalReviewCount").type(JsonFieldType.NUMBER)
 							.description("총 리뷰 갯수"),
-						fieldWithPath("data.locationStoreList[].isBookMarked").type(JsonFieldType.BOOLEAN)
+						fieldWithPath("data.locationStoreList[].isBookmarked").type(JsonFieldType.BOOLEAN)
 							.description("북마크 여부")
 					)
 				)

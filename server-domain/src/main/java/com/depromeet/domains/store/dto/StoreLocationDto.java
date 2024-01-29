@@ -11,17 +11,17 @@ public class StoreLocationDto {
 	private String storeName;
 	private Double latitude;
 	private Double longitude;
-	private boolean isBookMarked;
+	private boolean isBookmarked;
 
 	public static StoreLocationDto of(Long storeId, String storeName, Double latitude, Double longitude,
-		boolean isBookMarkedStore) {
+		boolean isBookmarkedStore) {
 
 		return StoreLocationDto.builder()
 			.storeId(storeId)
 			.storeName(storeName)
 			.latitude(latitude)
 			.longitude(longitude)
-			.isBookMarked(isBookMarkedStore)
+			.isBookmarked(isBookmarkedStore)
 			.build();
 	}
 }
