@@ -210,7 +210,7 @@ public class StoreService {
 	}
 
 	private List<StoreLocationRangeResponse.StoreLocationRange> toStoreLocationRange(List<Store> storeList,
-		boolean isBookMarked) {
+		boolean isBookmarked) {
 		return storeList.stream()
 			.map(store ->
 				StoreLocationRangeResponse.StoreLocationRange.of(
@@ -225,7 +225,7 @@ public class StoreService {
 					store.getLocation().getLatitude(),
 					store.getStoreMeta().getTotalRevisitedCount(),
 					store.getStoreMeta().getTotalReviewCount(),
-					isBookMarked))
+					isBookmarked))
 			.collect(Collectors.toList());
 	}
 
