@@ -59,6 +59,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.userId(1L)
 			.myRevisitedCount(5L)
 			.totalRevisitedCount(2L)
+			.isBookmarked(true)
 			.build();
 
 		given(storeService.getStore(eq(1L), any())).willReturn(storePreviewResponse);
@@ -92,7 +93,8 @@ class StoreControllerTest extends RestDocsTestSupport {
 						fieldWithPath("data.myRevisitedCount").type(JsonFieldType.NUMBER)
 							.description("자신이 재방문한 횟수(N번 방문)"),
 						fieldWithPath("data.totalRevisitedCount").type(JsonFieldType.NUMBER)
-							.description("전체 재방문 인원 수(00명이 재방문했어요)")
+							.description("전체 재방문 인원 수(00명이 재방문했어요)"),
+						fieldWithPath("data.isBookmarked").type(JsonFieldType.BOOLEAN).description("북마크 여부")
 					)
 				)
 			)

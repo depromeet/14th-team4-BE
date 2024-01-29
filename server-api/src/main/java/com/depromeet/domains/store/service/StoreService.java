@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.depromeet.domains.bookmark.repository.BookmarkRepository;
+import com.depromeet.domains.store.dto.request.*;
+import com.depromeet.domains.user.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -21,8 +25,6 @@ import com.depromeet.domains.category.entity.Category;
 import com.depromeet.domains.category.repository.CategoryRepository;
 import com.depromeet.domains.review.entity.Review;
 import com.depromeet.domains.review.repository.ReviewRepository;
-import com.depromeet.domains.store.dto.request.NewStoreRequest;
-import com.depromeet.domains.store.dto.request.ReviewRequest;
 import com.depromeet.domains.store.dto.response.ReviewAddLimitResponse;
 import com.depromeet.domains.store.dto.response.ReviewAddResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
@@ -52,6 +54,7 @@ public class StoreService {
 	private final ReviewRepository reviewRepository;
 	private final CategoryRepository categoryRepository;
 	private final UserRepository userRepository;
+	private final BookmarkRepository bookmarkRepository;
 
 	// 음식점 프리뷰 조회(바텀 시트)
 	@Transactional(readOnly = true)
@@ -62,12 +65,21 @@ public class StoreService {
 
 		ArrayList<String> reviewImageUrls = new ArrayList<>();
 		for (Review review : reviews) {
-			reviewImageUrls.add(review.getImageUrl());
+			String imageUrl = review.getImageUrl();
+			if (imageUrl != null) {
+				reviewImageUrls.add(imageUrl);
+			}
 		}
 
 		Long myRevisitedCount = reviewRepository.countByStoreAndUser(store, user);
 		StoreMeta storeMeta = store.getStoreMeta();
 		Long totalRevisitedCount = storeMeta.getTotalRevisitedCount();
+
+		Boolean isBookmarked = false;
+		if (bookmarkRepository.findByUserAndStore(user, store).isPresent()) {
+			isBookmarked = true;
+		}
+
 
 		return StorePreviewResponse.of(
 			store.getStoreId(),
@@ -79,7 +91,8 @@ public class StoreService {
 			reviewImageUrls,
 			user.getUserId(),
 			myRevisitedCount,
-			totalRevisitedCount);
+			totalRevisitedCount,
+			isBookmarked);
 	}
 
 	// 음식점 상세조회시 또잇 리포트 조회
