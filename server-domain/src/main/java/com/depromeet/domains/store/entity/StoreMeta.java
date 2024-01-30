@@ -34,20 +34,20 @@ public class StoreMeta extends BaseTimeEntity {
 
 
     public void updateTotalRating(Integer newRating) {
-        float newTotalRatingSum = this.totalRating * this.totalReviewCount + newRating;
-        this.totalReviewCount++; // 리뷰 개수 증가
-        this.totalRating = newTotalRatingSum / this.totalReviewCount; // 새 평균 평점 계산
+        this.totalRating = (this.totalRating * this.totalReviewCount + newRating) / (this.totalReviewCount + 1); // 새 평균 평점 계산
         this.totalRating = Math.round(this.totalRating * 10.0f) / 10.0f; // 반올림하여 저장
     }
 
-    public void incrementTotalRevisitedCount() {
+    public void increaseTotalReviewCount() {
+        this.totalReviewCount++;
+    }
+
+    public void increaseTotalRevisitedCount() {
         this.totalRevisitedCount++;
     }
 
     public void updateMostRevisitedCount(Long userReviewCount) {
-        if (userReviewCount > this.mostVisitedCount) {
-            this.mostVisitedCount = userReviewCount;
-        }
+        this.mostVisitedCount = Math.max(userReviewCount, this.mostVisitedCount);
     }
 
 
