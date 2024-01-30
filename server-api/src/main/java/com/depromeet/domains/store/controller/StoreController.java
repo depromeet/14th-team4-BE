@@ -52,7 +52,7 @@ public class StoreController {
 		String categoryTypeString = categoryType.isEmpty() ? "" : categoryType.get().name();
 
 		log.error(
-			"요청 /api/v1/stores/location-range >>> leftTopL기atitude = {}, leftTopLongitude = {}, rightBottomLatitude = {}, rightBottomLongitude = {}, level = {}, categoryType = {}",
+			"요청 /api/v1/stores/location-range >>> leftTopLatitude = {}, leftTopLongitude = {}, rightBottomLatitude = {}, rightBottomLongitude = {}, level = {}, categoryType = {}",
 			leftTopLatitude, leftTopLongitude, rightBottomLatitude, rightBottomLongitude, level, categoryTypeString);
 
 		return CustomResponseEntity.success(
