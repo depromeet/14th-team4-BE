@@ -27,7 +27,6 @@ import com.depromeet.domains.user.entity.User;
 import com.depromeet.enums.CategoryType;
 import com.depromeet.enums.ReviewType;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,22 +47,12 @@ public class StoreController {
 		@RequestParam(value = "rightBottomLongitude") Double rightBottomLongitude,
 		@RequestParam(value = "level") Integer level,
 		@RequestParam(value = "type") Optional<CategoryType> categoryType,
-		@AuthUser User user,
-		HttpServletRequest request) {
+		@AuthUser User user) {
 
-		String requestUri = request.getRequestURI() + "?" + request.getQueryString();
-
-		log.error("요청 /api/v1/stores/location-range >>> {} ", requestUri);
-
-		StoreLocationRangeResponse rangeStores = storeService.getRangeStores(leftTopLatitude, leftTopLongitude,
+		return CustomResponseEntity.success(storeService.getRangeStores(leftTopLatitude, leftTopLongitude,
 			rightBottomLatitude, rightBottomLongitude,
 			level, categoryType,
-			user);
-
-		log.error("응답 /api/v1/stores/location-range >>> " + rangeStores);
-		log.error("-------------------------------------------------------");
-
-		return CustomResponseEntity.success(rangeStores);
+			user));
 	}
 
 	@GetMapping("/stores/{storeId}")

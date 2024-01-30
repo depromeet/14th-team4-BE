@@ -31,6 +31,22 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
 		@Param("categoryType") CategoryType categoryType,
 		@Param("storeIdList") List<Long> storeIdList);
 
+	@Query("SELECT s "
+		+ "      FROM Store s "
+		+ "      LEFT JOIN FETCH s.storeMeta sm "
+		+ "  WHERE s.location.latitude <= :maxLatitude "
+		+ " 	  AND s.location.latitude >= :minLatitude "
+		+ " 	  AND s.location.longitude <= :maxLongitude "
+		+ " 	  AND s.location.longitude >= :minLongitude "
+		+ " 	  AND (s.category.categoryType = :categoryType or :categoryType is null) "
+		+ "    ORDER BY sm.totalReviewCount DESC ")
+	List<Store> findByLocationRangesWithCategoryNoExcept(
+		@Param("maxLatitude") double maxLatitude,
+		@Param("minLatitude") double minLatitude,
+		@Param("maxLongitude") double maxLongitude,
+		@Param("minLongitude") double minLongitude,
+		@Param("categoryType") CategoryType categoryType);
+
 	@Query(" SELECT s "
 		+ "      FROM Bookmark bm "
 		+ "      LEFT JOIN bm.store s "

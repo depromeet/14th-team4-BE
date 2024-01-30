@@ -80,7 +80,6 @@ public class StoreService {
 			isBookmarked = true;
 		}
 
-
 		return StorePreviewResponse.of(
 			store.getStoreId(),
 			store.getCategory().getCategoryName(),
@@ -183,6 +182,11 @@ public class StoreService {
 		List<Store> storeListWithCondition = this.storeRepository.findByLocationRangesWithCategory(maxLatitude,
 			minLatitude, maxLongitude, minLongitude, type, bookMarkStoreIdList);
 
+		if (bookMarkStoreIdList.size() == 0) {
+			storeListWithCondition = this.storeRepository.findByLocationRangesWithCategoryNoExcept(maxLatitude,
+				minLatitude, maxLongitude, minLongitude, type);
+		}
+
 		int viewStoreListCount = calculateViewStoreListRatio(storeListWithCondition.size(), viewLevel.getRatio());
 
 		totalList.addAll(toStoreLocationRange(bookMarkStoreList, true));
@@ -267,6 +271,7 @@ public class StoreService {
 		}
 		return UserLevel.LEVEL1;
 	}
+
 	private Store updateStoreMeta(Long storeId, User user, Integer rating) {
 		Store store = storeRepository.findById(storeId)
 			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
