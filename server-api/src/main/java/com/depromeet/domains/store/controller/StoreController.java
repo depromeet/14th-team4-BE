@@ -51,7 +51,7 @@ public class StoreController {
 		@AuthUser User user,
 		HttpServletRequest request) {
 
-		String requestUri = request.getRequestURI() + request.getQueryString();
+		String requestUri = request.getRequestURI() + "?" + request.getQueryString();
 
 		log.error("요청 /api/v1/stores/location-range >>> {} ", requestUri);
 
