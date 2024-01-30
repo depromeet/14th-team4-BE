@@ -55,6 +55,13 @@ public class StoreController {
 			"요청 /api/v1/stores/location-range >>> leftTopLatitude = {}, leftTopLongitude = {}, rightBottomLatitude = {}, rightBottomLongitude = {}, level = {}, categoryType = {}",
 			leftTopLatitude, leftTopLongitude, rightBottomLatitude, rightBottomLongitude, level, categoryTypeString);
 
+		StoreLocationRangeResponse rangeStores = storeService.getRangeStores(leftTopLatitude, leftTopLongitude,
+			rightBottomLatitude, rightBottomLongitude,
+			level, categoryType,
+			user);
+
+		log.error("응답 /api/v1/stores/location-range >>> " + rangeStores);
+
 		return CustomResponseEntity.success(
 			storeService.getRangeStores(leftTopLatitude, leftTopLongitude, rightBottomLatitude, rightBottomLongitude,
 				level, categoryType,
