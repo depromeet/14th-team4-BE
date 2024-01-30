@@ -27,9 +27,5 @@ public class BaseTimeEntity {
 	@Comment("수정일자")
 	private LocalDateTime updatedAt;
 
-	@Column(nullable = false, columnDefinition = "bit(1) DEFAULT false")
-	@Comment("삭제여부")
-	private boolean isDeleted;
-
 	private LocalDateTime deletedAt;
 }
