@@ -66,6 +66,9 @@ public class AuthService {
 
 		// 3. Redis에 저장된 리프레시 토큰과 비교
 		String savedRefreshToken = redisService.getValues(String.valueOf(userId));
+		log.info("savedRefreshToken : " + savedRefreshToken);
+		log.info("headerRefreshToken : " + refreshToken);
+
 		if (savedRefreshToken == null || !savedRefreshToken.equals(refreshToken)) {
 			log.info("저장된 리프레쉬토큰이 없거나, 다른 토큰이 일치하지 않는 경우");
 			throw new CustomException(Result.BAD_REQUEST);

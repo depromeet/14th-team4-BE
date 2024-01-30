@@ -1,16 +1,18 @@
 package com.depromeet.auth.service;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@Slf4j
 public class CookieService {
 	@Value("${jwt.access.expiration}")
 	private Long accessTokenExpirationPeriod;
@@ -20,7 +22,7 @@ public class CookieService {
 
 	public Optional<Cookie> getCookie(HttpServletRequest request, String name) {
 		Cookie[] cookies = request.getCookies();
-
+		log.info("cookies :" + Arrays.toString(cookies));
 		if (cookies != null && cookies.length > 0) {
 			for (Cookie cookie : cookies) {
 				if (name.equals(cookie.getName())) {
