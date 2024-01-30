@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +30,9 @@ import com.depromeet.enums.ReviewType;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequestMapping("/api/v1")
 @RestController
 @RequiredArgsConstructor
@@ -46,6 +49,13 @@ public class StoreController {
 		@RequestParam(value = "level") Integer level,
 		@RequestParam(value = "type") Optional<CategoryType> categoryType,
 		@AuthUser User user) {
+
+		String categoryTypeString = ObjectUtils.isEmpty(categoryType.isEmpty()) ? "" : categoryType.get().name();
+
+		log.error(
+			"요청 /api/v1/stores/location-range >>> leftTopL기atitude = {}, leftTopLongitude = {}, rightBottomLatitude = {}, rightBottomLongitude = {}, level = {}, categoryType = {}",
+			leftTopLatitude, leftTopLongitude, rightBottomLatitude, rightBottomLongitude, level, categoryTypeString);
+
 		return CustomResponseEntity.success(
 			storeService.getRangeStores(leftTopLatitude, leftTopLongitude, rightBottomLatitude, rightBottomLongitude,
 				level, categoryType,
