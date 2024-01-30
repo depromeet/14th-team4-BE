@@ -387,6 +387,8 @@ public class StoreService {
 		log.info("내가 최다 방문자가 아니고, 최다 방문자가 여러명도 아닌 경우");
 		processReviewForNonMostVisitor(storeMeta, hasVisitedThreeOrMore);
 		reviewRepository.delete(review);
+
+		user.decreaseMyReviewCount();
 	}
 
 	@Transactional
