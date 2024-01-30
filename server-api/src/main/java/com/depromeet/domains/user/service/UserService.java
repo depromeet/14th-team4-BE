@@ -55,7 +55,8 @@ public class UserService {
 
 	@Transactional(readOnly = true)
 	public Slice<UserReviewResponse> getUserReviews(User user, Pageable pageable) {
-		Slice<Review> reviews = reviewRepository.findByUser(user, getPageable(pageable, "visitedAt"));
+		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "visitedAt"));
+		Slice<Review> reviews = reviewRepository.findByUser(user, pageRequest);
 
 		List<UserReviewResponse> userReviewResponses = reviews.stream()
 				.map(this::getUserReviewResponse)
