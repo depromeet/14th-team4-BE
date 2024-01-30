@@ -1,9 +1,6 @@
 package com.depromeet.domains.user.service;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +19,9 @@ import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -57,7 +57,13 @@ public class UserService {
 	public Slice<UserReviewResponse> getUserReviews(User user, Pageable pageable) {
 		Slice<Review> reviews = reviewRepository.findByUser(user, getPageable(pageable, "visitedAt"));
 
-		return reviews.map(this::getUserReviewResponse);
+		List<UserReviewResponse> userReviewResponses = reviews.stream()
+				.map(this::getUserReviewResponse)
+				.collect(Collectors.toList());
+
+		Page<UserReviewResponse> userReviewResponsePage = new PageImpl<>(userReviewResponses, pageable, reviews.getNumberOfElements());
+
+		return new SliceImpl<>(userReviewResponsePage.getContent(), pageable, userReviewResponsePage.hasNext());
 	}
 
 	private User findUserById(Long userId) {
