@@ -1,0 +1,386 @@
+GET http://localhost:8080/api/v1/stores/location-range?leftTopLatitude=50.000&leftTopLongitude=120.000&rightBottomLatitude=35.0000&rightBottomLongitude=150.000&type=CHINESE&level=1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3ODIwNjQzfQ.supO4h2TgU89rFLCmVrgImd3FphAws_wNBglh9SIvX3hHPb9Gcno6tv07XbOdc039_WMJZl_l2TIwjc2E0Oc0A
+
+<> 2024-01-30T194303.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?leftTopLatitude=50.000&leftTopLongitude=120.000&rightBottomLatitude=35.0000&rightBottomLongitude=150.000&type=CHINESE
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3ODIwNjQzfQ.supO4h2TgU89rFLCmVrgImd3FphAws_wNBglh9SIvX3hHPb9Gcno6tv07XbOdc039_WMJZl_l2TIwjc2E0Oc0A
+
+<> 2024-01-30T194257.400.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?leftTopLatitude=50.000&leftTopLongitude=120.000&rightBottomLatitude=35.0000&rightBottomLongitude=150.000&type=CHINESE
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3ODIwNjQzfQ.supO4h2TgU89rFLCmVrgImd3FphAws_wNBglh9SIvX3hHPb9Gcno6tv07XbOdc039_WMJZl_l2TIwjc2E0Oc0A
+
+<> 2024-01-30T193857.400.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?leftTopLatitude=50.000&leftTopLongitude=120.000&rightBottomLatitude=35.0000&rightBottomLongitude=150.000&type=CHINESE&level=1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3ODIwNjQzfQ.supO4h2TgU89rFLCmVrgImd3FphAws_wNBglh9SIvX3hHPb9Gcno6tv07XbOdc039_WMJZl_l2TIwjc2E0Oc0A
+
+<> 2024-01-30T193852.200.json
+
+###
+
+GET https://api.ddoeat.site/api/v1/stores/location-range?leftTopLatitude=50.000&leftTopLongitude=120.000&rightBottomLatitude=35.0000&rightBottomLongitude=150.000&level=1&type=CHINESE
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3ODIwNjQzfQ.supO4h2TgU89rFLCmVrgImd3FphAws_wNBglh9SIvX3hHPb9Gcno6tv07XbOdc039_WMJZl_l2TIwjc2E0Oc0A
+
+<> 2024-01-30T193826.200.json
+
+###
+
+GET https://api.ddoeat.site/api/v1/stores/location-range?leftTopLatitude=50.000&leftTopLongitude=120.000&rightBottomLatitude=35.0000&rightBottomLongitude=150.000&level=1&type=CHINESE
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3ODIwNjQzfQ.supO4h2TgU89rFLCmVrgImd3FphAws_wNBglh9SIvX3hHPb9Gcno6tv07XbOdc039_WMJZl_l2TIwjc2E0Oc0A
+
+<> 2024-01-30T193810.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?leftTopLatitude=50.000&leftTopLongitude=120.000&rightBottomLatitude=35.0000&rightBottomLongitude=150.000&level=1&type=CHINESE
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3ODIwNjQzfQ.supO4h2TgU89rFLCmVrgImd3FphAws_wNBglh9SIvX3hHPb9Gcno6tv07XbOdc039_WMJZl_l2TIwjc2E0Oc0A
+
+<> 2024-01-30T193750.200.json
+
+###
+
+GET http://localhost:8080/api/v1/auth/access-token/1
+
+<> 2024-01-30T193723.200.json
+
+###
+
+GET https://api.ddoeat.site/api/v1/stores/location-range?leftTopLatitude=50.000&leftTopLongitude=120.000&rightBottomLatitude=35.0000&rightBottomLongitude=150.000&level=1&type=KOREAN
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3NjMyNDg2fQ.Lnd1NrzoN8NW3kIc9k0se7jamSCiSj3H88F_E8Vs1obfwT3fYSKTihb1Lk-wcTRdIOrArI2zOr6-BLl5DvubEQ
+
+<> 2024-01-28T154449.200.json
+
+###
+
+GET https://api.ddoeat.site/api/v1/stores/location-range?leftTopLatitude=50.000&leftTopLongitude=120.000&rightBottomLatitude=35.0000&rightBottomLongitude=150.000&level=1&type=CHINESE
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3NjMyNDg2fQ.Lnd1NrzoN8NW3kIc9k0se7jamSCiSj3H88F_E8Vs1obfwT3fYSKTihb1Lk-wcTRdIOrArI2zOr6-BLl5DvubEQ
+
+<> 2024-01-28T154438.200.json
+
+###
+
+GET https://api.ddoeat.site/api/v1/auth/access-token/1
+
+<> 2024-01-28T154432.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?leftTopLatitude=50.000&leftTopLongitude=120.000&rightBottomLatitude=35.0000&rightBottomLongitude=150.000&level=1&type=CHINESE
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3NjMyNDg2fQ.Lnd1NrzoN8NW3kIc9k0se7jamSCiSj3H88F_E8Vs1obfwT3fYSKTihb1Lk-wcTRdIOrArI2zOr6-BLl5DvubEQ
+
+<> 2024-01-28T152423.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?leftTopLatitude=50.000&leftTopLongitude=120.000&rightBottomLatitude=35.0000&rightBottomLongitude=150.000&level=1&type=KOREAN
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3NjMyNDg2fQ.Lnd1NrzoN8NW3kIc9k0se7jamSCiSj3H88F_E8Vs1obfwT3fYSKTihb1Lk-wcTRdIOrArI2zOr6-BLl5DvubEQ
+
+<> 2024-01-28T152400.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?leftTopLatitude=50.000&leftTopLongitude=120.000&rightBottomLatitude=35.0000&rightBottomLongitude=150.000&level=1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3NjMyNDg2fQ.Lnd1NrzoN8NW3kIc9k0se7jamSCiSj3H88F_E8Vs1obfwT3fYSKTihb1Lk-wcTRdIOrArI2zOr6-BLl5DvubEQ
+
+<> 2024-01-28T152201.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?leftTopLatitude=50.000&leftTopLongitude=120.000&rightBottomLatitude=35.0000&rightBottomLongitude=150.000&level=1&type=CHINESE
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3NjMyNDg2fQ.Lnd1NrzoN8NW3kIc9k0se7jamSCiSj3H88F_E8Vs1obfwT3fYSKTihb1Lk-wcTRdIOrArI2zOr6-BLl5DvubEQ
+
+<> 2024-01-28T152142.200.json
+
+###
+
+GET http://localhost:8080/api/v1/auth/access-token/1
+
+<> 2024-01-28T152126.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?leftTopLatitude=50.000&leftTopLongitude=120.000&rightBottomLatitude=35.0000&rightBottomLongitude=150.000&level=1&type=CHINESE
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MzY2NTI1fQ.6grzRdH5dHIzs-f_J3QVAma5wVwgrvDYhvEu8xqTrT3ATQ-FkXwIa_TqH0UuVPCVxnF2uzl4-X2YKumm5pwMIw
+
+<> 2024-01-25T132904.200.json
+
+###
+
+GET http://localhost:8080/api/v1/auth/access-token/1
+
+<> 2024-01-25T132845.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?leftTopLatitude=50.000&leftTopLongitude=120.000&rightBottomLatitude=35.0000&rightBottomLongitude=150.000&level=1&type=CHINESE
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MzUyMTE5fQ.6gx7ykX1iuFlCXg7Pe29r4SgY-nD1jqDkCuDFzhMkVp4JTf0RMoaH62AVkTS3_LDixjpO8Ytbu46ZtTJSjWHIA
+
+<> 2024-01-25T093256.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?leftTopLatitude=50.000&leftTopLongitude=120.000&rightBottomLatitude=35.0000&rightBottomLongitude=150.000&level=1&type=KOREAN
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MzUyMTE5fQ.6gx7ykX1iuFlCXg7Pe29r4SgY-nD1jqDkCuDFzhMkVp4JTf0RMoaH62AVkTS3_LDixjpO8Ytbu46ZtTJSjWHIA
+
+<> 2024-01-25T093249.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?leftTopLatitude=50.000&leftTopLongitude=120.000&rightBottomLatitude=35.0000&rightBottomLongitude=150.000&level=1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MzUyMTE5fQ.6gx7ykX1iuFlCXg7Pe29r4SgY-nD1jqDkCuDFzhMkVp4JTf0RMoaH62AVkTS3_LDixjpO8Ytbu46ZtTJSjWHIA
+
+<> 2024-01-25T093234.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?leftTopLatitude=50.000&leftTopLatitude=120.000&rightBottomLatitude=35.0000&rightBottomLongitude=150.000&level=1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MzUyMTE5fQ.6gx7ykX1iuFlCXg7Pe29r4SgY-nD1jqDkCuDFzhMkVp4JTf0RMoaH62AVkTS3_LDixjpO8Ytbu46ZtTJSjWHIA
+
+<> 2024-01-25T093220.400.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MzUyMTE5fQ.6gx7ykX1iuFlCXg7Pe29r4SgY-nD1jqDkCuDFzhMkVp4JTf0RMoaH62AVkTS3_LDixjpO8Ytbu46ZtTJSjWHIA
+
+<> 2024-01-25T092954.400.json
+
+###
+
+GET http://localhost:8080/api/v1/auth/access-token/1
+
+<> 2024-01-25T092840.200.json
+
+###
+
+GET http://localhost:8080/api/v1/auth/access-token/1
+
+<> 2024-01-25T092224.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T180245.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1&type=KOREAN
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T180230.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1&type=KOREAN
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T175931.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T175924.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1&type=KOREAN
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T175905.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1&type=KOREAN
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T175843.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=9
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T175807.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T175802.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T175601.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=9
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T175434.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T175428.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T175415.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=9
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T175403.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T175347.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=9
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T175340.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T175336.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1&type=KOREAN
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T175305.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1&type=KOREAN
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T175250.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=46.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1&type=CHINESE
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T175218.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1&type=CHINESE
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T175159.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T175141.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1&type=KOREAN
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T171118.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1&type=KOREAN
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T170736.200.json
+
+###
+
+GET http://localhost:8080/api/v1/auth/access-token/1
+
+<> 2024-01-21T170732.200.json
+
+###
+
+GET http://localhost:8080/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1&type=KOREAN
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsInVzZXJJZCI6MSwiZXhwIjoxNzA3MDMyMjMxfQ.k64HbkK8W_uyOGpUDMcxxA9ape9EjY9mbN4dLNjARZriMfwGwJJro6S52AMd_zf-mp-RilimMGg4gdZR3k2G0g
+
+<> 2024-01-21T170134.200.json
+
+###
+
