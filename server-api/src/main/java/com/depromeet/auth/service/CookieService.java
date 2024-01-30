@@ -22,9 +22,10 @@ public class CookieService {
 
 	public Optional<Cookie> getCookie(HttpServletRequest request, String name) {
 		Cookie[] cookies = request.getCookies();
-		log.info("cookies :" + Arrays.toString(cookies));
+		log.info("cookie.length :" + cookies.length);
 		if (cookies != null && cookies.length > 0) {
 			for (Cookie cookie : cookies) {
+				log.info("Cookie Name: " + cookie.getName() + ", Value: " + cookie.getValue());
 				if (name.equals(cookie.getName())) {
 					return Optional.of(cookie);
 				}
