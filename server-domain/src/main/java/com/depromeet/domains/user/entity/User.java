@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Where(clause = "deletedAt is NULL")
-@SQLDelete(sql = "UPDATE USER SET deletedAt = CURRENT_TIMESTAMP WHERE user_id = ?")
+@SQLDelete(sql = "UPDATE User SET deletedAt = CURRENT_TIMESTAMP WHERE userId = ?")
 public class User extends BaseTimeEntity {
 
 	@Id
