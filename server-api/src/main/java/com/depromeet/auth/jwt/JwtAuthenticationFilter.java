@@ -17,9 +17,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private static final String AUTHORIZATION_HEADER = "Authorization";
 	private static final String BEARER_PREFIX = "Bearer ";
@@ -32,6 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		FilterChain filterChain) throws ServletException, IOException {
 		try {
 			String token = jwtService.resolveToken(request);
+			log.info(token);
 			if (StringUtils.hasText(token) && isTokenValid(token)) {
 				setSecurityContext(token);
 			} else {
@@ -39,11 +42,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			}
 
 		} catch (CustomException e) {
+			log.info(e.getMessage());
 			request.setAttribute("error", e.getResult());
 		} catch (Exception e) {
+			log.info(e.getMessage());
 			request.setAttribute("error", Result.FAIL);
 		}
-
 		filterChain.doFilter(request, response);
 	}
 
