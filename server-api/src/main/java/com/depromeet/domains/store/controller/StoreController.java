@@ -62,10 +62,7 @@ public class StoreController {
 
 		log.error("응답 /api/v1/stores/location-range >>> " + rangeStores);
 
-		return CustomResponseEntity.success(
-			storeService.getRangeStores(leftTopLatitude, leftTopLongitude, rightBottomLatitude, rightBottomLongitude,
-				level, categoryType,
-				user));
+		return CustomResponseEntity.success(rangeStores);
 	}
 
 	@GetMapping("/stores/{storeId}")
