@@ -34,12 +34,16 @@ public class AuthService {
 
 		// Refresh Token 검증
 		if (!jwtService.isValidToken(refreshToken)) {
-			throw new IllegalAccessException();
+			throw new CustomException(Result.TOKEN_INVALID);
 		}
 
 		Long userId = jwtService.getUserIdFromToken(refreshToken);
 		User user = userRepository.findById(userId)
-			.orElseThrow(() -> new CustomException(Result.FAIL));
+			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_USER));
+
+		if (user.getDeletedAt() != null) {
+			throw new CustomException(Result.DELETED_USER);
+		}
 
 		// Redis에서 저장된 Refresh Token 값을 가져옴
 		String redisRefreshToken = redisService.getValues(String.valueOf(user.getUserId()));
@@ -89,6 +93,9 @@ public class AuthService {
 	public void signup(User user) {
 		User guestUser = userRepository.findById(user.getUserId()).orElseThrow(() -> new CustomException(Result.NOT_FOUND_USER));
 
+		if (guestUser.getDeletedAt() != null) {
+			throw new CustomException(Result.DELETED_USER);
+		}
 		guestUser.updateUserRole();
 		guestUser.updateNickname(getRandomNickname());
 	}

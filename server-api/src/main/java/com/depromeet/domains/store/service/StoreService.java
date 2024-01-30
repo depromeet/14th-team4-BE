@@ -234,7 +234,7 @@ public class StoreService {
 	}
 
 	@Transactional
-	public ReviewAddResponse createStoreReview(User user, ReviewRequest reviewRequest) {
+	public synchronized ReviewAddResponse createStoreReview(User user, ReviewRequest reviewRequest) {
 		Store store;
 		if (reviewRequest.getStoreId() != null) {
 			// 기존 StoreMeta 정보 업데이트
@@ -280,21 +280,23 @@ public class StoreService {
 
 		// 평점과 리뷰 개수 업데이트
 		storeMeta.updateTotalRating(rating);
+		storeMeta.increaseTotalReviewCount();
 
 		// 사용자가 이 가게에 대해 작성한 리뷰 개수 확인
 		Long userReviewCount = reviewRepository.countByStoreAndUser(store, user);
 		if (userReviewCount == 1) {
 			// 두 번째 리뷰인 경우, 재방문 횟수 증가
-			storeMeta.incrementTotalRevisitedCount();
+			storeMeta.increaseTotalRevisitedCount();
 		}
 
 		// 최다 방문자 횟수 업데이트
-		storeMeta.updateMostRevisitedCount(userReviewCount);
+		storeMeta.updateMostRevisitedCount(userReviewCount+1);
 		storeMetaRepository.save(storeMeta);
 		return store;
 	}
 
 	private Store createNewStoreWithMeta(NewStoreRequest newStoreRequest, Integer rating) {
+
 		Store store = storeRepository.findByKakaoStoreId(newStoreRequest.getKakaoStoreId());
 		if (store != null) {
 			throw new CustomException(Result.DUPLICATED_STORE);
