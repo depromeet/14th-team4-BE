@@ -7,10 +7,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.depromeet.domains.bookmark.repository.BookmarkRepository;
-import com.depromeet.domains.store.dto.request.*;
-import com.depromeet.domains.user.repository.UserRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -21,10 +17,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.depromeet.common.exception.CustomException;
 import com.depromeet.common.exception.Result;
+import com.depromeet.domains.bookmark.repository.BookmarkRepository;
 import com.depromeet.domains.category.entity.Category;
 import com.depromeet.domains.category.repository.CategoryRepository;
 import com.depromeet.domains.review.entity.Review;
 import com.depromeet.domains.review.repository.ReviewRepository;
+import com.depromeet.domains.store.dto.request.NewStoreRequest;
+import com.depromeet.domains.store.dto.request.ReviewRequest;
 import com.depromeet.domains.store.dto.response.ReviewAddLimitResponse;
 import com.depromeet.domains.store.dto.response.ReviewAddResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
@@ -39,6 +38,7 @@ import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.repository.UserRepository;
 import com.depromeet.enums.CategoryType;
 import com.depromeet.enums.ReviewType;
+import com.depromeet.enums.UserLevel;
 import com.depromeet.enums.ViewLevel;
 
 import lombok.RequiredArgsConstructor;
@@ -247,10 +247,26 @@ public class StoreService {
 		}
 		storeRepository.save(store);
 		Review review = saveReview(user, store, reviewRequest);
+		user.increaseMyReviewCount();
+		user.updateUserLevel(getUserLevel(user));
+		userRepository.save(user);
 
 		return ReviewAddResponse.of(review.getReviewId(), store.getStoreId());
 	}
 
+	private UserLevel getUserLevel(User user) {
+		int userReviewCount = user.getMyReviewCount();
+		if (userReviewCount >= 20) {
+			return UserLevel.LEVEL4;
+		}
+		if (userReviewCount >= 6) {
+			return UserLevel.LEVEL3;
+		}
+		if (userReviewCount >= 1) {
+			return UserLevel.LEVEL2;
+		}
+		return UserLevel.LEVEL1;
+	}
 	private Store updateStoreMeta(Long storeId, User user, Integer rating) {
 		Store store = storeRepository.findById(storeId)
 			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
@@ -274,8 +290,12 @@ public class StoreService {
 	}
 
 	private Store createNewStoreWithMeta(NewStoreRequest newStoreRequest, Integer rating) {
+		Store store = storeRepository.findByKakaoStoreId(newStoreRequest.getKakaoStoreId());
+		if (store != null) {
+			throw new CustomException(Result.DUPLICATED_STORE);
+		}
 		// store 객체 만들기
-		Store store = buildNewStore(newStoreRequest);
+		store = buildNewStore(newStoreRequest);
 		// storemeta 객체 초기화
 		StoreMeta storeMeta = StoreMeta.builder()
 			.totalRevisitedCount(0L)
