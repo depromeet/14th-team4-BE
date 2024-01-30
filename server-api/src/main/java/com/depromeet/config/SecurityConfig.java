@@ -77,7 +77,7 @@ public class SecurityConfig {
 			.authorizeHttpRequests(request -> request
 				.requestMatchers(PATTERNS).permitAll()
 				.requestMatchers("/api/v1/auth/signup").hasRole("GUEST")
-				.anyRequest().authenticated()
+				.anyRequest().hasRole("USER")
 			)
 			.oauth2Login(oauth2Login ->
 				oauth2Login
