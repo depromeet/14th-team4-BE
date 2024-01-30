@@ -32,7 +32,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     // 재방문 리뷰만 조회
     @Query("SELECT r FROM Review r WHERE r.store = :store AND r.user IN " +
             "(SELECT u.user FROM Review u WHERE u.store = :store GROUP BY u.user HAVING COUNT(u) >= 2) " +
-            "ORDER BY r.createdAt DESC")
+            "ORDER BY r.visitedAt DESC")
     Slice<Review> findRevisitedReviews(@Param("store") Store store, Pageable pageable);
 
     // 사진 리뷰만 조회
