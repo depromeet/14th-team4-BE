@@ -48,13 +48,19 @@ public class UserService {
 
 	@Transactional(readOnly = true)
 	public Slice<UserBookmarkResponse> getUserBookmarks(User user, Pageable pageable) {
-		Slice<Bookmark> bookmarks = bookmarkRepository.findByUser(user, getPageable(pageable, "createdAt"));
+		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
+		Slice<Bookmark> bookmarks = bookmarkRepository.findByUser(user, pageRequest);
 
-		return bookmarks.map(this::getUserBookemarkResponse);
+		List<UserBookmarkResponse> userBookmarkResponses = bookmarks.stream()
+			.map(this::getUserBookemarkResponse)
+			.collect(Collectors.toList());
+
+		return new SliceImpl<>(userBookmarkResponses, bookmarks.getPageable(), bookmarks.hasNext());
 	}
 
 	@Transactional(readOnly = true)
 	public Slice<UserReviewResponse> getUserReviews(User user, Pageable pageable) {
+
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "visitedAt"));
 		Slice<Review> reviews = reviewRepository.findByUser(user, pageRequest);
 
@@ -62,9 +68,7 @@ public class UserService {
 				.map(this::getUserReviewResponse)
 				.collect(Collectors.toList());
 
-		Page<UserReviewResponse> userReviewResponsePage = new PageImpl<>(userReviewResponses, pageable, reviews.getNumberOfElements());
-
-		return new SliceImpl<>(userReviewResponsePage.getContent(), pageable, userReviewResponsePage.hasNext());
+		return new SliceImpl<>(userReviewResponses, reviews.getPageable(), reviews.hasNext());
 	}
 
 	private User findUserById(Long userId) {
