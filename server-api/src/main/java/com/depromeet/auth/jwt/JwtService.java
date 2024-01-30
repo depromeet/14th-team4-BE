@@ -158,7 +158,14 @@ public class JwtService {
 
 	private User getUserFromToken(String token) {
 		Claims claims = getClaims(token);
-		return userRepository.findById(Long.valueOf(claims.get("userId", Integer.class))).orElseThrow(() -> new CustomException(Result.FAIL));
+		Long userId = Long.valueOf(claims.get("userId", Integer.class));
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_USER));
+
+		if (user.getDeletedAt() != null) {
+			throw new CustomException(Result.DELETED_USER);
+		}
+		return user;
 	}
 
 	public Long getLeftAccessTokenTTLSecond(String token) {

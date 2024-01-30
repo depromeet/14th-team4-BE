@@ -72,8 +72,13 @@ public class UserService {
 	}
 
 	private User findUserById(Long userId) {
-		return userRepository.findById(userId)
+		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_USER));
+
+		if (user.getDeletedAt() != null) {
+			throw new CustomException(Result.DELETED_USER);
+		}
+		return user;
 	}
 
 	private Pageable getPageable(Pageable pageable, String sortBy) {

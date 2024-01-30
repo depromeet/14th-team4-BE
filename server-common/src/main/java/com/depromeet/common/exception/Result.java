@@ -13,6 +13,7 @@ public enum Result {
     BAD_REQUEST(400,"잘못된 요청"),
     SOCIAL_LOGIN_FAIL(400, "소셜로그인 실패"),
     UNAUTHORIZED_USER(403, "권한 없는 사용자"),
+    DELETED_USER(400, "탈퇴 유저"),
     TOKEN_EXPIRED(401, "토큰 유효 기간 만료"),
     TOKEN_NOTSUPPORTED(401, "지원되지 않는 토큰 형식"),
     TOKEN_INVALID(401, "잘못된 토큰 형식"),
