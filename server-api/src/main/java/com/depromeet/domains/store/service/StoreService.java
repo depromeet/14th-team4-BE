@@ -307,7 +307,7 @@ public class StoreService {
 		StoreMeta storeMeta = StoreMeta.builder()
 			.totalRevisitedCount(0L)
 			.totalReviewCount(1L)
-			.mostVisitedCount(0L)
+			.mostVisitedCount(1L)
 			.totalRating(rating.floatValue())
 			.kakaoCategoryName(newStoreRequest.getKakaoCategoryName())
 			.build();
