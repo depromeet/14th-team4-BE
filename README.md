@@ -105,15 +105,17 @@
 
 ## 6. 팀원
 
-### 프런트엔드
+### 🧑🏻‍💻 Server Engineers
 
-[이상조](https://github.com/sjoleee)
-[오예린](https://github.com/YelynnOh)
-[유은지](https://github.com/y00eunji)
-[유준상](https://github.com/YOOJS1205)
+|<img src="https://avatars.githubusercontent.com/u/57219160?v=4" width="80">|<img src="https://avatars.githubusercontent.com/u/76957700?v=4"  width="80">|<img src="https://avatars.githubusercontent.com/u/112103038?v=4" width="80">|
+|:---:|:---:|:---:|
+|[허강준](https://github.com/highjune)|[유희수](https://github.com/Ryuhyis)|[최필환](https://github.com/thisishwan2)|
+  <br>
 
-### 백엔드
+### Front Engineers
 
-[유희수](https://github.com/Ryuhyis)
-[최필환](https://github.com/thisishwan2)
-[허강준](https://github.com/highjune)
+|<img src="https://avatars.githubusercontent.com/u/82137004?v=4" width="80">|<img src="https://avatars.githubusercontent.com/u/110076475?v=4" width="80">|<img src="https://avatars.githubusercontent.com/u/27201591?v=4" width="80">|<img src="https://avatars.githubusercontent.com/u/89122773?v=4" width="80">|
+|:---:|:---:|:---:|:---:|
+|[이상조](https://github.com/sjoleee)|[오예린](https://github.com/YelynnOh)|[유은지](https://github.com/y00eunji)|[유준상](https://github.com/YOOJS1205)|
+  <br>
+
