@@ -27,9 +27,8 @@ public class AuthService {
 	private final CookieService cookieService;
 	private final UserRepository userRepository;
 
-	public TokenResponse reissueToken(HttpServletRequest request) throws IllegalAccessException {
-		// get cookie
-		Cookie cookie = cookieService.getCookie(request, "refreshToken").orElseThrow();
+	public TokenResponse reissueToken(HttpServletRequest request) {
+		Cookie cookie = cookieService.getCookie(request, "refreshToken").orElseThrow(() -> new CustomException(Result.NOT_FOUND_COOKIE));
 		String refreshToken = cookie.getValue();
 
 		// Refresh Token 검증
@@ -47,8 +46,9 @@ public class AuthService {
 
 		// Redis에서 저장된 Refresh Token 값을 가져옴
 		String redisRefreshToken = redisService.getValues(String.valueOf(user.getUserId()));
-		if (!redisRefreshToken.equals(refreshToken)) {
-			throw new IllegalAccessException();
+		if (redisRefreshToken == null || !redisRefreshToken.equals(refreshToken)) {
+			log.info(redisRefreshToken);
+			throw new CustomException(Result.TOKEN_INVALID);
 		}
 		// 토큰 재발행
 		String newAccessToken = jwtService.createAccessToken(user.getUserId());
@@ -75,7 +75,7 @@ public class AuthService {
 
 		if (savedRefreshToken == null || !savedRefreshToken.equals(refreshToken)) {
 			log.info("저장된 리프레쉬토큰이 없거나, 다른 토큰이 일치하지 않는 경우");
-			throw new CustomException(Result.BAD_REQUEST);
+			throw new CustomException(Result.TOKEN_INVALID);
 		}
 
 		// redis에서 삭제

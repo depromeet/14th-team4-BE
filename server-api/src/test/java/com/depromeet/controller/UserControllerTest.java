@@ -273,7 +273,7 @@ class UserControllerTest extends RestDocsTestSupport {
 
 	@Test
 	public void deleteUserTest() throws Exception {
-		doNothing().when(userService).deleteUser(any());
+		doNothing().when(userService).deleteUser(any(), any());
 
 		mockMvc.perform(delete("/api/v1/users/withdraw"))
 			.andExpect(status().isOk());

@@ -4,6 +4,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.depromeet.auth.service.CookieService;
 import com.depromeet.auth.service.RedisService;
 import com.depromeet.common.exception.CustomException;
 import com.depromeet.common.exception.Result;
@@ -18,6 +19,7 @@ import com.depromeet.domains.user.dto.response.UserReviewResponse;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.repository.UserRepository;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 public class UserService {
 	private final RedisService redisService;
 	private final UserRepository userRepository;
+	private final CookieService cookieService;
 	private final BookmarkRepository bookmarkRepository;
 	private final ReviewRepository reviewRepository;
 
@@ -115,8 +118,11 @@ public class UserService {
 	}
 
 	@Transactional
-	public void deleteUser(User user) {
+	public void deleteUser(User user, HttpServletResponse response) {
 		userRepository.deleteById(user.getUserId());
 		redisService.deleteValues(String.valueOf(user.getUserId()));
+
+		cookieService.deleteAccessTokenCookie(response);
+		cookieService.deleteRefreshTokenCookie(response);
 	}
 }
