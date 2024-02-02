@@ -53,22 +53,26 @@ public class StoreMeta extends BaseTimeEntity {
 
     // 리뷰 삭제시 별점 계산
     public void updateTotalRatingAfterDeletion(Integer rating) {
+        if (this.totalReviewCount == 1) {
+            this.totalRating = 0.0f;
+            return;
+        }
         this.totalRating = (this.totalRating * this.totalReviewCount - rating) / (this.totalReviewCount - 1);
         this.totalRating = Math.round(this.totalRating * 10.0f) / 10.0f;
     }
 
     // 전체 리뷰 개수 감소
     public void decreaseTotalReviewCount() {
-        this.totalReviewCount--;
+        this.totalReviewCount = Math.max(0, this.totalReviewCount - 1);
     }
 
     // 전체 재방문 인원 감소
     public void decreaseTotalRevisitCount() {
-        this.totalRevisitedCount--;
+        this.totalRevisitedCount = Math.max(0, this.totalRevisitedCount - 1);
     }
 
     // 최다 방문자의 재방문 횟수 감소
     public void decreaseMostVisitedCount() {
-        this.mostVisitedCount--;
+        this.mostVisitedCount = Math.max(0, this.mostVisitedCount - 1);
     }
 }

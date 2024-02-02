@@ -426,21 +426,19 @@ public class StoreService {
 		if (isMostVisitor && isDuplicateMostVisitor) { // 나도 최다 방문자이고, 최다 방문자가 여러명인 경우
 			log.info("나도 최다 방문자, 최다 방문자 여려명");
 			processReviewForDuplicateMostVisitor(storeMeta, hasVisitedThreeOrMore);
-			reviewRepository.delete(review);
-			return;
-		}
-
-		if (isMostVisitor) { // 나만 최다 방문자인 경우
+		} else if (isMostVisitor) { // 나만 최다 방문자인 경우
 			log.info("나만 최다 방문자");
 			processReviewForSingleMostVisitor(storeMeta, hasVisitedThreeOrMore);
-			reviewRepository.delete(review);
-			return;
+		}else {
+			// 내가 최다방문자도 아니고, 최다 방문자가 여러명도 아닌 경우
+			log.info("내가 최다 방문자가 아니고, 최다 방문자가 여러명도 아닌 경우");
+			processReviewForNonMostVisitor(storeMeta, hasVisitedThreeOrMore);
 		}
-
-		// 내가 최다방문자도 아니고, 최다 방문자가 여러명도 아닌 경우
-		log.info("내가 최다 방문자가 아니고, 최다 방문자가 여러명도 아닌 경우");
-		processReviewForNonMostVisitor(storeMeta, hasVisitedThreeOrMore);
 		reviewRepository.delete(review);
+
+		if (storeMeta.getTotalReviewCount()==1){
+			storeRepository.delete(store);
+		}
 	}
 
 	private void processReviewForDuplicateMostVisitor(StoreMeta storeMeta, boolean hasVisitedThreeOrMore) {
