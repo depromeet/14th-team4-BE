@@ -2,6 +2,8 @@ package com.depromeet.auth.jwt;
 
 import java.io.IOException;
 
+import javax.security.sasl.AuthenticationException;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -32,21 +34,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
+
 		try {
 			String token = jwtService.resolveToken(request);
-			log.info(token);
 			if (StringUtils.hasText(token) && isTokenValid(token)) {
 				setSecurityContext(token);
-			} else {
-				request.setAttribute("error", Result.TOKEN_INVALID);
 			}
-
 		} catch (CustomException e) {
 			log.info(e.getMessage());
 			request.setAttribute("error", e.getResult());
+			throw new AuthenticationException(e.getMessage());
 		} catch (Exception e) {
 			log.info(e.getMessage());
 			request.setAttribute("error", Result.FAIL);
+			throw new AuthenticationException(e.getMessage());
+
 		}
 		filterChain.doFilter(request, response);
 	}
