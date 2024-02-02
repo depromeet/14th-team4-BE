@@ -18,6 +18,7 @@ import com.depromeet.domains.user.dto.response.UserReviewResponse;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.service.UserService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -61,7 +62,7 @@ public class UserController {
 	}
 
 	@DeleteMapping("/withdraw")
-	public void deleteUser(@AuthUser User user) {
-		userService.deleteUser(user);
+	public void deleteUser(@AuthUser User user, HttpServletResponse response) {
+		userService.deleteUser(user, response);
 	}
 }
