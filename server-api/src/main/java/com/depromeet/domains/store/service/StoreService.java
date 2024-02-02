@@ -436,7 +436,8 @@ public class StoreService {
 		}
 		reviewRepository.delete(review);
 
-		if (storeMeta.getTotalReviewCount()==1){
+		if (storeMeta.getTotalReviewCount()==0){
+			log.info("음식점도 삭제");
 			storeRepository.delete(store);
 		}
 	}
