@@ -25,6 +25,7 @@ public class CustomOAuth2FailureHandler implements AuthenticationFailureHandler 
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 		AuthenticationException exception) throws IOException, ServletException {
 		response.setContentType("application/json");
+		response.setCharacterEncoding("utf-8");
 		response.setStatus(Result.SOCIAL_LOGIN_FAIL.getCode());
 		ObjectMapper objectMapper = new ObjectMapper();
 		response.getWriter().write(objectMapper.writeValueAsString(
