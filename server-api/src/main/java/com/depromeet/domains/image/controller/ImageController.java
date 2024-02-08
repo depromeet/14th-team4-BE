@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.depromeet.S3.S3UploaderService;
+import com.depromeet.S3.S3Service;
 import com.depromeet.common.exception.CustomResponseEntity;
 import com.depromeet.domains.image.dto.ImageResponse;
 
@@ -15,13 +15,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/images")
 public class ImageController {
-	private final S3UploaderService s3UploaderService;
+	private final S3Service s3Service;
 
 	/**
 	 * Presigned-url 발급
 	 */
 	@GetMapping("/presigned-url")
 	public CustomResponseEntity<ImageResponse> getPresignedUrl(@RequestParam("fileName") String fileName) {
-		return CustomResponseEntity.success(new ImageResponse(s3UploaderService.getPreSignedUrl(fileName)));
+		return CustomResponseEntity.success(new ImageResponse(s3Service.getPreSignedUrl(fileName)));
 	}
 }
