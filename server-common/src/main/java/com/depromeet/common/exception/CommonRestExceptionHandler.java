@@ -3,6 +3,7 @@ package com.depromeet.common.exception;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -31,10 +32,22 @@ public class CommonRestExceptionHandler extends RuntimeException {
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CustomException.class)
-    public CustomResponseEntity<String> handleCustomExceptionHandler(CustomException exception) {
+    public ResponseEntity<Object> handleCustomExceptionHandler(CustomException exception) {
+
+        Result result = exception.getResult();
+        // HttpStatus.resolve 메서드를 사용하여 Result의 코드를 HttpStatus 객체로 변환
+        HttpStatus httpStatus = HttpStatus.resolve(result.getCode());
+
+        // httpStatus가 null이 아니면 해당 상태 코드를 사용하고, null인 경우 기본 상태 코드를 설정
+        if (httpStatus == null) {
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
         log.error("CustomExceptionHandler code : {}, message : {}",
                 exception.getResult().getCode(), exception.getResult().getMessage());
-        return CustomResponseEntity.fail(exception.getResult());
+        return ResponseEntity
+                .status(httpStatus)
+                .body(new CustomResponseEntity<>(result.getCode(), result.getMessage(), null));
     }
 
     @ResponseBody
