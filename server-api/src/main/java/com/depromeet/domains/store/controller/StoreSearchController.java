@@ -24,13 +24,12 @@ public class StoreSearchController {
     private final StoreSearchService storeSearchService;
 
     @GetMapping("/search")
-    public CustomResponseEntity<StoreSearchResponse> search(@AuthUser User user,
-                                                                  @RequestParam("query") String query,
-                                                                  @RequestParam("x") String x,
-                                                                  @RequestParam("y") String y,
-                                                                  @RequestParam("storePage") Optional<Integer> storePage,
-                                                                  @RequestParam("cafePage") Optional<Integer> cafePage
+    public CustomResponseEntity<StoreSearchResponse> search(@RequestParam("query") String query,
+                                                            @RequestParam("x") String x,
+                                                            @RequestParam("y") String y,
+                                                            @RequestParam("storePage") Optional<Integer> storePage,
+                                                            @RequestParam("cafePage") Optional<Integer> cafePage
     ) {
-        return CustomResponseEntity.success(storeSearchService.searchStoreList(user, query, x, y, storePage, cafePage));
+        return CustomResponseEntity.success(storeSearchService.searchStoreList(query, x, y, storePage, cafePage));
     }
 }
