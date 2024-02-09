@@ -46,17 +46,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
 		SocialType socialType = getSocialType(registrationId);
 		String userNameAttributeName = getUserNameAttributeName(userRequest);
-		// Map<String, Object> attributes = oAuth2User.getAttributes();
-		Map<String, Object> attributes;
-
-		if (socialType.name().contains("apple")) {
-			String idToken = userRequest.getAdditionalParameters().get("id_token").toString();
-			attributes = decodeJwtTokenPayload(idToken);
-			attributes.put("id_token", idToken);
-		} else {
-			attributes = oAuth2User.getAttributes();
-		}
-
+		Map<String, Object> attributes = oAuth2User.getAttributes();
 		OAuth2Attribute extractAttributes = OAuth2Attribute.of(socialType, userNameAttributeName, attributes);
 		// 기존 가입된 유저인지 확인
 		User createdUser = getUser(extractAttributes, socialType);
