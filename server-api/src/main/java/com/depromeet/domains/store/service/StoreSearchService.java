@@ -7,23 +7,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.depromeet.domains.store.controller.KakaoSearchClient;
 import com.depromeet.enums.CategoryType;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
 import com.depromeet.domains.store.dto.response.StoreSearchResponse;
 import com.depromeet.domains.store.dto.response.StoreSearchResult;
 import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.store.repository.StoreRepository;
-import com.depromeet.domains.user.entity.User;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,77 +29,37 @@ public class StoreSearchService {
 	private String kakaoRestApi;
 
 	private final StoreRepository storeRepository;
+	private final KakaoSearchClient kakaoSearchClient;
 
 	@Transactional(readOnly = true)
-	public StoreSearchResponse searchStoreList(User user, String query, String x, String y, Optional<Integer> storePage,
+	public StoreSearchResponse searchStoreList(String query, String x, String y, Optional<Integer> storePage,
 		Optional<Integer> cafePage) {
 		Integer size = 15;
 		String sort = "distance";
+		String authorization = "KakaoAK " + kakaoRestApi;
 
-		// 헤더 설정
-		RestTemplate restTemplate = new RestTemplate();
+		List<StoreSearchResult> combinedResults = new ArrayList<>();
 
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-		httpHeaders.set("Authorization", "KakaoAK " + kakaoRestApi);
-
-		List<Map<String, Object>> storeDocuments = new ArrayList<>();
 		Boolean storeIsEnd = true;
 		if (storePage.isPresent()) {
-			Integer realStorePage = storePage.get();
-			// 음식점 검색 API URI 생성
-			UriComponentsBuilder builderStore = UriComponentsBuilder.fromHttpUrl(
-					"https://dapi.kakao.com/v2/local/search/keyword.json")
-				.queryParam("category_group_code", "FD6")
-				.queryParam("x", x)
-				.queryParam("y", y)
-				.queryParam("page", realStorePage)
-				.queryParam("size", size)
-				.queryParam("sort", sort);
 
-			HttpEntity<String> entityStore = new HttpEntity<>(httpHeaders);
-			String uriStore = builderStore.build().encode().toUriString() + "&query=" + query; //이렇게 처리하지 않으면 결과가 안나옴
-			ResponseEntity<Map> resultStore = restTemplate.exchange(uriStore, HttpMethod.GET, entityStore, Map.class);
-			Map<String, Object> responseBodyStore = resultStore.getBody();
-			storeDocuments = (List<Map<String, Object>>)responseBodyStore.get("documents");
-
-			Map<String, Object> storeMeta = (Map<String, Object>)resultStore.getBody().get("meta");
+			Map<String, Object> resultStore = kakaoSearchClient.searchKeyword(authorization, query, x, y, storePage.get(), size, sort, "FD6");
+			List<Map<String, Object>> storeDocuments = (List<Map<String, Object>>) resultStore.get("documents");
+			Map<String, Object> storeMeta = (Map<String, Object>) resultStore.get("meta");
+			combinedResults.addAll(convertToStoreSearchResults(storeDocuments));
 			storeIsEnd = (Boolean)storeMeta.get("is_end");
 		}
 
-		List<Map<String, Object>> cafeDocuments = new ArrayList<>();
 		Boolean cafeIsEnd = true;
 		if (cafePage.isPresent()) {
-			Integer realCafePage = cafePage.get();
-			// 카페 검색 API URI 생성
-			UriComponentsBuilder builderCafe = UriComponentsBuilder.fromHttpUrl(
-					"https://dapi.kakao.com/v2/local/search/keyword.json")
-				.queryParam("category_group_code", "CE7")
-				.queryParam("x", x)
-				.queryParam("y", y)
-				.queryParam("page", realCafePage)
-				.queryParam("size", size)
-				.queryParam("sort", sort);
-
-			HttpEntity<String> entityCafe = new HttpEntity<>(httpHeaders);
-			String uriCafe = builderCafe.build().encode().toUriString() + "&query=" + query;
-			ResponseEntity<Map> resultCafe = restTemplate.exchange(uriCafe, HttpMethod.GET, entityCafe, Map.class);
-			Map<String, Object> responseBodyCafe = resultCafe.getBody();
-			cafeDocuments = (List<Map<String, Object>>)responseBodyCafe.get("documents");
-
-			Map<String, Object> cafeMeta = (Map<String, Object>)resultCafe.getBody().get("meta");
+			Map<String, Object> resultStore = kakaoSearchClient.searchKeyword(authorization, query, x, y, cafePage.get(), size, sort, "CE7");
+			List<Map<String, Object>> cafeDocuments = (List<Map<String, Object>>) resultStore.get("documents");
+			Map<String, Object> cafeMeta = (Map<String, Object>) resultStore.get("meta");
+			combinedResults.addAll(convertToStoreSearchResults(cafeDocuments));
 			cafeIsEnd = (Boolean)cafeMeta.get("is_end");
 		}
 
 		log.info("search kakao");
-
-		// `resultStore` 및 `resultCafe`가 가게 및 카페에 대한 JSON 응답이라고 가정
-		List<StoreSearchResult> storeResults = convertToStoreSearchResults(storeDocuments);
-		List<StoreSearchResult> cafeResults = convertToStoreSearchResults(cafeDocuments);
-
-		List<StoreSearchResult> combinedResults = new ArrayList<>();
-		combinedResults.addAll(storeResults);
-		combinedResults.addAll(cafeResults);
 
 		// 거리에 따라 정렬
 		combinedResults.sort(Comparator.comparing(StoreSearchResult::getDistance));
