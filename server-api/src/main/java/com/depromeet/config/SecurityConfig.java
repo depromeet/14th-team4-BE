@@ -8,9 +8,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
-import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
-import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
@@ -18,7 +15,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.depromeet.auth.apple.CustomRequestEntityConverter;
 import com.depromeet.auth.jwt.JwtAuthenticationFilter;
 import com.depromeet.auth.oauth2.handler.CustomAuthenticationRequestFilter;
 import com.depromeet.auth.oauth2.handler.CustomOAuth2FailureHandler;
@@ -85,8 +81,6 @@ public class SecurityConfig {
 						authEndpoint -> authEndpoint
 							.baseUri("/oauth2/authorization/**") // 이 url로 접근시 로그인을 요청한다
 					)
-					.tokenEndpoint(tokenEndpoint
-						-> tokenEndpoint.accessTokenResponseClient(accessTokenResponseClient()))
 					.redirectionEndpoint(redirectEndpoint -> redirectEndpoint.baseUri("/login/oauth2/code/**"))
 					.userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(customOAuth2UserService))
 					.successHandler(customOAuth2SuccessHandler)
@@ -101,14 +95,4 @@ public class SecurityConfig {
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
-
-	@Bean
-	public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
-		DefaultAuthorizationCodeTokenResponseClient accessTokenResponseClient
-			= new DefaultAuthorizationCodeTokenResponseClient();
-		accessTokenResponseClient.setRequestEntityConverter(new CustomRequestEntityConverter());
-
-		return accessTokenResponseClient;
-	}
-
 }
