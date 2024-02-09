@@ -10,21 +10,12 @@ import java.util.stream.Collectors;
 import com.depromeet.domains.store.controller.KakaoSearchClient;
 import com.depromeet.enums.CategoryType;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
 import com.depromeet.domains.store.dto.response.StoreSearchResponse;
 import com.depromeet.domains.store.dto.response.StoreSearchResult;
 import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.store.repository.StoreRepository;
-import com.depromeet.domains.user.entity.User;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
