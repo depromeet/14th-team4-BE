@@ -74,7 +74,7 @@ public class StoreSearchControllerTest extends RestDocsTestSupport {
 			.cafeIsEnd(cafeIsEnd)
 			.build();
 
-		given(storeSearchService.searchStoreList(any(), eq(query), eq(x), eq(y),
+		given(storeSearchService.searchStoreList(eq(query), eq(x), eq(y),
 			eq(java.util.Optional.ofNullable(storePage)), eq(java.util.Optional.ofNullable(cafePage)))).willReturn(
 			storeSearchResponse);
 
