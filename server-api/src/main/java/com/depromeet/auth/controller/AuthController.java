@@ -47,7 +47,7 @@ public class AuthController {
 		@RequestHeader("Authorization-refresh") String refreshToken
 	) {
 		TokenResponse tokenResponse = authService.reissueToken(refreshToken);
-		return CustomResponseEntity.success(new TokenResponse(tokenResponse.getAccessToken()));
+		return CustomResponseEntity.success(tokenResponse);
 	}
 
 	@PostMapping("/signup")
@@ -72,6 +72,6 @@ public class AuthController {
 		String accessToken = jwtService.createAccessToken(userId);
 		String refreshToken = jwtService.createRefreshToken(userId);
 
-		return CustomResponseEntity.success(new TokenResponse(accessToken, refreshToken));
+		return CustomResponseEntity.success(TokenResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build());
 	}
 }

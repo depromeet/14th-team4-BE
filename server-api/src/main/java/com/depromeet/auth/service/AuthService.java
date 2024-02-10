@@ -55,11 +55,13 @@ public class AuthService {
 		// 사용자 정보로 회원가입 및 로그인
 		User user = userRepository.findBySocialTypeAndSocialId(SocialType.KAKAO, userResponse.getId())
 			.orElseGet(() -> createUser(userResponse));
+
+		boolean isFirst = user.getUserRole().equals(Role.GUEST);
 		//토큰 발급
 		String accessToken = jwtService.createAccessToken(user.getUserId());
 		String refreshToken = jwtService.createRefreshToken(user.getUserId());
 
-		return new TokenResponse(accessToken, refreshToken);
+		return TokenResponse.builder().accessToken(accessToken).refreshToken(refreshToken).isFirst(isFirst).build();
 	}
 
 
@@ -88,7 +90,7 @@ public class AuthService {
 		String newAccessToken = jwtService.createAccessToken(user.getUserId());
 		String newRefreshToken = jwtService.createRefreshToken(user.getUserId());
 
-		return new TokenResponse(newAccessToken, newRefreshToken);
+		return TokenResponse.builder().accessToken(newAccessToken).refreshToken(newRefreshToken).build();
 	}
 
 	@Transactional
