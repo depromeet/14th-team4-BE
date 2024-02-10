@@ -1,8 +1,9 @@
 package com.depromeet.auth.jwt;
 
-import java.io.IOException;
+import static com.depromeet.config.SecurityConfig.*;
 
-import javax.security.sasl.AuthenticationException;
+import java.io.IOException;
+import java.util.Arrays;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,12 +22,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Component
 @RequiredArgsConstructor
 @Slf4j
+@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-	private static final String AUTHORIZATION_HEADER = "Authorization";
-	private static final String BEARER_PREFIX = "Bearer ";
 
 	private final JwtService jwtService;
 	private final RedisService redisService;
@@ -34,23 +33,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
-
 		try {
-			String token = jwtService.resolveToken(request);
-			if (StringUtils.hasText(token) && isTokenValid(token)) {
-				setSecurityContext(token);
+			String accessToken = jwtService.resolveToken(request);
+			if (StringUtils.hasText(accessToken) && !isTokenBlacklisted(accessToken)
+				&& jwtService.isValidToken(accessToken)) {
+				setSecurityContext(accessToken);
 			}
 		} catch (CustomException e) {
-			log.info(e.getMessage());
 			request.setAttribute("error", e.getResult());
-			throw new AuthenticationException(e.getMessage());
 		} catch (Exception e) {
 			log.info(e.getMessage());
 			request.setAttribute("error", Result.FAIL);
-			throw new AuthenticationException(e.getMessage());
-
 		}
 		filterChain.doFilter(request, response);
+	}
+
+	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) {
+		return Arrays.stream(PATTERNS).anyMatch(exclude -> request.getServletPath().startsWith(exclude));
 	}
 
 	private void setSecurityContext(String token) {
@@ -58,23 +58,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}
 
-	private boolean isTokenValid(String token) {
-		return !isTokenBlacklisted(token) && jwtService.isValidToken(token);
-	}
-
 	private boolean isTokenBlacklisted(String token) {
 		return redisService.getValues(token) != null;
 	}
-
-	private String resolveToken(HttpServletRequest request) {
-		String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-
-		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-			return bearerToken.substring(BEARER_PREFIX.length());
-		}
-		return null;
-	}
-
 }
 
 
