@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+// TODO: 삭제 예정
 /**
  * 각 소셜에서 받아오는 데이터가 다르므로
  * 소셜별로 데이터를 받는 데이터를 분기 처리하는 DTO 클래스
