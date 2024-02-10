@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 public class TokenResponse {
 	String accessToken;
 	String refreshToken;
+	boolean isFirstValue;
 
 	public TokenResponse(String accessToken) {
 		this.accessToken = accessToken;
@@ -16,5 +17,11 @@ public class TokenResponse {
 	public TokenResponse(String accessToken, String refreshToken) {
 		this.accessToken = accessToken;
 		this.refreshToken = refreshToken;
+	}
+
+	public TokenResponse(String accessToken, String refreshToken, boolean isFirstValue) {
+		this.accessToken = accessToken;
+		this.refreshToken = refreshToken;
+		this.isFirstValue = isFirstValue;
 	}
 }
