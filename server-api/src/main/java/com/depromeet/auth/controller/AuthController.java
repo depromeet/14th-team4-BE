@@ -28,7 +28,7 @@ public class AuthController {
 	private final JwtService jwtService;
 
 	@GetMapping("/login")
-	public CustomResponseEntity<TokenResponse> loginWithKakao(
+	public CustomResponseEntity<TokenResponse> socialLogin(
 		@RequestParam String provider,
 		@RequestParam String code
 	) {

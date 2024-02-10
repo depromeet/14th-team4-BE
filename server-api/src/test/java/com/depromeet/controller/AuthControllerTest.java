@@ -36,28 +36,66 @@ class AuthControllerTest extends RestDocsTestSupport {
 		when(cookieService.createRefreshTokenCookie(anyString())).thenReturn(mockRefreshTokenCookie);
 	}
 
-
 	@Test
-	void refreshToken() throws Exception {
+	void socialLogin() throws Exception {
 		// given
-		TokenResponse tokenResponse = new TokenResponse("test_access_token", "test_refresh_token");
-		given(authService.reissueToken(any())).willReturn(tokenResponse);
+		TokenResponse tokenResponse = TokenResponse.builder()
+			.accessToken("access_token")
+			.refreshToken("refresh_token")
+			.isFirst(true)
+			.build();
+		given(authService.kakaoLogin(anyString())).willReturn(tokenResponse);
 
 		// when
 		mockMvc.perform(
-			post("/api/v1/auth/token/reissue")
-				)
+				get("/api/v1/auth/login")
+					.param("provider", "kakao")
+					.param("code", "test_code")
+					.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
-			.andExpect(cookie().exists("refreshToken")) // 쿠키 존재 확인
-			.andExpect(cookie().value("refreshToken", "test_refresh_token")) // 쿠키 값 확인 (mock 값)
 			.andDo(
 				restDocs.document(
+					queryParameters(
+						parameterWithName("provider").description("로그인 제공자 (apple, kakao)"),
+						parameterWithName("code").description("로그인 코드")
+					),
 					responseFields(
 						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
 						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
 						fieldWithPath("data").type(JsonFieldType.OBJECT).description("토큰 값"),
 						fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("엑세스토큰"),
-						fieldWithPath("data.refreshToken").type(JsonFieldType.NULL).description("리프레쉬토큰 (쿠키에 담겨서 보내짐)")
+						fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("리프레쉬토큰"),
+						fieldWithPath("data.isFirst").type(JsonFieldType.BOOLEAN).description("첫 로그인 여부")
+					)
+				)
+			);
+	}
+
+
+	@Test
+	void refreshToken() throws Exception {
+		// given
+		TokenResponse tokenResponse = TokenResponse.builder().accessToken("access_token").refreshToken("refresh_token").isFirst(null).build();
+		given(authService.reissueToken(any())).willReturn(tokenResponse);
+
+		// when
+		mockMvc.perform(
+			post("/api/v1/auth/token/reissue")
+				.header("Authorization-refresh","refresh_token")
+				)
+			.andExpect(status().isOk())
+			.andDo(
+				restDocs.document(
+					requestHeaders(
+						headerWithName("Authorization-refresh").description("refreshToken")
+					),
+					responseFields(
+						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
+						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+						fieldWithPath("data").type(JsonFieldType.OBJECT).description("토큰 값"),
+						fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("엑세스토큰"),
+						fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("리프레쉬토큰"),
+						fieldWithPath("data.isFirst").type(JsonFieldType.NULL).description("첫 로그인 여부")
 					)
 				)
 			);
@@ -66,7 +104,6 @@ class AuthControllerTest extends RestDocsTestSupport {
 	@Test
 	void signup() throws Exception {
 		// given
-		TokenResponse tokenResponse = new TokenResponse("access_token", "refresh_token");
 		doNothing().when(authService).signup(any());
 
 		// when
@@ -91,7 +128,7 @@ class AuthControllerTest extends RestDocsTestSupport {
 
 	@Test
 	public void logout() throws Exception {
-		doNothing().when(authService).logout(any(), any());
+		doNothing().when(authService).logout(any(), any(), any());
 
 		mockMvc.perform(post("/api/v1/auth/logout"))
 			.andExpect(status().isOk());
@@ -121,14 +158,11 @@ class AuthControllerTest extends RestDocsTestSupport {
 						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
 						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
 						fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("테스트용 accessToken"),
-						fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("테스트용 refreshToken")
+						fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("테스트용 refreshToken"),
+						fieldWithPath("data.isFirst").type(JsonFieldType.NULL).description("NULL")
 					)
 				)
 			);
-	}
-
-	@Test
-	void oauth2login() {
 	}
 
 }
