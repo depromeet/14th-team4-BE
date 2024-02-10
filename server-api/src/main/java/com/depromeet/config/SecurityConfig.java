@@ -13,17 +13,14 @@ import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResp
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.depromeet.auth.apple.CustomRequestEntityConverter;
 import com.depromeet.auth.jwt.JwtAuthenticationFilter;
-import com.depromeet.auth.oauth2.handler.CustomAuthenticationRequestFilter;
-import com.depromeet.auth.oauth2.handler.CustomOAuth2FailureHandler;
-import com.depromeet.auth.oauth2.handler.CustomOAuth2SuccessHandler;
-import com.depromeet.auth.oauth2.service.CustomOAuth2UserService;
+import com.depromeet.auth.jwt.handler.JwtAccessDeniedHandler;
+import com.depromeet.auth.jwt.handler.JwtAuthenticationEntryPoint;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,18 +28,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
-	private static final String[] PATTERNS = {
-		"/", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**",
-		"/docs/index.html", "/common/*.html", "/jwt-test", "/api/v1/auth/**", "/api/v1/reviews/test/**"
+	public static final String[] PATTERNS = {
+		"/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**",
+		"/docs/index.html", "/common/*.html",
+		"/api/v1/auth/token/reissue","/api/v1/auth/access-token", "/api/v1/auth/login",
+		"/api/v1/reviews/test/**"
 	};
 
-	private final CustomOAuth2UserService customOAuth2UserService;
-	private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
-	private final CustomOAuth2FailureHandler customOAuth2FailureHandler;
-
-	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
 
 	/*
 	 * CORS 설정
@@ -74,30 +70,17 @@ public class SecurityConfig {
 			.sessionManagement((sessionManagement) ->
 				sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			)
-			.authorizeHttpRequests(request -> request
-				.requestMatchers(PATTERNS).permitAll()
-				.requestMatchers("/api/v1/auth/signup").hasRole("GUEST")
-				.anyRequest().hasRole("USER")
-			)
-			.oauth2Login(oauth2Login ->
-				oauth2Login
-					.authorizationEndpoint(
-						authEndpoint -> authEndpoint
-							.baseUri("/oauth2/authorization/**") // 이 url로 접근시 로그인을 요청한다
-					)
-					.tokenEndpoint(tokenEndpoint
-						-> tokenEndpoint.accessTokenResponseClient(accessTokenResponseClient()))
-					.redirectionEndpoint(redirectEndpoint -> redirectEndpoint.baseUri("/login/oauth2/code/**"))
-					.userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(customOAuth2UserService))
-					.successHandler(customOAuth2SuccessHandler)
-					.failureHandler(customOAuth2FailureHandler)
-			)
 			.exceptionHandling(exceptionHandling ->
 				exceptionHandling
 					.authenticationEntryPoint(jwtAuthenticationEntryPoint) // 401
 					.accessDeniedHandler(jwtAccessDeniedHandler) // 403
 			)
-			.addFilterBefore(new CustomAuthenticationRequestFilter(), SecurityContextHolderFilter.class)
+			.authorizeHttpRequests(request -> request
+				.requestMatchers("/api/v1/auth/signup").hasRole("GUEST")
+				.requestMatchers(PATTERNS).permitAll()
+				.requestMatchers("/api/v1/**").hasRole("USER")
+				.anyRequest().authenticated()
+			)
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
