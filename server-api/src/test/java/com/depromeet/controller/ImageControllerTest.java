@@ -24,7 +24,7 @@ class ImageControllerTest extends RestDocsTestSupport {
 	@Test
 	void getPresignedUrl() throws Exception {
 		String presigendUrl = "https://ddoeatimg.kr.object.ncloudstorage.com/example";
-		given(s3UploaderService.getPreSignedUrl("exampleimage")).willReturn(presigendUrl);
+		given(s3Service.getPreSignedUrl("exampleimage")).willReturn(presigendUrl);
 
 		// when
 		mockMvc.perform(

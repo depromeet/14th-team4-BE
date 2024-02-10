@@ -6,7 +6,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.depromeet.S3.S3UploaderService;
+import com.depromeet.S3.S3Service;
 import com.depromeet.auth.controller.AuthController;
 import com.depromeet.auth.jwt.JwtService;
 import com.depromeet.auth.service.AuthService;
@@ -66,7 +66,7 @@ public abstract class ControllerTest {
     protected JwtService jwtService;
 
     @MockBean
-    protected S3UploaderService s3UploaderService;
+    protected S3Service s3Service;
     // @MockBean으로 필요한 레포지토리, 서비스로직을 정의
 
     protected String createJson(Object dto) throws JsonProcessingException {

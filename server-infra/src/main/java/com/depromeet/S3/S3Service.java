@@ -4,6 +4,8 @@ import java.net.URL;
 import java.util.Date;
 import java.util.UUID;
 
+import com.amazonaws.SdkClientException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +19,8 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class S3UploaderService {
+@Slf4j
+public class S3Service {
 	@Value("${cloud.aws.bucket}")
 	private String bucketName;
 
@@ -47,5 +50,15 @@ public class S3UploaderService {
 		expTimeMillis += 1000 * 60 * 30;
 		expiration.setTime(expTimeMillis);
 		return expiration;
+	}
+
+	public void deleteFile(String fileName) {
+		try {
+			amazonS3.deleteObject(bucketName, fileName);
+			log.info("[S3 File Delete] {}", fileName);
+		} catch (SdkClientException e) {
+			log.error("[S3 File Delete 실패]", e);
+			throw new RuntimeException("[S3 File Delete 실패]", e);
+		}
 	}
 }
