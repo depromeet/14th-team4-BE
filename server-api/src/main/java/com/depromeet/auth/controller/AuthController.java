@@ -29,10 +29,11 @@ public class AuthController {
 	@GetMapping("/login")
 	public CustomResponseEntity<TokenResponse> socialLogin(
 		@RequestParam String provider,
-		@RequestParam String code
+		@RequestParam String code,
+		@RequestParam String redirect_uri
 	) {
 		if ("kakao".equals(provider)) {
-			return CustomResponseEntity.success(authService.kakaoLogin(code));
+			return CustomResponseEntity.success(authService.kakaoLogin(code, redirect_uri));
 		}
 		return CustomResponseEntity.success(authService.appleLogin(code));
 	}
