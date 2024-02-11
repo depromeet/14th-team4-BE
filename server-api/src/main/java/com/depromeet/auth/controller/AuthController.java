@@ -4,14 +4,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.depromeet.annotation.AuthUser;
-import com.depromeet.auth.dto.SocialLoginRequest;
-import com.depromeet.auth.dto.SocialSignupRequest;
 import com.depromeet.auth.dto.TokenResponse;
 import com.depromeet.auth.jwt.JwtService;
 import com.depromeet.auth.service.AuthService;
@@ -20,7 +17,6 @@ import com.depromeet.domains.user.entity.User;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -35,44 +31,10 @@ public class AuthController {
 		@RequestParam String provider,
 		@RequestParam String code
 	) {
-		// TODO: provider에 따라서 로그인 처리
 		if ("kakao".equals(provider)) {
 			return CustomResponseEntity.success(authService.kakaoLogin(code));
 		}
-		return CustomResponseEntity.success(authService.kakaoLogin(code));
-	}
-
-	@PostMapping("/{social}/signup")
-	public CustomResponseEntity<TokenResponse> socialSignup(
-		@Valid @RequestBody SocialSignupRequest signupRequest, @PathVariable("social") String social) {
-
-		TokenResponse tokenResponse = null;
-
-		if ("apple".equalsIgnoreCase(social)) {
-			// todo - 애플에서는 첫 로그인? 에서만 user 정보를 준다는데 테스트 해보고 저장할 것 추가하기
-			tokenResponse
-				= this.authService.signupWithApple(signupRequest.getIdentityToken(),
-				signupRequest.getAuthorizationCode());
-		} else {
-			// todo - 카카오
-		}
-
-		return CustomResponseEntity.success(tokenResponse);
-	}
-
-	@PostMapping("/{social}/login")
-	public CustomResponseEntity<TokenResponse> socialLogin(
-		@Valid @RequestBody SocialLoginRequest loginRequest, @PathVariable("social") String social) {
-
-		TokenResponse tokenResponse = null;
-
-		if ("apple".equalsIgnoreCase(social)) {
-			return CustomResponseEntity.success(authService.loginWithApple(loginRequest));
-		} else {
-			// todo - 카카오
-		}
-
-		return CustomResponseEntity.success(tokenResponse);
+		return CustomResponseEntity.success(authService.appleLogin(code));
 	}
 
 	/**
@@ -108,6 +70,7 @@ public class AuthController {
 		String accessToken = jwtService.createAccessToken(userId);
 		String refreshToken = jwtService.createRefreshToken(userId);
 
-		return CustomResponseEntity.success(TokenResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build());
+		return CustomResponseEntity.success(
+			TokenResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build());
 	}
 }
