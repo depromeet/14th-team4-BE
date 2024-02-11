@@ -92,11 +92,4 @@ public class StoreController {
 		storeService.deleteStoreReview(user, reviewId);
 		return CustomResponseEntity.success();
 	}
-
-	// 리뷰 삭제 테스트
-	@DeleteMapping("/reviews/test/{reviewId}")
-	public CustomResponseEntity<Void> deleteStoreReviewTest(@RequestParam Long userId, @PathVariable Long reviewId) {
-		storeService.deleteStoreReviewTest(userId, reviewId);
-		return CustomResponseEntity.success();
-	}
 }
