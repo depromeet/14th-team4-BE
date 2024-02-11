@@ -24,16 +24,16 @@ public class CommonRestExceptionHandler extends RuntimeException {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(Exception.class)
     public CustomResponseEntity<String> handleExceptionHandler(HttpServletRequest request, Exception e) {
-        log.error("defaultExceptionHandler", e);
+        log.error("defaultExceptionHandler url: {}, error: ", request.getRequestURI(), e);
         return CustomResponseEntity.fail(Result.FAIL);
     }
 
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CustomException.class)
-    public CustomResponseEntity<String> handleCustomExceptionHandler(CustomException exception) {
-        log.error("CustomExceptionHandler code : {}, message : {}",
-                exception.getResult().getCode(), exception.getResult().getMessage());
+    public CustomResponseEntity<String> handleCustomExceptionHandler(HttpServletRequest request, CustomException exception) {
+        log.error("CustomExceptionHandler url: {}, code : {}, message : {}",
+                request.getRequestURI(), exception.getResult().getCode(), exception.getResult().getMessage());
         return CustomResponseEntity.fail(exception.getResult());
     }
 

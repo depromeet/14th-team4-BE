@@ -10,6 +10,7 @@ import com.depromeet.enums.Role;
 
 import lombok.Getter;
 
+// TODO: 삭제 예정
 @Getter
 public class CustomOAuth2User extends DefaultOAuth2User {
 	private final Long userId;
