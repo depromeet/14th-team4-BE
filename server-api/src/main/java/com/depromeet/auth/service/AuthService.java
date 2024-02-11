@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.depromeet.auth.apple.AppleAuthClient;
-import com.depromeet.auth.apple.AppleProperties;
 import com.depromeet.auth.controller.KakaoTokenClient;
 import com.depromeet.auth.controller.KakaoUserClient;
 import com.depromeet.auth.dto.ApplePublicKeyResponse;
@@ -50,7 +49,6 @@ public class AuthService {
 	private final RedisService redisService;
 	private final UserRepository userRepository;
 	private final AppleAuthClient appleAuthClient;
-	private final AppleProperties appleProperties;
 	private final KakaoTokenClient kakaoTokenClient;
 	private final KakaoUserClient kakaoUserClient;
 
