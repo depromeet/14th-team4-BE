@@ -8,16 +8,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
-import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
-import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.depromeet.auth.apple.CustomRequestEntityConverter;
 import com.depromeet.auth.jwt.JwtAuthenticationFilter;
 import com.depromeet.auth.jwt.handler.JwtAccessDeniedHandler;
 import com.depromeet.auth.jwt.handler.JwtAuthenticationEntryPoint;
@@ -31,14 +27,13 @@ public class SecurityConfig {
 	public static final String[] PATTERNS = {
 		"/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**",
 		"/docs/index.html", "/common/*.html",
-		"/api/v1/auth/token/reissue","/api/v1/auth/access-token", "/api/v1/auth/login",
+		"/api/v1/auth/token/reissue", "/api/v1/auth/access-token", "/api/v1/auth/login",
 		"/api/v1/reviews/test/**"
 	};
 
 	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
 
 	/*
 	 * CORS 설정
@@ -84,14 +79,4 @@ public class SecurityConfig {
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
-
-	@Bean
-	public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
-		DefaultAuthorizationCodeTokenResponseClient accessTokenResponseClient
-			= new DefaultAuthorizationCodeTokenResponseClient();
-		accessTokenResponseClient.setRequestEntityConverter(new CustomRequestEntityConverter());
-
-		return accessTokenResponseClient;
-	}
-
 }
