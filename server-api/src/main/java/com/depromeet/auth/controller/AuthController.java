@@ -3,8 +3,10 @@ package com.depromeet.auth.controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.depromeet.annotation.AuthUser;
@@ -13,7 +15,6 @@ import com.depromeet.auth.dto.SocialSignupRequest;
 import com.depromeet.auth.dto.TokenResponse;
 import com.depromeet.auth.jwt.JwtService;
 import com.depromeet.auth.service.AuthService;
-import com.depromeet.auth.service.CookieService;
 import com.depromeet.common.exception.CustomResponseEntity;
 import com.depromeet.domains.user.entity.User;
 
@@ -27,8 +28,19 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping(value = "/api/v1/auth")
 public class AuthController {
 	private final AuthService authService;
-	private final CookieService cookieService;
 	private final JwtService jwtService;
+
+	@GetMapping("/login")
+	public CustomResponseEntity<TokenResponse> socialLogin(
+		@RequestParam String provider,
+		@RequestParam String code
+	) {
+		// TODO: provider에 따라서 로그인 처리
+		if ("kakao".equals(provider)) {
+			return CustomResponseEntity.success(authService.kakaoLogin(code));
+		}
+		return CustomResponseEntity.success(authService.kakaoLogin(code));
+	}
 
 	@PostMapping("/{social}/signup")
 	public CustomResponseEntity<TokenResponse> socialSignup(
@@ -68,13 +80,10 @@ public class AuthController {
 	 */
 	@PostMapping("/token/reissue")
 	public CustomResponseEntity<TokenResponse> refreshToken(
-		HttpServletRequest request, HttpServletResponse response
-	) throws IllegalAccessException {
-		TokenResponse tokenResponse = authService.reissueToken(request);
-		// 응답 헤더에 쿠키 추가
-		response.addCookie(cookieService.createRefreshTokenCookie(tokenResponse.getRefreshToken()));
-
-		return CustomResponseEntity.success(new TokenResponse(tokenResponse.getAccessToken()));
+		@RequestHeader("Authorization-refresh") String refreshToken
+	) {
+		TokenResponse tokenResponse = authService.reissueToken(refreshToken);
+		return CustomResponseEntity.success(tokenResponse);
 	}
 
 	@PostMapping("/signup")
@@ -85,8 +94,8 @@ public class AuthController {
 	}
 
 	@PostMapping("/logout")
-	public void logout(HttpServletRequest request, HttpServletResponse response) {
-		authService.logout(request, response);
+	public void logout(@AuthUser User user, HttpServletRequest request, HttpServletResponse response) {
+		authService.logout(user, request, response);
 	}
 
 	/**
@@ -99,9 +108,6 @@ public class AuthController {
 		String accessToken = jwtService.createAccessToken(userId);
 		String refreshToken = jwtService.createRefreshToken(userId);
 
-		response.addCookie(cookieService.createAccessTokenCookie(accessToken));
-		response.addCookie(cookieService.createRefreshTokenCookie(refreshToken));
-
-		return CustomResponseEntity.success(new TokenResponse(accessToken, refreshToken));
+		return CustomResponseEntity.success(TokenResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build());
 	}
 }

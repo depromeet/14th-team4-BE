@@ -1,27 +1,14 @@
 package com.depromeet.auth.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class TokenResponse {
 	String accessToken;
 	String refreshToken;
-	boolean isFirstValue;
-
-	public TokenResponse(String accessToken) {
-		this.accessToken = accessToken;
-	}
-
-	public TokenResponse(String accessToken, String refreshToken) {
-		this.accessToken = accessToken;
-		this.refreshToken = refreshToken;
-	}
-
-	public TokenResponse(String accessToken, String refreshToken, boolean isFirstValue) {
-		this.accessToken = accessToken;
-		this.refreshToken = refreshToken;
-		this.isFirstValue = isFirstValue;
-	}
+	Boolean isFirst;
 }

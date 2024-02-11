@@ -20,7 +20,7 @@ public enum Result {
     DUPLICATED_NICKNAME(400, "이미 존재하는 닉네임입니다."),
     DUPLICATED_STORE(400, "이미 존재하는 가게입니다."),
     NOT_FOUND_COOKIE(401, "존재하지 않는 쿠키"),
-    NOT_FOUND_USER(404, "사용자를 찾을 수 없습니다."),
+    NOT_FOUND_USER(401, "사용자를 찾을 수 없습니다."),
     NOT_FOUND_BOOKMARK(404, "북마크를 찾을 수 없습니다."),
     NOT_FOUND_STORE(404, "가게를 찾을 수 없습니다."),
     NOT_FOUND_CATEGORY(404, "카테고리를 찾을 수 없습니다." ),
