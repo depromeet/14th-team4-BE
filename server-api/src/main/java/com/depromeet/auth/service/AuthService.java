@@ -2,37 +2,24 @@ package com.depromeet.auth.service;
 
 import java.math.BigInteger;
 import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.security.Security;
-import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Base64;
-import java.util.Date;
 import java.util.Map;
-import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.depromeet.auth.apple.AppleAuthClient;
+import com.depromeet.auth.apple.AppleProperties;
 import com.depromeet.auth.controller.KakaoTokenClient;
 import com.depromeet.auth.controller.KakaoUserClient;
+import com.depromeet.auth.dto.ApplePublicKeyResponse;
 import com.depromeet.auth.dto.KakaoTokenResponse;
 import com.depromeet.auth.dto.KakaoUserInfo;
-import com.depromeet.auth.apple.AppleAuthClient;
-import com.depromeet.auth.apple.AppleIdTokenPayload;
-import com.depromeet.auth.apple.AppleProperties;
-import com.depromeet.auth.apple.TokenDecoder;
-import com.depromeet.auth.dto.ApplePublicKeyResponse;
-import com.depromeet.auth.dto.AppleToken;
-import com.depromeet.auth.dto.SocialLoginRequest;
 import com.depromeet.auth.dto.TokenResponse;
 import com.depromeet.auth.jwt.JwtService;
 import com.depromeet.common.exception.CustomException;
@@ -41,18 +28,11 @@ import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.repository.UserRepository;
 import com.depromeet.enums.Role;
 import com.depromeet.enums.SocialType;
-import com.depromeet.enums.Role;
-import com.depromeet.enums.SocialType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwsHeader;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -66,8 +46,6 @@ public class AuthService {
 	private static final String AUTHORIZATION_TYPE = "Bearer ";
 	private static final String AUTHORIZATION_CODE = "authorization_code";
 	private static final String GUEST_PREFIX = "게스트";
-
-	private static final String APPLE_JWT_ALGORITHM = "ES256";
 	private final JwtService jwtService;
 	private final RedisService redisService;
 	private final UserRepository userRepository;
@@ -85,13 +63,14 @@ public class AuthService {
 
 	public TokenResponse kakaoLogin(String code) {
 		// 액세스 토큰 요청
-		KakaoTokenResponse tokenResponse = kakaoTokenClient.getToken(AUTHORIZATION_CODE, kakaoClientId, kakaoRedirectUrl, code,
+		KakaoTokenResponse tokenResponse = kakaoTokenClient.getToken(AUTHORIZATION_CODE, kakaoClientId,
+			kakaoRedirectUrl, code,
 			kakaoClientSecret);
 		// 사용자 정보 요청
 		KakaoUserInfo userResponse = kakaoUserClient.getUserInfo(AUTHORIZATION_TYPE + tokenResponse.getAccess_token());
 		// 사용자 정보로 회원가입 및 로그인
 		User user = userRepository.findBySocialTypeAndSocialId(SocialType.KAKAO, userResponse.getId())
-			.orElseGet(() -> createUser(userResponse));
+			.orElseGet(() -> createUser(SocialType.KAKAO, userResponse.getId()));
 
 		boolean isFirst = user.getUserRole().equals(Role.GUEST);
 		//토큰 발급
@@ -101,6 +80,24 @@ public class AuthService {
 		return TokenResponse.builder().accessToken(accessToken).refreshToken(refreshToken).isFirst(isFirst).build();
 	}
 
+	public TokenResponse appleLogin(String idToken) {
+
+		Claims appleClaims = getClaimsBy(idToken);
+		String appleEmail = (String)appleClaims.get("email");
+
+		log.info("AppleInfo by idToken after parsing Claim >>>> " + appleEmail);
+
+		User user = userRepository.findBySocialTypeAndSocialId(SocialType.APPLE, appleEmail)
+			.orElseGet(() -> createUser(SocialType.APPLE, appleEmail));
+
+		boolean isFirst = user.getUserRole().equals(Role.GUEST);
+
+		//토큰 발급
+		String accessToken = jwtService.createAccessToken(user.getUserId());
+		String refreshToken = jwtService.createRefreshToken(user.getUserId());
+
+		return TokenResponse.builder().accessToken(accessToken).refreshToken(refreshToken).isFirst(isFirst).build();
+	}
 
 	public TokenResponse reissueToken(String refreshToken) {
 
@@ -177,97 +174,28 @@ public class AuthService {
 		return prefix + sb;
 	}
 
-	private User createUser(KakaoUserInfo userInfo) {
+	private User createUser(SocialType socialType, String socialId) {
+		String randomUUID = UUID.randomUUID().toString().toUpperCase().substring(0, 7);
+
 		User newUser = User.builder()
-			.socialType(SocialType.KAKAO)
-			.socialId(userInfo.getId())
-			.nickName(GUEST_PREFIX + userInfo.getId())
+			.socialType(socialType)
+			.socialId(socialId)
+			.nickName(GUEST_PREFIX + randomUUID)
 			.userRole(Role.GUEST)
 			.build();
 		return userRepository.save(newUser);
-	}
-
-	public TokenResponse signupWithApple(String identityToken, String authorizationCode) {
-		Claims appleClaims = getClaimsBy(identityToken);
-		String appleUserId = appleClaims.getSubject();
-		String appleEmail = (String)appleClaims.get("email");
-		String appleName = (String)appleClaims.get("name");
-		String appleAccountId = appleClaims.getId();
-
-		log.error("AppleInfo by identityToken after parsing Claim >>>> " + appleUserId + " / " + appleEmail + "/"
-			+ appleName + "/" + appleAccountId);
-
-		Optional<User> findUser = userRepository.findBySocialTypeAndSocialId(SocialType.APPLE,
-			appleAccountId);
-
-		boolean isFirstValue = false;
-		// 기존에 없으면 생성
-		if (!findUser.isPresent()) {
-			User createdUser = User.builder()
-				.socialType(SocialType.APPLE)
-				.socialId(appleAccountId)
-				.nickName("게스트" + appleAccountId)
-				.userRole(Role.GUEST)
-				.build();
-
-			isFirstValue = true;
-			userRepository.save(createdUser);
-		}
-
-		// todo - authorizationCode 으로 토큰만 가져와야 하는데 email, sub 가져오는 로직 왜 다른지 확인
-		AppleIdTokenPayload appleIdTokenPayload = get(authorizationCode);
-		// appleIdTokenPayload.getEmail();
-		// appleIdTokenPayload.getSub();
-
-		// todo 애플에서 주는 refreshToken 으로 세션유지?
-		return new TokenResponse(null, null, isFirstValue);
-	}
-
-	public TokenResponse loginWithApple(SocialLoginRequest loginRequest) {
-		String clientSecret = makeAppleClientSecret();
-
-		AppleToken.Request tokenRequest = AppleToken.Request.of(loginRequest.getRefreshToken()
-			, appleProperties.getClientId(), clientSecret);
-
-		AppleToken.Response response = appleAuthClient.generateOrValidateToken(tokenRequest);
-
-		String accessToken = jwtService.createAccessToken(null);
-		String refreshToken = jwtService.createAccessToken(null);
-
-		return new TokenResponse(accessToken, refreshToken, true);
-	}
-
-	/**
-	 *
-	 * @param authorizationCode
-	 * 	app 측에서 받은 authorizationCode
-	 * 	1번만 사용가능, 5분 만료
-	 */
-	public AppleIdTokenPayload get(String authorizationCode) {
-
-		String clientSecret = makeAppleClientSecret();
-
-		AppleToken.Request tokenRequest = AppleToken.Request.of(authorizationCode,
-			appleProperties.getClientId(),
-			clientSecret, appleProperties.getGrantType());
-
-		// 로그인에 사용될 token 요청
-		AppleToken.Response tokenResponse = appleAuthClient.generateOrValidateToken(tokenRequest);
-		String idToken = tokenResponse.getIdToken();
-
-		return TokenDecoder.decodePayload(idToken, AppleIdTokenPayload.class);
 	}
 
 	/**
 	 * Verify the Identity Token
 	 * 애플 서버의 public key를 사용해 JWS E256 signature를 검증(identity Token내 payload에 속한 값들이 변조되지 않았는지 검증위해)
 	 */
-	public Claims getClaimsBy(String identityToken) {
+	public Claims getClaimsBy(String idToken) {
 		try {
 			// identityToken 서명 검증용 publicKey 요청
 			ApplePublicKeyResponse response = appleAuthClient.getAppleAuthPublicKey();
 
-			String headerOfIdentityToken = identityToken.substring(0, identityToken.indexOf("."));
+			String headerOfIdentityToken = idToken.substring(0, idToken.indexOf("."));
 			Map<String, String> header = new ObjectMapper().readValue(
 				new String(Base64.getDecoder().decode(headerOfIdentityToken), "UTF-8"), Map.class);
 			ApplePublicKeyResponse.ApplePublicKey key = response.getMatchedKeyBy(header.get("kid"), header.get("alg"))
@@ -283,61 +211,10 @@ public class AuthService {
 			KeyFactory keyFactory = KeyFactory.getInstance(key.getKty());
 			PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
 
-			return getAppleClaims(publicKey, identityToken);
+			return getAppleClaims(publicKey, idToken);
 
-		} catch (NoSuchAlgorithmException e) {
-			throw new CustomException(Result.TOKEN_INVALID);
-		} catch (InvalidKeySpecException e) {
-			throw new CustomException(Result.TOKEN_INVALID);
-		} catch (MalformedJwtException e) {
-			//토큰 서명 검증 or 구조 문제 (Invalid token)
-			throw new CustomException(Result.TOKEN_INVALID);
-		} catch (ExpiredJwtException e) {
-			//토큰이 만료됐기 때문에 클라이언트는 토큰을 refresh 해야함.
-			throw new CustomException(Result.TOKEN_INVALID);
 		} catch (Exception e) {
 			throw new CustomException(Result.TOKEN_INVALID);
-		}
-	}
-
-	public String makeAppleClientSecret() {
-		return Jwts.builder()
-			.setHeaderParam(JwsHeader.KEY_ID, appleProperties.getKeyId())
-			.setHeaderParam(JwsHeader.ALGORITHM, APPLE_JWT_ALGORITHM)
-			.setIssuer(appleProperties.getTeamId())
-			.setIssuedAt(new Date(System.currentTimeMillis()))
-			// .setExpiration(Date.from(expiration.atZone(ZoneId.systemDefault()).toInstant()))
-			.setExpiration(
-				Date.from(LocalDateTime.now().plusDays(30).atZone(ZoneId.systemDefault()).toInstant()))
-			.setAudience(appleProperties.getAudience())
-			.setSubject(appleProperties.getClientId())
-			.signWith(getApplePrivateKey(), SignatureAlgorithm.ES256)
-			.compact();
-	}
-
-	private PrivateKey getApplePrivateKey() {
-
-		// 1) .p8 파일 직접 사용하는 방법
-		// ClassPathResource resource = new ClassPathResource("Apple_Developer_페이지에서_다운.p8");
-		// String privateKey = new String(Files.readAllBytes(Paths.get(resource.getURI())));
-		// String privateKey = appleProperties.getPrivateKey();
-		// Reader pemReader = new StringReader(privateKey);
-		// PEMParser pemParser = new PEMParser(pemReader);
-		// JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
-		// PrivateKeyInfo object = (PrivateKeyInfo)pemParser.readObject();
-		// return converter.getPrivateKey(object);
-
-		// 2) .p8 안의 키 string 값을 사용하는 방법
-		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-		JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("BC");
-
-		try {
-			byte[] privateKeyBytes = Base64.getDecoder().decode(appleProperties.getPrivateKey());
-
-			PrivateKeyInfo privateKeyInfo = PrivateKeyInfo.getInstance(privateKeyBytes);
-			return converter.getPrivateKey(privateKeyInfo);
-		} catch (Exception e) {
-			throw new RuntimeException("Error converting private key from String", e);
 		}
 	}
 
@@ -347,7 +224,7 @@ public class AuthService {
 				.setSigningKey(publicKey)
 				.build()
 				.parseClaimsJws(identityToken)
-				.getBody();    // apple 고유 계정 id, email 등 중요 요소 사용하면 된다.
+				.getBody();    // email 등 중요 요소 사용하면 된다.
 		} catch (JwtException e) {
 			throw new CustomException(Result.TOKEN_INVALID);
 		}
