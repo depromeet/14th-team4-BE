@@ -1,6 +1,19 @@
 ### 테스트 토큰 발급
 GET {{host}}/api/v1/auth/access-token/1
 
+### 로그인(apple)
+GET {{host}}/api/v1/auth/login?provider=apple&code={{code}}
+Content-Type: application/json;charset=UTF-8
+
+### 로그인(kakao)
+GET {{host}}/api/v1/auth/login?provider=kakao&code={{code}}&redirect_uri={{redirect_uri}}
+Content-Type: application/json;charset=UTF-8
+
+### 회원가입
+POST {{host}}/api/v1/auth/signup
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer {{token}}
+
 ### 맵에서 식당 정보 조회
 GET {{host}}/api/v1/stores/location-range?leftTopLatitude=50.000&leftTopLongitude=120.000&rightBottomLatitude=35.0000&rightBottomLongitude=150.000&level=1&type=CHINESE
 #GET {{host}}/api/v1/stores/location-range?latitude1=35.0000&longitude1=120.000&latitude2=50.000&longitude2=135.000&level=1&type=KOREAN
