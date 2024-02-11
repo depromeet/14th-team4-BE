@@ -43,44 +43,11 @@ operation::common-doc-controller-test/error-sample[snippets='http-response,respo
 == Auth API
 [[login]]
 === 1. 로그인
-* "accessToken", "refreshToken"으로 쿠키에 토큰 담아 반환
 
-Request
-[source,http]
-----
-GET /oauth2/authorization/{provider}?env=local HTTP/1.1
-Host: localhost:8080
-Content-Type: application/json;charset=UTF-8
-----
-Path Parameter
-[cols="1,2,3", options="header"]
-|===
-| Parameter
-| Description
-| Example Values
-
-| provider
-| 소셜로그인 종류
-| apple, kakao
-
-|===
-
-Query Parameter
-[cols="1,2,3", options="header"]
-|===
-| Parameter
-| Description
-| Example Values
-
-| env
-| 프론트 요청 환경
-| local, dev (쿼리 스트링 없이 보낸 경우 dev로 리다이렉트 됩니다)
-
-|===
+operation::auth-controller-test/social-login[snippets='curl-request,http-request,query-parameters,http-response']
 
 [[signup]]
 === 2. 약관동의 후 회원가입
-* 리다이렉트 쿼리스트링으로 "accessToken", "refreshToken" 반환
 
 operation::auth-controller-test/signup[snippets='curl-request,http-request,request-headers,http-response']
 
@@ -92,7 +59,6 @@ operation::auth-controller-test/refresh-token[snippets='curl-request,http-reques
 
 [[logout]]
 === 4. 로그아웃
-* 쿠키를 삭제시킨 후 반환합니다
 
 operation::auth-controller-test/logout[snippets='curl-request,http-request,http-response']
 
