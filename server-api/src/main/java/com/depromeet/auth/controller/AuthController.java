@@ -30,13 +30,14 @@ public class AuthController {
 	@GetMapping("/login")
 	public CustomResponseEntity<TokenResponse> socialLogin(
 		@RequestParam String provider,
-		@RequestParam String code
+		@RequestParam String code,
+		@RequestParam String redirect_uri
 	) {
 		// TODO: provider에 따라서 로그인 처리
 		if ("kakao".equals(provider)) {
-			return CustomResponseEntity.success(authService.kakaoLogin(code));
+			return CustomResponseEntity.success(authService.kakaoLogin(code, redirect_uri));
 		}
-		return CustomResponseEntity.success(authService.kakaoLogin(code));
+		return CustomResponseEntity.success(authService.kakaoLogin(code, redirect_uri));
 	}
 
 	/**

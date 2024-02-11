@@ -44,20 +44,22 @@ class AuthControllerTest extends RestDocsTestSupport {
 			.refreshToken("refresh_token")
 			.isFirst(true)
 			.build();
-		given(authService.kakaoLogin(anyString())).willReturn(tokenResponse);
+		given(authService.kakaoLogin(anyString(), anyString())).willReturn(tokenResponse);
 
 		// when
 		mockMvc.perform(
 				get("/api/v1/auth/login")
 					.param("provider", "kakao")
 					.param("code", "test_code")
+					.param("redirect_uri", "test_redirect_uri")
 					.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andDo(
 				restDocs.document(
 					queryParameters(
 						parameterWithName("provider").description("로그인 제공자 (apple, kakao)"),
-						parameterWithName("code").description("로그인 코드")
+						parameterWithName("code").description("로그인 코드"),
+						parameterWithName("redirect_uri").description("리다이렉트 URI")
 					),
 					responseFields(
 						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
