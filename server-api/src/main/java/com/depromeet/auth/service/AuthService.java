@@ -43,10 +43,8 @@ public class AuthService {
 	private String kakaoClientId;
 	@Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
 	private String kakaoClientSecret;
-	@Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
-	private String kakaoRedirectUrl;
 
-	public TokenResponse kakaoLogin(String code) {
+	public TokenResponse kakaoLogin(String code, String kakaoRedirectUrl) {
 		// 액세스 토큰 요청
 		KakaoTokenResponse tokenResponse = kakaoTokenClient.getToken(AUTHORIZATION_CODE, kakaoClientId, kakaoRedirectUrl, code,
 			kakaoClientSecret);
