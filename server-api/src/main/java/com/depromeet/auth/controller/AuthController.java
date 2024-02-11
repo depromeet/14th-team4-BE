@@ -30,7 +30,7 @@ public class AuthController {
 	public CustomResponseEntity<TokenResponse> socialLogin(
 		@RequestParam String provider,
 		@RequestParam String code,
-		@RequestParam String redirect_uri
+		@RequestParam(required = false) String redirect_uri
 	) {
 		if ("kakao".equals(provider)) {
 			return CustomResponseEntity.success(authService.kakaoLogin(code, redirect_uri));
