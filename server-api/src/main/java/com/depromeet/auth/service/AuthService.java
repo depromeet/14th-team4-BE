@@ -7,6 +7,7 @@ import java.security.SecureRandom;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -58,6 +59,8 @@ public class AuthService {
 	private String kakaoClientSecret;
 
 	public TokenResponse kakaoLogin(String code, String kakaoRedirectUrl) {
+		validateUrlParam(kakaoRedirectUrl);
+
 		// 액세스 토큰 요청
 		KakaoTokenResponse tokenResponse = kakaoTokenClient.getToken(AUTHORIZATION_CODE, kakaoClientId,
 			kakaoRedirectUrl, code,
@@ -74,6 +77,12 @@ public class AuthService {
 		String refreshToken = jwtService.createRefreshToken(user.getUserId());
 
 		return TokenResponse.builder().accessToken(accessToken).refreshToken(refreshToken).isFirst(isFirst).build();
+	}
+
+	private void validateUrlParam(String kakaoRedirectUrl) {
+		if (Objects.isNull(kakaoRedirectUrl)) {
+			throw new CustomException(Result.BAD_REQUEST);
+		}
 	}
 
 	public TokenResponse appleLogin(String idToken) {
