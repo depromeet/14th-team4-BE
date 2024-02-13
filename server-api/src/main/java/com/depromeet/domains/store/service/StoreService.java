@@ -133,14 +133,16 @@ public class StoreService {
 			reviews = reviewRepository.findByStoreAndImageUrlIsNotNullOrderByVisitedAtDesc(store, pageRequest);
 		}
 
+		Integer maxVisitTimes = reviewRepository.maxVisitTimes(store, user);
+
 		// Review 객체를 StoreLogResponse DTO로 변환
-		Slice<StoreReviewResponse> storeReviewResponse = getStoreReviewResponses(user, reviews);
+		Slice<StoreReviewResponse> storeReviewResponse = getStoreReviewResponses(user, reviews, maxVisitTimes);
 
 		// Slice 객체 생성
 		return storeReviewResponse;
 	}
 
-	private static Slice<StoreReviewResponse> getStoreReviewResponses(User user, Slice<Review> reviews) {
+	private static Slice<StoreReviewResponse> getStoreReviewResponses(User user, Slice<Review> reviews, Integer maxVisitTimes) {
 		List<StoreReviewResponse> storeReviewResponseList = reviews.getContent().stream()
 			.map(review -> {
 				// 현재 사용자가 리뷰 작성자와 동일한지 확인
@@ -153,7 +155,7 @@ public class StoreService {
 					review.getUser().getNickName(),
 					review.getRating(),
 					imageUrl,
-					review.getVisitTimes(),
+					maxVisitTimes,
 					review.getVisitedAt(),
 					review.getDescription(),
 					isMine
