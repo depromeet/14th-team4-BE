@@ -143,7 +143,7 @@ public class StoreService {
 	private Slice<StoreReviewResponse> getStoreReviewResponses(User user, Slice<Review> reviews, Store store) {
 		List<StoreReviewResponse> storeReviewResponseList = reviews.getContent().stream()
 				.map(review -> {
-					reviewRepository.maxVisitTimes(store, review.getUser());
+					Integer maxVisitTimes = reviewRepository.maxVisitTimes(store, review.getUser());
 					// 현재 사용자가 리뷰 작성자와 동일한지 확인
 					Boolean isMine = review.getUser().getUserId().equals(user.getUserId()); // 사용자 비교 로직 수정
 					String imageUrl = review.getImageUrl() != null ? review.getImageUrl() : "";
@@ -154,7 +154,7 @@ public class StoreService {
 							review.getUser().getNickName(),
 							review.getRating(),
 							imageUrl,
-							1,
+							maxVisitTimes,
 							review.getVisitedAt(),
 							review.getDescription(),
 							isMine
