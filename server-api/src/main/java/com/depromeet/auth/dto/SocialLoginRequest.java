@@ -1,14 +1,15 @@
 package com.depromeet.auth.dto;
 
 import jakarta.validation.constraints.NotEmpty;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class SocialLoginRequest {
-
-	@NotEmpty(message = "accessToken 값은 필수입니다.")
-	private String accessToken;
-
-	@NotEmpty(message = "refreshToken 값은 필수입니다.")
-	private String refreshToken;
+	@NotEmpty
+	private String provider;
+	@NotEmpty
+	private String code;
+	private String redirect_uri;
 }

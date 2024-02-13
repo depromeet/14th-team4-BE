@@ -3,20 +3,23 @@ package com.depromeet.auth.controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.depromeet.annotation.AuthUser;
+import com.depromeet.auth.dto.SocialLoginRequest;
 import com.depromeet.auth.dto.TokenResponse;
 import com.depromeet.auth.jwt.JwtService;
 import com.depromeet.auth.service.AuthService;
 import com.depromeet.common.exception.CustomResponseEntity;
 import com.depromeet.domains.user.entity.User;
+import com.depromeet.enums.SocialType;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -26,16 +29,15 @@ public class AuthController {
 	private final AuthService authService;
 	private final JwtService jwtService;
 
-	@GetMapping("/login")
+	@PostMapping("/login")
 	public CustomResponseEntity<TokenResponse> socialLogin(
-		@RequestParam String provider,
-		@RequestParam String code,
-		@RequestParam(required = false) String redirect_uri
+		@Valid @RequestBody SocialLoginRequest socialLoginRequest
 	) {
-		if ("kakao".equals(provider)) {
-			return CustomResponseEntity.success(authService.kakaoLogin(code, redirect_uri));
+		SocialType provider = SocialType.fromString(socialLoginRequest.getProvider());
+		if (SocialType.KAKAO.equals(provider)) {
+			return CustomResponseEntity.success(authService.kakaoLogin(socialLoginRequest.getCode(), socialLoginRequest.getRedirect_uri()));
 		}
-		return CustomResponseEntity.success(authService.appleLogin(code));
+		return CustomResponseEntity.success(authService.appleLogin(socialLoginRequest.getCode()));
 	}
 
 	/**

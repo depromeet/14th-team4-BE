@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 
+import com.depromeet.auth.dto.SocialLoginRequest;
 import com.depromeet.auth.dto.TokenResponse;
 import com.depromeet.document.RestDocsTestSupport;
 import jakarta.servlet.http.Cookie;
@@ -39,27 +40,24 @@ class AuthControllerTest extends RestDocsTestSupport {
 	@Test
 	void socialLogin() throws Exception {
 		// given
-		TokenResponse tokenResponse = TokenResponse.builder()
-			.accessToken("access_token")
-			.refreshToken("refresh_token")
-			.isFirst(true)
-			.build();
+		TokenResponse tokenResponse = TokenResponse.builder().accessToken("access_token").refreshToken("refresh_token").isFirst(true).build();
+
+		SocialLoginRequest socialLoginRequest = SocialLoginRequest.builder().provider("kakao").code("code").redirect_uri("redirect_uri").build();
+
 		given(authService.kakaoLogin(anyString(), anyString())).willReturn(tokenResponse);
 
 		// when
 		mockMvc.perform(
-				get("/api/v1/auth/login")
-					.param("provider", "kakao")
-					.param("code", "test_code")
-					.param("redirect_uri", "test_redirect_uri")
-					.contentType(MediaType.APPLICATION_JSON))
+			post("/api/v1/auth/login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(socialLoginRequest)))
 			.andExpect(status().isOk())
 			.andDo(
 				restDocs.document(
-					queryParameters(
-						parameterWithName("provider").description("로그인 제공자 (apple, kakao)"),
-						parameterWithName("code").description("로그인 코드"),
-						parameterWithName("redirect_uri").description("리다이렉트 URI")
+					requestFields(
+						fieldWithPath("provider").type(JsonFieldType.STRING).description("소셜 로그인 제공자 (kakao, apple)"),
+						fieldWithPath("code").type(JsonFieldType.STRING).description("소셜 로그인 코드"),
+						fieldWithPath("redirect_uri").type(JsonFieldType.STRING).description("리다이렉트 URI (kakao는 필수)").optional()
 					),
 					responseFields(
 						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
@@ -71,6 +69,9 @@ class AuthControllerTest extends RestDocsTestSupport {
 					)
 				)
 			);
+
+
+
 	}
 
 
