@@ -44,8 +44,7 @@ operation::common-doc-controller-test/error-sample[snippets='http-response,respo
 [[login]]
 === 1. 로그인
 
-operation::auth-controller-test/social-login[snippets='curl-request,http-request,query-parameters,http-response']
-
+operation::auth-controller-test/social-login[snippets='curl-request,http-request,request-fields,http-response']
 [[signup]]
 === 2. 약관동의 후 회원가입
 
