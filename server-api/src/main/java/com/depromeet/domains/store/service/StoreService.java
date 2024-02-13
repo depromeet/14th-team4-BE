@@ -133,36 +133,37 @@ public class StoreService {
 			reviews = reviewRepository.findByStoreAndImageUrlIsNotNullOrderByVisitedAtDesc(store, pageRequest);
 		}
 
-		Integer maxVisitTimes = reviewRepository.maxVisitTimes(store, user);
+		// Review 객체를 StoreLogResponse DTO로 변환하여 Slice 객체에 담아 반환
+		Slice<StoreReviewResponse> storeReviewResponse = getStoreReviewResponses(user, reviews, store);
 
-		// Review 객체를 StoreLogResponse DTO로 변환
-		Slice<StoreReviewResponse> storeReviewResponse = getStoreReviewResponses(user, reviews, maxVisitTimes);
-
-		// Slice 객체 생성
 		return storeReviewResponse;
 	}
 
-	private static Slice<StoreReviewResponse> getStoreReviewResponses(User user, Slice<Review> reviews, Integer maxVisitTimes) {
+
+	private Slice<StoreReviewResponse> getStoreReviewResponses(User user, Slice<Review> reviews, Store store) {
 		List<StoreReviewResponse> storeReviewResponseList = reviews.getContent().stream()
-			.map(review -> {
-				// 현재 사용자가 리뷰 작성자와 동일한지 확인
-				Boolean isMine = review.getUser().getUserId().equals(user.getUserId()); // 사용자 비교 로직 수정
-				String imageUrl = review.getImageUrl() != null ? review.getImageUrl() : "";
-				// 필요한 정보를 포함하여 StoreReviewResponse 객체 생성
-				return StoreReviewResponse.of(
-					review.getUser().getUserId(),
-					review.getReviewId(),
-					review.getUser().getNickName(),
-					review.getRating(),
-					imageUrl,
-					maxVisitTimes,
-					review.getVisitedAt(),
-					review.getDescription(),
-					isMine
-				);
-			})
-			.collect(Collectors.toList());
-		return new SliceImpl<>(storeReviewResponseList, reviews.getPageable(), reviews.hasNext());
+				.map(review -> {
+					reviewRepository.maxVisitTimes(store, review.getUser());
+					// 현재 사용자가 리뷰 작성자와 동일한지 확인
+					Boolean isMine = review.getUser().getUserId().equals(user.getUserId()); // 사용자 비교 로직 수정
+					String imageUrl = review.getImageUrl() != null ? review.getImageUrl() : "";
+					// 필요한 정보를 포함하여 StoreReviewResponse 객체 생성
+					return StoreReviewResponse.of(
+							review.getUser().getUserId(),
+							review.getReviewId(),
+							review.getUser().getNickName(),
+							review.getRating(),
+							imageUrl,
+							1,
+							review.getVisitedAt(),
+							review.getDescription(),
+							isMine
+					);
+				})
+				.collect(Collectors.toList());
+
+		Slice<StoreReviewResponse> storeReviewResponse  = new SliceImpl<>(storeReviewResponseList, reviews.getPageable(), reviews.hasNext());
+		return storeReviewResponse;
 	}
 
 	@Transactional(readOnly = true)
