@@ -139,6 +139,7 @@ public class StoreService {
 		return storeReviewResponse;
 	}
 
+
 	private Slice<StoreReviewResponse> getStoreReviewResponses(User user, Slice<Review> reviews, Store store) {
 		List<StoreReviewResponse> storeReviewResponseList = reviews.getContent().stream()
 				.map(review -> {
