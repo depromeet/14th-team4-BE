@@ -29,6 +29,13 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 		AuthenticationException authException) throws IOException, ServletException {
 		Object errorObj = request.getAttribute("error");
 		Result result = errorObj instanceof Result ? (Result) errorObj : Result.TOKEN_INVALID; // DEFAULT_ERROR는 기본 에러로 설정
+		// 헤더에서 JWT 토큰 추출
+		String jwtToken = request.getHeader("Authorization");
+		if (jwtToken != null && jwtToken.startsWith("Bearer ")) {
+			log.info("JWT Token: {}", jwtToken);
+		} else {
+			log.info("JWT Token 없음");
+		}
 		log.error("url {}, message: {}", request.getRequestURI(), result.getMessage());
 
 		response.setCharacterEncoding("UTF-8");
