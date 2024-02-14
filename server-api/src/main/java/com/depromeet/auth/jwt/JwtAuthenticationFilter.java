@@ -8,6 +8,7 @@ import java.util.Arrays;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -52,8 +53,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) {
-		return Arrays.stream(PATTERNS).anyMatch(exclude -> request.getServletPath().startsWith(exclude));
-	}
+		AntPathMatcher matcher = new AntPathMatcher();
+		return Arrays.stream(PATTERNS).anyMatch(
+			pattern -> matcher.match(pattern, request.getServletPath()));	}
 
 	private void setSecurityContext(String token) {
 		Authentication authentication = jwtService.getAuthentication(token);
