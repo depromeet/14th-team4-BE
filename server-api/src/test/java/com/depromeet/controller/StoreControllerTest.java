@@ -540,6 +540,8 @@ class StoreControllerTest extends RestDocsTestSupport {
 	@DisplayName("나의 재방문한 식당 공유하기")
 	public void getSharingSpots() throws Exception {
 
+		Long userId = 3L;
+
 		//given
 		StoreSharingSpotResponse.StoreSharingSpot storeSharingSpot1 =
 			StoreSharingSpotResponse.StoreSharingSpot.builder()
@@ -608,21 +610,18 @@ class StoreControllerTest extends RestDocsTestSupport {
 			StoreSharingSpotResponse.of(storeSharingSpotList);
 
 		// given
-		given(storeService.getSharingSpots(any()))
+		given(storeService.getSharingSpots(eq(userId)))
 			.willReturn(locationStoreList);
 
 		// when
 		mockMvc.perform(
 				get("/api/v1/stores/sharing-spot")
-					.contentType(MediaType.APPLICATION_JSON)
-					// .with(csrf())
-					.header("Authorization", "Bearer accessToken"))
+					.param("userId", String.valueOf(userId))
+					.contentType(MediaType.APPLICATION_JSON))
+			// .with(csrf())
 			.andExpect(status().isOk())
 			.andDo(
 				restDocs.document(
-					requestHeaders(
-						headerWithName("Authorization").description("accessToken")
-					),
 					responseFields(
 						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
 						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
