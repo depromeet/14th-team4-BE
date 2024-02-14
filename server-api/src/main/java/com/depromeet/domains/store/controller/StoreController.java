@@ -57,8 +57,9 @@ public class StoreController {
 	}
 
 	@GetMapping("/stores/sharing-spot")
-	public CustomResponseEntity<StoreSharingSpotResponse> getSharingSpots(@AuthUser User user) {
-		return CustomResponseEntity.success(storeService.getSharingSpots(user));
+	public CustomResponseEntity<StoreSharingSpotResponse> getSharingSpots
+		(@RequestParam(value = "userId") Long userId) {
+		return CustomResponseEntity.success(storeService.getSharingSpots(userId));
 	}
 
 	@GetMapping("/stores/{storeId}")
