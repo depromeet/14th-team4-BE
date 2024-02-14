@@ -35,6 +35,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		FilterChain filterChain) throws ServletException, IOException {
 		try {
 			String accessToken = jwtService.resolveToken(request);
+			log.info("request url : {}", request.getRequestURL());
+			log.info("request token : {}", accessToken);
 			if (StringUtils.hasText(accessToken) && !isTokenBlacklisted(accessToken)
 				&& jwtService.isValidToken(accessToken)) {
 				setSecurityContext(accessToken);
