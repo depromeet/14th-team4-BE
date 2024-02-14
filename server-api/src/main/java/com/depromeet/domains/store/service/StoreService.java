@@ -141,30 +141,30 @@ public class StoreService {
 		return storeReviewResponse;
 	}
 
-
 	private Slice<StoreReviewResponse> getStoreReviewResponses(User user, Slice<Review> reviews, Store store) {
 		List<StoreReviewResponse> storeReviewResponseList = reviews.getContent().stream()
-				.map(review -> {
-					Integer maxVisitTimes = reviewRepository.maxVisitTimes(store, review.getUser());
-					// 현재 사용자가 리뷰 작성자와 동일한지 확인
-					Boolean isMine = review.getUser().getUserId().equals(user.getUserId()); // 사용자 비교 로직 수정
-					String imageUrl = review.getImageUrl() != null ? review.getImageUrl() : "";
-					// 필요한 정보를 포함하여 StoreReviewResponse 객체 생성
-					return StoreReviewResponse.of(
-							review.getUser().getUserId(),
-							review.getReviewId(),
-							review.getUser().getNickName(),
-							review.getRating(),
-							imageUrl,
-							maxVisitTimes,
-							review.getVisitedAt(),
-							review.getDescription(),
-							isMine
-					);
-				})
-				.collect(Collectors.toList());
+			.map(review -> {
+				Integer maxVisitTimes = reviewRepository.maxVisitTimes(store, review.getUser());
+				// 현재 사용자가 리뷰 작성자와 동일한지 확인
+				Boolean isMine = review.getUser().getUserId().equals(user.getUserId()); // 사용자 비교 로직 수정
+				String imageUrl = review.getImageUrl() != null ? review.getImageUrl() : "";
+				// 필요한 정보를 포함하여 StoreReviewResponse 객체 생성
+				return StoreReviewResponse.of(
+					review.getUser().getUserId(),
+					review.getReviewId(),
+					review.getUser().getNickName(),
+					review.getRating(),
+					imageUrl,
+					maxVisitTimes,
+					review.getVisitedAt(),
+					review.getDescription(),
+					isMine
+				);
+			})
+			.collect(Collectors.toList());
 
-		Slice<StoreReviewResponse> storeReviewResponse  = new SliceImpl<>(storeReviewResponseList, reviews.getPageable(), reviews.hasNext());
+		Slice<StoreReviewResponse> storeReviewResponse = new SliceImpl<>(storeReviewResponseList, reviews.getPageable(),
+			reviews.hasNext());
 		return storeReviewResponse;
 	}
 
@@ -194,7 +194,7 @@ public class StoreService {
 				minLatitude, maxLongitude, minLongitude, type);
 		}
 
-		int viewStoreListCount = calculateViewStoreListRatio(storeListWithCondition.size(), viewLevel.getRatio());
+		int viewStoreListCount = calculateViewStoreListRatio(storeListWithCondition.size(), viewLevel);
 
 		totalList.addAll(toStoreLocationRange(bookMarkStoreList, true));
 		totalList.addAll(toStoreLocationRange(storeListWithCondition.subList(0, viewStoreListCount), false));
@@ -202,8 +202,11 @@ public class StoreService {
 		return toStoreLocationRangeResponse(totalList);
 	}
 
-	private int calculateViewStoreListRatio(int listSize, double ratio) {
-		return (int)Math.round(listSize * ratio);
+	private int calculateViewStoreListRatio(int listSize, ViewLevel viewLevel) {
+		if (viewLevel.getMinCount() >= listSize) {
+			return listSize;
+		}
+		return (int)Math.round(listSize * viewLevel.getRatio());
 	}
 
 	private List<Long> storeToIdList(List<Store> storeList) {
