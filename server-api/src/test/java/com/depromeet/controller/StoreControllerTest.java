@@ -619,9 +619,13 @@ class StoreControllerTest extends RestDocsTestSupport {
 					.param("userId", String.valueOf(userId))
 					.contentType(MediaType.APPLICATION_JSON))
 			// .with(csrf())
+
 			.andExpect(status().isOk())
 			.andDo(
 				restDocs.document(
+					queryParameters(
+						parameterWithName("userId").description("유저 고유id")
+					),
 					responseFields(
 						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
 						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
