@@ -27,7 +27,7 @@ public class SecurityConfig {
 	public static final String[] PATTERNS = {
 		"/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**",
 		"/docs/index.html", "/common/*.html",
-		"/api/v1/auth/**",
+		"/api/v1/auth/reissue/**", "/api/v1/auth/login/**", "/api/v1/auth/access-token/**",
 		"/api/v1/reviews/test/**"
 	};
 
