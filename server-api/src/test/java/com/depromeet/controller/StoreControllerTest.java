@@ -36,6 +36,7 @@ import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse.Store
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
 import com.depromeet.domains.store.dto.response.StoreReportResponse;
 import com.depromeet.domains.store.dto.response.StoreReviewResponse;
+import com.depromeet.domains.store.dto.response.StoreSharingSpotResponse;
 import com.depromeet.enums.CategoryType;
 import com.depromeet.enums.ReviewType;
 
@@ -47,7 +48,6 @@ class StoreControllerTest extends RestDocsTestSupport {
 	@Test
 	void getStore() throws Exception {
 		// given
-
 		StorePreviewResponse storePreviewResponse = StorePreviewResponse.builder()
 			.storeId(1L)
 			.categoryName("중식")
@@ -453,6 +453,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 		StoreLocationRangeResponse storeLocationRangeResponse =
 			StoreLocationRangeResponse.of(totalList);
 
+		// given
 		given(storeService.getRangeStores(eq(leftTopLatitude), eq(leftTopLongitude), eq(rightBottomLatitude)
 			, eq(rightBottomLongitude), eq(level), eq(java.util.Optional.ofNullable(type)), any()))
 			.willReturn(storeLocationRangeResponse);
@@ -536,6 +537,133 @@ class StoreControllerTest extends RestDocsTestSupport {
 	}
 
 	@Test
+	@DisplayName("나의 재방문한 식당 공유하기")
+	public void getSharingSpots() throws Exception {
+
+		//given
+		StoreSharingSpotResponse.StoreSharingSpot storeSharingSpot1 =
+			StoreSharingSpotResponse.StoreSharingSpot.builder()
+				.storeId(1L)
+				.kakaoStoreId(2L)
+				.storeName("칠기마라탕1")
+				.categoryId(1L)
+				.categoryName("한식")
+				.categoryType("KOREAN")
+				.address("서울특별시 1")
+				.longitude(127.239487)
+				.latitude(37.29472)
+				.totalRevisitedCount(1L)
+				.totalReviewCount(1L)
+				.build();
+
+		StoreSharingSpotResponse.StoreSharingSpot storeSharingSpot2 =
+			StoreSharingSpotResponse.StoreSharingSpot.builder()
+				.storeId(2L)
+				.kakaoStoreId(2L)
+				.storeName("칠기마라탕2")
+				.categoryId(1L)
+				.categoryName("중식")
+				.categoryType("CHINESE")
+				.address("서울특별시 2")
+				.longitude(127.239487)
+				.latitude(37.29472)
+				.totalRevisitedCount(1L)
+				.totalReviewCount(1L)
+				.build();
+
+		StoreSharingSpotResponse.StoreSharingSpot storeSharingSpot3 =
+			StoreSharingSpotResponse.StoreSharingSpot.builder()
+				.storeId(3L)
+				.kakaoStoreId(3L)
+				.storeName("칠기마라탕3")
+				.categoryId(1L)
+				.categoryName("일식")
+				.categoryType("JAPANESE")
+				.address("서울특별시 3")
+				.longitude(127.239487)
+				.latitude(37.29472)
+				.totalRevisitedCount(1L)
+				.totalReviewCount(1L)
+				.build();
+
+		StoreSharingSpotResponse.StoreSharingSpot storeSharingSpot4 =
+			StoreSharingSpotResponse.StoreSharingSpot.builder()
+				.storeId(4L)
+				.kakaoStoreId(4L)
+				.storeName("칠기마라탕4")
+				.categoryId(1L)
+				.categoryName("양식")
+				.categoryType("WESTERN")
+				.address("서울특별시 4")
+				.longitude(127.239487)
+				.latitude(37.29472)
+				.totalRevisitedCount(1L)
+				.totalReviewCount(1L)
+				.build();
+
+		List<StoreSharingSpotResponse.StoreSharingSpot> storeSharingSpotList = Arrays.asList(
+			storeSharingSpot1, storeSharingSpot2, storeSharingSpot3, storeSharingSpot4);
+
+		StoreSharingSpotResponse locationStoreList =
+			StoreSharingSpotResponse.of(storeSharingSpotList);
+
+		// given
+		given(storeService.getSharingSpots(any()))
+			.willReturn(locationStoreList);
+
+		// when
+		mockMvc.perform(
+				get("/api/v1/stores/sharing-spot")
+					.contentType(MediaType.APPLICATION_JSON)
+					// .with(csrf())
+					.header("Authorization", "Bearer accessToken"))
+			.andExpect(status().isOk())
+			.andDo(
+				restDocs.document(
+					requestHeaders(
+						headerWithName("Authorization").description("accessToken")
+					),
+					responseFields(
+						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
+						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+						fieldWithPath("data.locationStoreList[]").type(JsonFieldType.ARRAY)
+							.description("요청한 위경도 내 식당 목록"),
+						fieldWithPath("data.locationStoreList[].storeId").type(JsonFieldType.NUMBER)
+							.description("우리 DB상 음식점 ID"),
+						fieldWithPath("data.locationStoreList[].kakaoStoreId").type(JsonFieldType.NUMBER)
+							.description("카카오 DB상 음식점 ID"),
+						fieldWithPath("data.locationStoreList[].storeName").type(JsonFieldType.STRING)
+							.description("음식점 명"),
+						fieldWithPath("data.locationStoreList[].categoryId").type(JsonFieldType.NUMBER)
+							.description("음식점 카테고리 ID"),
+						fieldWithPath("data.locationStoreList[].categoryName").type(JsonFieldType.STRING)
+							.description("음식점 카테고리 명"),
+						fieldWithPath("data.locationStoreList[].categoryType").type(JsonFieldType.STRING)
+							.description("음식점 카테고리 타입"
+								+ "\nKOREAN(한식)"
+								+ "\nCHINESE(중식)"
+								+ "\nJAPANESE(일식)"
+								+ "\nWESTERN(양식)"
+								+ "\nCAFE(카페,디저트)"
+								+ "\nBARS(술집)"
+								+ "\nSCHOOLFOOD(분식)"
+								+ "\nETC(기타)"),
+						fieldWithPath("data.locationStoreList[].address").type(JsonFieldType.STRING)
+							.description("음식점 주소"),
+						fieldWithPath("data.locationStoreList[].longitude").type(JsonFieldType.NUMBER)
+							.description("음식점 위도"),
+						fieldWithPath("data.locationStoreList[].latitude").type(JsonFieldType.NUMBER)
+							.description("음식점 경도"),
+						fieldWithPath("data.locationStoreList[].totalRevisitedCount").type(JsonFieldType.NUMBER)
+							.description("재방문한 인원수 (N명 재방문)"),
+						fieldWithPath("data.locationStoreList[].totalReviewCount").type(JsonFieldType.NUMBER)
+							.description("총 리뷰 갯수")
+					)
+				)
+			);
+	}
+
+	@Test
 	void getUserDailyStoreReviewLimit() throws Exception {
 		// given
 		given(storeService.checkUserDailyStoreReviewLimit(any(), eq(1L))).willReturn(ReviewAddLimitResponse.of(false));
@@ -595,7 +723,5 @@ class StoreControllerTest extends RestDocsTestSupport {
 					)
 				)
 			);
-
 	}
-
 }

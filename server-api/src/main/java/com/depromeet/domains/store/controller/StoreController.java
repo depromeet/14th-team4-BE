@@ -22,6 +22,7 @@ import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
 import com.depromeet.domains.store.dto.response.StoreReportResponse;
 import com.depromeet.domains.store.dto.response.StoreReviewResponse;
+import com.depromeet.domains.store.dto.response.StoreSharingSpotResponse;
 import com.depromeet.domains.store.service.StoreService;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.enums.CategoryType;
@@ -53,6 +54,11 @@ public class StoreController {
 			rightBottomLatitude, rightBottomLongitude,
 			level, categoryType,
 			user));
+	}
+
+	@GetMapping("/stores/sharing-spot")
+	public CustomResponseEntity<StoreSharingSpotResponse> getSharingSpots(@AuthUser User user) {
+		return CustomResponseEntity.success(storeService.getSharingSpots(user));
 	}
 
 	@GetMapping("/stores/{storeId}")

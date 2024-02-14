@@ -7,19 +7,19 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class StoreLocationRangeResponse {
+public class StoreSharingSpotResponse {
 
-	private List<StoreLocationRange> locationStoreList;
+	private List<StoreSharingSpot> locationStoreList; // 변수명은 StoreLocationRangeResponse 클래스와 동일(프런트에서 요청)
 
-	public static StoreLocationRangeResponse of(List<StoreLocationRange> locationStoreList) {
-		return StoreLocationRangeResponse.builder()
-			.locationStoreList(locationStoreList)
+	public static StoreSharingSpotResponse of(List<StoreSharingSpot> storeSharingSpot) {
+		return StoreSharingSpotResponse.builder()
+			.locationStoreList(storeSharingSpot)
 			.build();
 	}
 
 	@Getter
 	@Builder
-	public static class StoreLocationRange {
+	public static class StoreSharingSpot {
 		private Long storeId;
 		private Long kakaoStoreId;
 		private String storeName;
@@ -31,12 +31,12 @@ public class StoreLocationRangeResponse {
 		private Double latitude;
 		private Long totalRevisitedCount;
 		private Long totalReviewCount;
-		private Boolean isBookmarked;
 
-		public static StoreLocationRange of(Long storeId, Long kakaoStoreId, String storeName, Long categoryId,
+		public static StoreSharingSpot of(Long storeId, Long kakaoStoreId, String storeName,
+			Long categoryId,
 			String categoryName, String categoryType, String address, Double longitude, Double latitude,
-			Long totalRevisitedCount, Long totalReviewCount, Boolean isBookmarked) {
-			return StoreLocationRange.builder()
+			Long totalRevisitedCount, Long totalReviewCount) {
+			return StoreSharingSpot.builder()
 				.storeId(storeId)
 				.kakaoStoreId(kakaoStoreId)
 				.storeName(storeName)
@@ -48,7 +48,6 @@ public class StoreLocationRangeResponse {
 				.latitude(latitude)
 				.totalRevisitedCount(totalRevisitedCount)
 				.totalReviewCount(totalReviewCount)
-				.isBookmarked(isBookmarked)
 				.build();
 		}
 	}

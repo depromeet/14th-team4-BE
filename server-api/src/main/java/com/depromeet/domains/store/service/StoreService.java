@@ -4,10 +4,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.depromeet.S3.S3Service;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.depromeet.S3.S3Service;
 import com.depromeet.common.exception.CustomException;
 import com.depromeet.common.exception.Result;
 import com.depromeet.domains.bookmark.repository.BookmarkRepository;
@@ -31,6 +32,7 @@ import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
 import com.depromeet.domains.store.dto.response.StoreReportResponse;
 import com.depromeet.domains.store.dto.response.StoreReviewResponse;
+import com.depromeet.domains.store.dto.response.StoreSharingSpotResponse;
 import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.store.entity.StoreMeta;
 import com.depromeet.domains.store.repository.StoreMetaRepository;
@@ -219,7 +221,7 @@ public class StoreService {
 	}
 
 	private List<StoreLocationRangeResponse.StoreLocationRange> toStoreLocationRange(List<Store> storeList,
-		boolean isBookmarked) {
+		Boolean isBookmarked) {
 		return storeList.stream()
 			.map(store ->
 				StoreLocationRangeResponse.StoreLocationRange.of(
@@ -235,6 +237,24 @@ public class StoreService {
 					store.getStoreMeta().getTotalRevisitedCount(),
 					store.getStoreMeta().getTotalReviewCount(),
 					isBookmarked))
+			.collect(Collectors.toList());
+	}
+
+	private List<StoreSharingSpotResponse.StoreSharingSpot> toStoreSharingSpot(List<Store> storeList) {
+		return storeList.stream()
+			.map(store ->
+				StoreSharingSpotResponse.StoreSharingSpot.of(
+					store.getStoreId(),
+					store.getKakaoStoreId(),
+					store.getStoreName(),
+					store.getCategory().getCategoryId(),
+					store.getCategory().getCategoryName(),
+					store.getCategory().getCategoryType().getName(),
+					store.getAddress(),
+					store.getLocation().getLongitude(),
+					store.getLocation().getLatitude(),
+					store.getStoreMeta().getTotalRevisitedCount(),
+					store.getStoreMeta().getTotalReviewCount()))
 			.collect(Collectors.toList());
 	}
 
@@ -295,7 +315,7 @@ public class StoreService {
 		}
 
 		// 최다 방문자 횟수 업데이트
-		storeMeta.updateMostRevisitedCount(userReviewCount+1);
+		storeMeta.updateMostRevisitedCount(userReviewCount + 1);
 		storeMetaRepository.save(storeMeta);
 		return store;
 	}
@@ -394,7 +414,7 @@ public class StoreService {
 
 		user.decreaseMyReviewCount();
 
-		if (storeMeta.getTotalReviewCount()==0){
+		if (storeMeta.getTotalReviewCount() == 0) {
 			log.info("음식점도 삭제");
 			storeRepository.delete(store);
 		}
@@ -450,5 +470,22 @@ public class StoreService {
 
 		int reviewCount = reviewRepository.countStoreReviewByUserForDay(user, store, startOfDay, endOfDay);
 		return ReviewAddLimitResponse.of(reviewCount < 3);
+	}
+
+	@Transactional(readOnly = true)
+	public StoreSharingSpotResponse getSharingSpots(User user) {
+
+		List<Review> reviews = this.reviewRepository.findByUser(user);
+
+		// 재방문이상(리뷰 수 2개 이상)의 식당만 공유
+		List<Store> revisitedStores = reviews.stream()
+			.collect(Collectors.groupingBy(Review::getStore))
+			.entrySet()
+			.stream()
+			.filter(entry -> entry.getValue().size() >= 2)
+			.map(Map.Entry::getKey)
+			.collect(Collectors.toList());
+
+		return StoreSharingSpotResponse.of(toStoreSharingSpot(revisitedStores));
 	}
 }
