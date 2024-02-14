@@ -470,7 +470,10 @@ public class StoreService {
 	}
 
 	@Transactional(readOnly = true)
-	public StoreSharingSpotResponse getSharingSpots(User user) {
+	public StoreSharingSpotResponse getSharingSpots(Long userId) {
+
+		User user = this.userRepository.findById(userId).orElseThrow(
+			() -> new CustomException(Result.NOT_FOUND_USER));
 
 		List<Review> reviews = this.reviewRepository.findByUser(user);
 
