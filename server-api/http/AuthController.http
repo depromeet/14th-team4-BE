@@ -1,0 +1,15 @@
+### 테스트 토큰 발급
+GET {{host}}/api/v1/auth/access-token/3
+
+### 로그인(apple)
+GET {{host}}/api/v1/auth/login?provider=apple&code={{code}}
+Content-Type: application/json;charset=UTF-8
+
+### 로그인(kakao)
+GET {{host}}/api/v1/auth/login?provider=kakao&code={{code}}&redirect_uri={{redirect_uri}}
+Content-Type: application/json;charset=UTF-8
+
+### 회원가입
+POST {{host}}/api/v1/auth/signup
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer {{token}}
