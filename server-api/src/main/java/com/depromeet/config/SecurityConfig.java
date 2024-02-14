@@ -28,7 +28,7 @@ public class SecurityConfig {
 		"/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**",
 		"/docs/index.html", "/common/*.html",
 		"/api/v1/auth/token/reissue", "/api/v1/auth/access-token", "/api/v1/auth/login",
-		"/api/v1/reviews/test/**"
+		"/api/v1/reviews/test/**", "/api/v1/stores/sharing-spot"
 	};
 
 	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
