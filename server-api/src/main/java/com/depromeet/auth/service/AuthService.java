@@ -105,7 +105,7 @@ public class AuthService {
 	}
 
 	public TokenResponse reissueToken(String refreshToken) {
-
+		log.info("reissueToken : " + refreshToken);
 		// Refresh Token 검증
 		if (!jwtService.isValidToken(refreshToken)) {
 			throw new CustomException(Result.TOKEN_INVALID);

@@ -56,4 +56,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 		@Param("startOfDay") LocalDateTime startOfDay,
 		@Param("endOfDay") LocalDateTime endOfDay);
 
+    @Query("SELECT MAX(r.visitTimes) FROM Review r WHERE r.store = :store AND r.user = :user")
+    int maxVisitTimes(@Param("store") Store store, @Param("user") User user);
 }
