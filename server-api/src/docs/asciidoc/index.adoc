@@ -99,6 +99,10 @@ operation::store-controller-test/get-location-range-stores[]
 === 8. 사용자 리뷰 작성 가능 여부 체크
 operation::store-controller-test/get-user-daily-store-review-limit[]
 
+[[get-sharing-spots]]
+=== 9. 나의 재방문한 식당들 정보 공유
+operation::store-controller-test/get-sharing-spots[]
+
 == User API
 
 === 1. 유저 닉네임 변경
