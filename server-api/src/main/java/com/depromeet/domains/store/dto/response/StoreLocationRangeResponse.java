@@ -4,11 +4,9 @@ import java.util.List;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
 @Builder
-@ToString
 public class StoreLocationRangeResponse {
 
 	private List<StoreLocationRange> locationStoreList;
@@ -21,7 +19,6 @@ public class StoreLocationRangeResponse {
 
 	@Getter
 	@Builder
-	@ToString
 	public static class StoreLocationRange {
 		private Long storeId;
 		private Long kakaoStoreId;
