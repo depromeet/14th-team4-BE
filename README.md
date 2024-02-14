@@ -43,8 +43,7 @@
 - Figma
 
 ## 2. 시스템 아키텍처
-<img width="1142" alt="스크린샷 2024-02-14 오후 11 15 56" src="https://github.com/depromeet/14th-team4-BE/assets/112103038/194c8110-42c9-4025-aeab-b9e0b33df075">
-
+<img width="1142" alt="스크린샷 2024-02-14 오후 11 15 56" src="https://github.com/depromeet/14th-team4-BE/assets/76957700/63785025-06d8-42e4-a87b-3d118b3f9259">
 
 
 ## 3. 모듈 구조
