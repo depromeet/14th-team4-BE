@@ -540,6 +540,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 	@DisplayName("나의 재방문한 식당 공유하기")
 	public void getSharingSpots() throws Exception {
 
+		String userNickName = "또밥입니다";
 		Long userId = 3L;
 
 		//given
@@ -607,7 +608,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 			storeSharingSpot1, storeSharingSpot2, storeSharingSpot3, storeSharingSpot4);
 
 		StoreSharingSpotResponse locationStoreList =
-			StoreSharingSpotResponse.of(storeSharingSpotList);
+			StoreSharingSpotResponse.of(userNickName, storeSharingSpotList);
 
 		// given
 		given(storeService.getSharingSpots(eq(userId)))
@@ -629,6 +630,8 @@ class StoreControllerTest extends RestDocsTestSupport {
 					responseFields(
 						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
 						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+						fieldWithPath("data.userNickName").type(JsonFieldType.STRING)
+							.description("유저닉네임 "),
 						fieldWithPath("data.locationStoreList[]").type(JsonFieldType.ARRAY)
 							.description("요청한 위경도 내 식당 목록"),
 						fieldWithPath("data.locationStoreList[].storeId").type(JsonFieldType.NUMBER)
