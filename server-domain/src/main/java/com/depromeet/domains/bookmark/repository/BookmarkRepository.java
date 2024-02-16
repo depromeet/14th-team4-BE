@@ -14,4 +14,6 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 	Slice<Bookmark> findByUser(User user, Pageable pageable);
 
 	Optional<Bookmark> findByUserAndStore(User user, Store store);
+
+    void deleteByStore(Store store);
 }

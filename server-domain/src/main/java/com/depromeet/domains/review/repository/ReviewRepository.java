@@ -58,4 +58,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT MAX(r.visitTimes) FROM Review r WHERE r.store = :store AND r.user = :user")
     int maxVisitTimes(@Param("store") Store store, @Param("user") User user);
+
+	// 가장 먼저 생성된 리뷰 조회
+	@Query("SELECT r FROM Review r WHERE r.store = :store ORDER BY r.createdAt ASC")
+	Review findFirstByStoreOrderByVisitedAtAsc(Store store);
 }
