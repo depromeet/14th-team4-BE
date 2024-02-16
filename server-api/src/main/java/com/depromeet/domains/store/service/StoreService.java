@@ -492,6 +492,6 @@ public class StoreService {
 			.map(Map.Entry::getKey)
 			.collect(Collectors.toList());
 
-		return StoreSharingSpotResponse.of(toStoreSharingSpot(revisitedStores));
+		return StoreSharingSpotResponse.of(user.getNickName(), toStoreSharingSpot(revisitedStores));
 	}
 }
