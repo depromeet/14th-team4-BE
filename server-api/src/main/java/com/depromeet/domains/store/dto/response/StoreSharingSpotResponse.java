@@ -9,10 +9,12 @@ import lombok.Getter;
 @Builder
 public class StoreSharingSpotResponse {
 
+	private String userNickName;
 	private List<StoreSharingSpot> locationStoreList; // 변수명은 StoreLocationRangeResponse 클래스와 동일(프런트에서 요청)
 
-	public static StoreSharingSpotResponse of(List<StoreSharingSpot> storeSharingSpot) {
+	public static StoreSharingSpotResponse of(String userNickName, List<StoreSharingSpot> storeSharingSpot) {
 		return StoreSharingSpotResponse.builder()
+			.userNickName(userNickName)
 			.locationStoreList(storeSharingSpot)
 			.build();
 	}
