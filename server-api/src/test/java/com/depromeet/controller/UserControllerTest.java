@@ -64,7 +64,7 @@ class UserControllerTest extends RestDocsTestSupport {
 
 	@Test
 	void getUserProfile() throws Exception {
-		UserProfileResponse userProfileResponse = UserProfileResponse.of("닉네임","배고픈");
+		UserProfileResponse userProfileResponse = UserProfileResponse.of(1L,"닉네임","배고픈");
 		given(userService.getUserProfile(any())).willReturn(userProfileResponse);
 
 		// when
@@ -82,6 +82,7 @@ class UserControllerTest extends RestDocsTestSupport {
 						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
 						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
 						subsectionWithPath("data").type(JsonFieldType.OBJECT).description("프로필"),
+						fieldWithPath("data.userId").type(JsonFieldType.NUMBER).description("유저 ID"),
 						fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("유저 닉네임"),
 						fieldWithPath("data.level").type(JsonFieldType.STRING).description("유저 레벨 이름 (배고픈, 맨밥이, 또밥이, 또또밥이)"))
 				)
