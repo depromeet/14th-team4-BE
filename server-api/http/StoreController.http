@@ -25,3 +25,7 @@ Authorization: Bearer {{token}}
 DELETE {{host}}/api/v1/reviews/1
 Content-Type: application/json;charset=UTF-8
 Authorization: Bearer {{token}}
+
+### 공유하기
+GET {{host}}/api/v1/stores/sharing-spot?userId=71
+Content-Type: application/json;charset=UTF-8
