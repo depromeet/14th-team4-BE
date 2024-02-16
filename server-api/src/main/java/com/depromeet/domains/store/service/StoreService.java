@@ -418,14 +418,18 @@ public class StoreService {
 		user.decreaseMyReviewCount();
 
 		if (storeMeta.getTotalReviewCount() == 0) {
+			log.info("해당 음식점 북마크 삭제");
+			bookmarkRepository.deleteByStore(store);
 			log.info("음식점도 삭제");
 			storeRepository.delete(store);
+		} else {
+			Review firstCreatedReview = reviewRepository.findFirstByStoreOrderByVisitedAtAsc(store);
+			store.setThumbnailUrl(firstCreatedReview.getImageUrl());
 		}
 
 		Integer lastIdx = imageUrl.lastIndexOf("/") + 1;
 		String fileName = imageUrl.substring(lastIdx);
 		s3Service.deleteFile(fileName);
-
 	}
 
 	private void processReviewForDuplicateMostVisitor(StoreMeta storeMeta, boolean hasVisitedThreeOrMore) {
