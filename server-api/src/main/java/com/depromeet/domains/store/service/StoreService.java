@@ -422,10 +422,11 @@ public class StoreService {
 			storeRepository.delete(store);
 		}
 
-		Integer lastIdx = imageUrl.lastIndexOf("/") + 1;
-		String fileName = imageUrl.substring(lastIdx);
-		s3Service.deleteFile(fileName);
-
+		if (imageUrl != null) {
+			Integer lastIdx = imageUrl.lastIndexOf("/") + 1;
+			String fileName = imageUrl.substring(lastIdx);
+			s3Service.deleteFile(fileName);
+		}
 	}
 
 	private void processReviewForDuplicateMostVisitor(StoreMeta storeMeta, boolean hasVisitedThreeOrMore) {
