@@ -4,6 +4,7 @@ import static com.depromeet.domains.store.entity.QStore.*;
 
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import com.depromeet.domains.store.entity.Store;
@@ -12,14 +13,14 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
 
 @Repository
-@AllArgsConstructor
-public class StoreQueryRepository {
+@RequiredArgsConstructor
+public class StoreRepositoryImpl implements StoreRepositoryCustom{
 
-	private final JPAQueryFactory queryFactory;
+	private final JPAQueryFactory jpaQueryFactory;
 
 	// 테스트 (추후 지우기)
 	public List<Store> getStoreAll() {
-		return queryFactory
+		return jpaQueryFactory
 			.select(store)
 			.from(store)
 			.fetch();

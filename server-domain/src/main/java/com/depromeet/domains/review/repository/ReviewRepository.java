@@ -13,7 +13,7 @@ import com.depromeet.domains.review.entity.Review;
 import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.user.entity.User;
 
-public interface ReviewRepository extends JpaRepository<Review, Long> {
+public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRepositoryCustom {
 
 	//리뷰 이미지가 존재하는 가장 최근 10개의 리뷰 조회
 	List<Review> findTop10ByStoreOrderByVisitedAtDesc(Store store);
