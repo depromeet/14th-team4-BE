@@ -35,7 +35,7 @@ import com.depromeet.domains.store.dto.response.StoreReviewResponse;
 import com.depromeet.domains.store.dto.response.StoreSharingSpotResponse;
 import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.store.entity.StoreMeta;
-import com.depromeet.domains.store.repository.StoreMetaRepository;
+import com.depromeet.domains.store.repository.storeMeta.StoreMetaRepository;
 import com.depromeet.domains.store.repository.StoreRepository;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.repository.UserRepository;

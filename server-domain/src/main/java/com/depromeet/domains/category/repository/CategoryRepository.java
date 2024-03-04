@@ -6,6 +6,6 @@ import com.depromeet.domains.category.entity.Category;
 import com.depromeet.enums.CategoryType;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-public interface CategoryRepository extends JpaRepository<Category, Long> {
+public interface CategoryRepository extends JpaRepository<Category, Long>, CategoryRepositoryCustom {
 	Optional<Category> findByCategoryType(CategoryType categoryType);
 }

@@ -11,7 +11,7 @@ import com.depromeet.domains.store.entity.Store;
 import com.depromeet.enums.CategoryType;
 
 @Repository
-public interface StoreRepository extends JpaRepository<Store, Long> {
+public interface StoreRepository extends JpaRepository<Store, Long>, StoreRepositoryCustom {
 
 	@Query("SELECT s "
 		+ "      FROM Store s "
