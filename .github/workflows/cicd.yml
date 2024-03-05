@@ -95,26 +95,30 @@ jobs:
         if: github.ref == 'refs/heads/develop'
         run: sudo docker ps -q --filter "name=develop" | xargs -r sudo docker stop
 
-      - name: pwd
-        run: sudo pwd
+      # 3. 기존의 컨테이너를 삭제 - release
+      - name: docker remove container - release
+        if: github.ref == 'refs/heads/release'
+        run: sudo docker ps -aq --filter "name=release" | xargs -r sudo docker rm
 
-      #      # 3. 최신 이미지를 컨테이너화하여 실행시킵니다
-      #      - name: docker run new container
-      #        run: sudo docker run --name github-actions-demo --rm -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/dpmbackdevelop
+      # 3. 기존의 컨테이너를 삭제 - develop
+      - name: docker remove container - develop
+        if: github.ref == 'refs/heads/develop'
+        run: sudo docker ps -aq --filter "name=develop" | xargs -r sudo docker rm
+
+      # 4. 최신 이미지를 컨테이너화하여 실행시킵니다 - release
       - name: docker compose up - release
         if: github.ref == 'refs/heads/release'
         run: |
           cd ./Config/docker
           sudo docker-compose -f docker-compose-release.yml up -d
 
+      # 4. 최신 이미지를 컨테이너화하여 실행시킵니다 - develop
       - name: docker compose up - develop
         if: github.ref == 'refs/heads/develop'
         run: |
-          sudo pwd
           cd ./Config/docker
-          sudo pwd
           sudo docker-compose -f docker-compose-develop.yml up -d
 
-      # 4. 미사용 이미지를 정리합니다
+      # 5. 미사용 이미지를 정리합니다
       - name: delete old docker image
         run: sudo docker system prune -f
