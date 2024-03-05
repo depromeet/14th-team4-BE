@@ -12,4 +12,4 @@ ARG JAR_FILE=server-api/build/libs/*.jar
 COPY ${JAR_FILE} dpmback.jar
 
 # 실행 명령어
-ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=test", "-Duser.timezone=Asia/Seoul", "dpmback.jar"]
+ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=develop", "-Duser.timezone=Asia/Seoul", "dpmback.jar"]

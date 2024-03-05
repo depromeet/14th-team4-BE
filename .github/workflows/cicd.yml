@@ -10,7 +10,7 @@ name: Java CI with Gradle
 # 동작 조건 설정 : develop 브런치에 push가 발생할 경우 동작한다.
 on:
   push:
-    branches: [ "develop" , "test"]
+    branches: [ "release" , "develop"]
 
 permissions:
   contents: read
@@ -42,15 +42,15 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean build
 
+      # 3. Docker 이미지 빌드 - release
+      - name: docker image build - release
+        if: github.ref == 'refs/heads/release'
+        run: docker build -f Dockerfile-release -t ${{ secrets.DOCKERHUB_USERNAME }}/dpmback-release .
+
       # 3. Docker 이미지 빌드 - develop
       - name: docker image build - develop
         if: github.ref == 'refs/heads/develop'
-        run: docker build -f Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/dpmback-develop .
-
-      # 3. Docker 이미지 빌드 - test
-      - name: docker image build - test
-        if: github.ref == 'refs/heads/test'
-        run: docker build -f Dockerfile-test -t ${{ secrets.DOCKERHUB_USERNAME }}/dpmback-test .
+        run: docker build -f Dockerfile-develop -t ${{ secrets.DOCKERHUB_USERNAME }}/dpmback-develop .
 
       # 4. DockerHub 로그인
       - name: docker login
@@ -59,15 +59,15 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      # 5. Docker Hub 이미지 푸시 - release
+      - name: docker Hub push - release
+        if: github.ref == 'refs/heads/release'
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/dpmback-release
+
       # 5. Docker Hub 이미지 푸시 - develop
       - name: docker Hub push - develop
         if: github.ref == 'refs/heads/develop'
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/dpmback-develop
-
-      # 5. Docker Hub 이미지 푸시 - test
-      - name: docker Hub push - test
-        if: github.ref == 'refs/heads/test'
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/dpmback-test
 
   # 위 과정에서 푸시한 이미지를 클라우드 서버에서 pull 받아서 실행시키는 과정
   run-docker-image-on-cloud:
@@ -75,36 +75,36 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      # 1. 최신 이미지를 풀 - release
+      - name: docker pull - release
+        if: github.ref == 'refs/heads/release'
+        run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/dpmback-release
+
       # 1. 최신 이미지를 풀 - develop
       - name: docker pull - develop
         if: github.ref == 'refs/heads/develop'
         run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/dpmback-develop
 
-      # 1. 최신 이미지를 풀 - test
-      - name: docker pull - test
-        if: github.ref == 'refs/heads/test'
-        run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/dpmback-test
+      # 2. 기존의 컨테이너를 중지 - release
+      - name: docker stop container - release
+        if: github.ref == 'refs/heads/release'
+        run: sudo docker ps -q --filter "name=release" | xargs -r sudo docker stop
 
       # 2. 기존의 컨테이너를 중지 - develop
       - name: docker stop container - develop
         if: github.ref == 'refs/heads/develop'
         run: sudo docker ps -q --filter "name=develop" | xargs -r sudo docker stop
 
-      # 2. 기존의 컨테이너를 중지 - test
-      - name: docker stop container - test
-        if: github.ref == 'refs/heads/test'
-        run: sudo docker ps -q --filter "name=test" | xargs -r sudo docker stop
-
       #      # 3. 최신 이미지를 컨테이너화하여 실행시킵니다
       #      - name: docker run new container
       #        run: sudo docker run --name github-actions-demo --rm -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/dpmbackdevelop
+      - name: docker compose up - release
+        if: github.ref == 'refs/heads/release'
+        run: sudo docker-compose-release up -d
+
       - name: docker compose up - develop
         if: github.ref == 'refs/heads/develop'
-        run: sudo docker-compose up -d
-
-      - name: docker compose up - test
-        if: github.ref == 'refs/heads/test'
-        run: sudo docker-compose-test up -d
+        run: sudo docker-compose-develop up -d
 
       # 4. 미사용 이미지를 정리합니다
       - name: delete old docker image
