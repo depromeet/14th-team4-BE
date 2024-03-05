@@ -89,7 +89,7 @@ jobs:
       - name: Stop and remove containers in release network
         if: github.ref == 'refs/heads/release'
         run: |
-          CONTAINER_IDS=$(sudo docker network inspect dpm-network-release -f '{{range .Containers}}{{.Name}} {{end}}')
+          CONTAINER_IDS=$(sudo docker network inspect root_dpm-network-release -f '{{range .Containers}}{{.Name}} {{end}}')
           if [ ! -z "$CONTAINER_IDS" ]; then
             sudo docker stop $CONTAINER_IDS
             sudo docker rm $CONTAINER_IDS
@@ -99,7 +99,7 @@ jobs:
       - name: Stop and remove containers in develop network
         if: github.ref == 'refs/heads/develop'
         run: |
-          CONTAINER_IDS=$(sudo docker network inspect dpm-network-develop -f '{{range .Containers}}{{.Name}} {{end}}')
+          CONTAINER_IDS=$(sudo docker network inspect root_dpm-network-develop -f '{{range .Containers}}{{.Name}} {{end}}')
           if [ ! -z "$CONTAINER_IDS" ]; then
             sudo docker stop $CONTAINER_IDS
             sudo docker rm $CONTAINER_IDS
