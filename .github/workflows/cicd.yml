@@ -99,7 +99,7 @@ jobs:
         run: sudo pwd
 
       - name: move to docker-compose directory
-        run: cd /Config/docker
+        run: cd ./Config/docker
 
       - name: pwd
         run: sudo pwd
