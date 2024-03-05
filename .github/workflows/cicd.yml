@@ -99,7 +99,10 @@ jobs:
         run: sudo pwd
 
       - name: move to docker-compose directory
-        run: cd root
+        run: cd /Config/docker
+
+      - name: pwd
+        run: sudo pwd
 
       #      # 3. 최신 이미지를 컨테이너화하여 실행시킵니다
       #      - name: docker run new container
