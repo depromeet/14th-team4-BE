@@ -75,14 +75,6 @@ jobs:
     runs-on: self-hosted # 클라우드 서버에서 아래 job 명령어들을 실행
 
     steps:
-
-      # 서브모듈 접근
-      - name: Checkout
-        uses: actions/checkout@v1
-        with:
-          token: ${{ secrets.ACTION_TOKEN }}
-          submodules: true
-
       # 1. 최신 이미지를 풀 - release
       - name: docker pull - release
         if: github.ref == 'refs/heads/release'
@@ -106,22 +98,22 @@ jobs:
       - name: pwd
         run: sudo pwd
 
-      - name: move to docker-compose directory
-        run: cd Config/docker
-
-      - name: pwd
-        run: sudo pwd
-
       #      # 3. 최신 이미지를 컨테이너화하여 실행시킵니다
       #      - name: docker run new container
       #        run: sudo docker run --name github-actions-demo --rm -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/dpmbackdevelop
       - name: docker compose up - release
         if: github.ref == 'refs/heads/release'
-        run: sudo docker-compose -f docker-compose-release.yml up -d
+        run: |
+          cd ./Config/docker
+          sudo docker-compose -f docker-compose-release.yml up -d
 
       - name: docker compose up - develop
         if: github.ref == 'refs/heads/develop'
-        run: sudo docker-compose -f docker-compose-develop.yml up -d
+        run: |
+          sudo pwd
+          cd ./Config/docker
+          sudo pwd
+          sudo docker-compose -f docker-compose-develop.yml up -d
 
       # 4. 미사용 이미지를 정리합니다
       - name: delete old docker image
