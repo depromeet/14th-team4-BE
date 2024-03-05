@@ -75,6 +75,14 @@ jobs:
     runs-on: self-hosted # 클라우드 서버에서 아래 job 명령어들을 실행
 
     steps:
+
+      # 서브모듈 접근
+      - name: Checkout
+        uses: actions/checkout@v1
+        with:
+          token: ${{ secrets.ACTION_TOKEN }}
+          submodules: true
+
       # 1. 최신 이미지를 풀 - release
       - name: docker pull - release
         if: github.ref == 'refs/heads/release'
@@ -99,7 +107,7 @@ jobs:
         run: sudo pwd
 
       - name: move to docker-compose directory
-        run: cd ./Config/docker
+        run: cd Config/docker
 
       - name: pwd
         run: sudo pwd
