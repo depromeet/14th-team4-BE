@@ -96,7 +96,7 @@ jobs:
               sudo docker rm $CONTAINER_IDS
             fi
           else
-            echo "Network root_dpm-network-release does not exist."
+            echo "Network release_dpm-network-release does not exist."
           fi
 
       # 특정 네트워크에 연결된 컨테이너를 중지하고 삭제 - develop 네트워크 예시
@@ -110,7 +110,7 @@ jobs:
               sudo docker rm $CONTAINER_IDS
             fi
           else
-            echo "Network root_dpm-network-release does not exist."
+            echo "Network develop_dpm-network-release does not exist."
           fi
 
       # 4. 최신 이미지를 컨테이너화하여 실행시킵니다 - release
