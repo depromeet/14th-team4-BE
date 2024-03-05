@@ -95,6 +95,12 @@ jobs:
         if: github.ref == 'refs/heads/develop'
         run: sudo docker ps -q --filter "name=develop" | xargs -r sudo docker stop
 
+      - name: pwd
+        run: sudo pwd
+
+      - name: move to docker-compose directory
+        run: cd root
+
       #      # 3. 최신 이미지를 컨테이너화하여 실행시킵니다
       #      - name: docker run new container
       #        run: sudo docker run --name github-actions-demo --rm -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/dpmbackdevelop
