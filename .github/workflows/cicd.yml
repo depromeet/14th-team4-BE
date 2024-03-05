@@ -100,11 +100,11 @@ jobs:
       #        run: sudo docker run --name github-actions-demo --rm -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/dpmbackdevelop
       - name: docker compose up - release
         if: github.ref == 'refs/heads/release'
-        run: sudo docker-compose-release up -d
+        run: sudo docker-compose -f docker-compose-release.yml up -d
 
       - name: docker compose up - develop
         if: github.ref == 'refs/heads/develop'
-        run: sudo docker-compose-develop up -d
+        run: sudo docker-compose -f docker-compose-develop.yml up -d
 
       # 4. 미사용 이미지를 정리합니다
       - name: delete old docker image
