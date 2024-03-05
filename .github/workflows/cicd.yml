@@ -85,25 +85,45 @@ jobs:
         if: github.ref == 'refs/heads/develop'
         run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/dpmback-develop
 
-      # 2. 기존의 컨테이너를 중지 - release
-      - name: docker stop container - release
+      # 특정 네트워크에 연결된 컨테이너를 중지하고 삭제 - release 네트워크 예시
+      - name: Stop and remove containers in release network
         if: github.ref == 'refs/heads/release'
-        run: sudo docker ps -q --filter "name=release" | xargs -r sudo docker stop
+        run: |
+          CONTAINER_IDS=$(sudo docker network inspect dpm-network-release -f '{{range .Containers}}{{.Name}} {{end}}')
+          if [ ! -z "$CONTAINER_IDS" ]; then
+            sudo docker stop $CONTAINER_IDS
+            sudo docker rm $CONTAINER_IDS
+          fi
 
-      # 2. 기존의 컨테이너를 중지 - develop
-      - name: docker stop container - develop
+      # 특정 네트워크에 연결된 컨테이너를 중지하고 삭제 - develop 네트워크 예시
+      - name: Stop and remove containers in develop network
         if: github.ref == 'refs/heads/develop'
-        run: sudo docker ps -q --filter "name=develop" | xargs -r sudo docker stop
+        run: |
+          CONTAINER_IDS=$(sudo docker network inspect dpm-network-develop -f '{{range .Containers}}{{.Name}} {{end}}')
+          if [ ! -z "$CONTAINER_IDS" ]; then
+            sudo docker stop $CONTAINER_IDS
+            sudo docker rm $CONTAINER_IDS
+          fi
 
-      # 3. 기존의 컨테이너를 삭제 - release
-      - name: docker remove container - release
-        if: github.ref == 'refs/heads/release'
-        run: sudo docker ps -aq --filter "name=release" | xargs -r sudo docker rm
-
-      # 3. 기존의 컨테이너를 삭제 - develop
-      - name: docker remove container - develop
-        if: github.ref == 'refs/heads/develop'
-        run: sudo docker ps -aq --filter "name=develop" | xargs -r sudo docker rm
+#      # 2. 기존의 컨테이너를 중지 - release
+#      - name: docker stop container - release
+#        if: github.ref == 'refs/heads/release'
+#        run: sudo docker ps -q --filter "name=release" | xargs -r sudo docker stop
+#
+#      # 2. 기존의 컨테이너를 중지 - develop
+#      - name: docker stop container - develop
+#        if: github.ref == 'refs/heads/develop'
+#        run: sudo docker ps -q --filter "name=develop" | xargs -r sudo docker stop
+#
+#      # 3. 기존의 컨테이너를 삭제 - release
+#      - name: docker remove container - release
+#        if: github.ref == 'refs/heads/release'
+#        run: sudo docker ps -aq --filter "name=release" | xargs -r sudo docker rm
+#
+#      # 3. 기존의 컨테이너를 삭제 - develop
+#      - name: docker remove container - develop
+#        if: github.ref == 'refs/heads/develop'
+#        run: sudo docker ps -aq --filter "name=develop" | xargs -r sudo docker rm
 
       # 4. 최신 이미지를 컨테이너화하여 실행시킵니다 - release
       - name: docker compose up - release
