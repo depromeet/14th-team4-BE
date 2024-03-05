@@ -89,20 +89,28 @@ jobs:
       - name: Stop and remove containers in release network
         if: github.ref == 'refs/heads/release'
         run: |
-          CONTAINER_IDS=$(sudo docker network inspect root_dpm-network-release -f '{{range .Containers}}{{.Name}} {{end}}')
-          if [ ! -z "$CONTAINER_IDS" ]; then
-            sudo docker stop $CONTAINER_IDS
-            sudo docker rm $CONTAINER_IDS
+          if sudo docker network inspect root_dpm-network-release &>/dev/null; then
+            CONTAINER_IDS=$(sudo docker network inspect root_dpm-network-release -f '{{range .Containers}}{{.Name}} {{end}}')
+            if [ ! -z "$CONTAINER_IDS" ]; then
+              sudo docker stop $CONTAINER_IDS
+              sudo docker rm $CONTAINER_IDS
+            fi
+          else
+            echo "Network root_dpm-network-release does not exist."
           fi
 
       # 특정 네트워크에 연결된 컨테이너를 중지하고 삭제 - develop 네트워크 예시
       - name: Stop and remove containers in develop network
         if: github.ref == 'refs/heads/develop'
         run: |
-          CONTAINER_IDS=$(sudo docker network inspect root_dpm-network-develop -f '{{range .Containers}}{{.Name}} {{end}}')
-          if [ ! -z "$CONTAINER_IDS" ]; then
-            sudo docker stop $CONTAINER_IDS
-            sudo docker rm $CONTAINER_IDS
+          if sudo docker network inspect root_dpm-network-develop &>/dev/null; then
+            CONTAINER_IDS=$(sudo docker network inspect root_dpm-network-develop -f '{{range .Containers}}{{.Name}} {{end}}')
+            if [ ! -z "$CONTAINER_IDS" ]; then
+              sudo docker stop $CONTAINER_IDS
+              sudo docker rm $CONTAINER_IDS
+            fi
+          else
+            echo "Network root_dpm-network-release does not exist."
           fi
 
 #      # 2. 기존의 컨테이너를 중지 - release
