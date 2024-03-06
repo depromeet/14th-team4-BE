@@ -79,6 +79,7 @@ jobs:
       - name: submodule clone
         run: |
           cd /root 
+          sudo rm -rf Config
           git clone https://thisishwan2:${{ secrets.ACTION_TOKEN }}@github.com/depromeet-14th-team4-BE/Config.git
 
       # 1. 최신 이미지를 풀 - release
