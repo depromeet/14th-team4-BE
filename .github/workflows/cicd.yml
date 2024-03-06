@@ -75,6 +75,13 @@ jobs:
     runs-on: self-hosted # 클라우드 서버에서 아래 job 명령어들을 실행
 
     steps:
+      # 서브모듈 클론
+      - name: submodule clone
+        run: |
+          cd /root 
+          sudo rm -rf Config
+          git clone https://thisishwan2:${{ secrets.ACTION_TOKEN }}@github.com/depromeet-14th-team4-BE/Config.git
+
       # 1. 최신 이미지를 풀 - release
       - name: docker pull - release
         if: github.ref == 'refs/heads/release'
@@ -89,14 +96,14 @@ jobs:
       - name: Stop and remove containers in release network
         if: github.ref == 'refs/heads/release'
         run: |
-          if sudo docker network inspect release_dpm-network-release &>/dev/null; then
-            CONTAINER_IDS=$(sudo docker network inspect release_dpm-network-release -f '{{range .Containers}}{{.Name}} {{end}}')
+          if sudo docker network inspect release_dpm-network-release-v1 &>/dev/null; then
+            CONTAINER_IDS=$(sudo docker network inspect release_dpm-network-release-v1 -f '{{range .Containers}}{{.Name}} {{end}}')
             if [ ! -z "$CONTAINER_IDS" ]; then
               sudo docker stop $CONTAINER_IDS
               sudo docker rm $CONTAINER_IDS
             fi
           else
-            echo "Network release_dpm-network-release does not exist."
+            echo "Network release_dpm-network-release-v1 does not exist."
           fi
 
       # 특정 네트워크에 연결된 컨테이너를 중지하고 삭제 - develop 네트워크 예시
@@ -117,14 +124,14 @@ jobs:
       - name: docker compose up - release
         if: github.ref == 'refs/heads/release'
         run: |
-          cd /root
+          cd /root/Config/docker
           sudo docker-compose -p release -f docker-compose-release.yml up -d
 
       # 4. 최신 이미지를 컨테이너화하여 실행시킵니다 - develop
       - name: docker compose up - develop
         if: github.ref == 'refs/heads/develop'
         run: |
-          cd /root
+          cd /root/Config/docker
           sudo docker-compose -p develop -f docker-compose-develop.yml up -d
 
       # 5. 미사용 이미지를 정리합니다
