@@ -89,14 +89,14 @@ jobs:
       - name: Stop and remove containers in release network
         if: github.ref == 'refs/heads/release'
         run: |
-          if sudo docker network inspect release_dpm-network-release &>/dev/null; then
-            CONTAINER_IDS=$(sudo docker network inspect release_dpm-network-release -f '{{range .Containers}}{{.Name}} {{end}}')
+          if sudo docker network inspect release_dpm-network-release-v1 &>/dev/null; then
+            CONTAINER_IDS=$(sudo docker network inspect release_dpm-network-release-v1 -f '{{range .Containers}}{{.Name}} {{end}}')
             if [ ! -z "$CONTAINER_IDS" ]; then
               sudo docker stop $CONTAINER_IDS
               sudo docker rm $CONTAINER_IDS
             fi
           else
-            echo "Network release_dpm-network-release does not exist."
+            echo "Network release_dpm-network-release-v1 does not exist."
           fi
 
       # 특정 네트워크에 연결된 컨테이너를 중지하고 삭제 - develop 네트워크 예시
