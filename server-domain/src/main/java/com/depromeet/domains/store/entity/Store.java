@@ -1,19 +1,13 @@
 package com.depromeet.domains.store.entity;
 
-import com.depromeet.domains.category.entity.Category;
 import com.depromeet.domains.common.entity.BaseTimeEntity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -33,14 +27,6 @@ public class Store extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long storeId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "category_id")
-	private Category category;
-
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "store_meta_id")
-	private StoreMeta storeMeta;
-
 	@Column(nullable = false)
 	private String storeName;
 
@@ -54,9 +40,9 @@ public class Store extends BaseTimeEntity {
 
 	private Long kakaoStoreId;
 
-	public void setStoreMeta(StoreMeta storeMeta) {
-		this.storeMeta = storeMeta;
-	}
+	private float totalRating = 0.0f;
+
+	private String kakaoCategoryName;
 
 	public void setThumbnailUrl(String imageUrl) {
 		this.thumbnailUrl = imageUrl;

@@ -1,11 +1,10 @@
 package com.depromeet.domains.store.dto.request;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import com.depromeet.annotation.VisitedDateFormat;
-import com.depromeet.domains.review.entity.Review;
+import com.depromeet.domains.feed.entity.Review;
 import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.user.entity.User;
 
