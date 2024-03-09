@@ -1,19 +1,18 @@
-package com.depromeet.domains.review.repository;
+package com.depromeet.domains.feed.repository;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
+import com.depromeet.domains.feed.entity.Feed;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.depromeet.domains.review.entity.Review;
 import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.user.entity.User;
 
-public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRepositoryCustom {
+public interface FeedRepository extends JpaRepository<Feed, Long>, FeedRepositoryCustom {
 
 	//리뷰 이미지가 존재하는 가장 최근 10개의 리뷰 조회
 	List<Review> findTop10ByStoreOrderByVisitedAtDesc(Store store);

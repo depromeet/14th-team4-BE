@@ -20,10 +20,7 @@ import com.depromeet.S3.S3Service;
 import com.depromeet.common.exception.CustomException;
 import com.depromeet.common.exception.Result;
 import com.depromeet.domains.bookmark.repository.BookmarkRepository;
-import com.depromeet.domains.category.entity.Category;
-import com.depromeet.domains.category.repository.CategoryRepository;
-import com.depromeet.domains.review.entity.Review;
-import com.depromeet.domains.review.repository.ReviewRepository;
+import com.depromeet.domains.feed.repository.FeedRepository;
 import com.depromeet.domains.store.dto.request.NewStoreRequest;
 import com.depromeet.domains.store.dto.request.ReviewRequest;
 import com.depromeet.domains.store.dto.response.ReviewAddLimitResponse;
@@ -34,8 +31,6 @@ import com.depromeet.domains.store.dto.response.StoreReportResponse;
 import com.depromeet.domains.store.dto.response.StoreReviewResponse;
 import com.depromeet.domains.store.dto.response.StoreSharingSpotResponse;
 import com.depromeet.domains.store.entity.Store;
-import com.depromeet.domains.store.entity.StoreMeta;
-import com.depromeet.domains.store.repository.storeMeta.StoreMetaRepository;
 import com.depromeet.domains.store.repository.StoreRepository;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.repository.UserRepository;
@@ -53,9 +48,7 @@ import lombok.extern.slf4j.Slf4j;
 public class StoreService {
 
 	private final StoreRepository storeRepository;
-	private final StoreMetaRepository storeMetaRepository;
-	private final ReviewRepository reviewRepository;
-	private final CategoryRepository categoryRepository;
+	private final FeedRepository feedRepository;
 	private final UserRepository userRepository;
 	private final BookmarkRepository bookmarkRepository;
 	private final S3Service s3Service;
@@ -65,7 +58,7 @@ public class StoreService {
 	public StorePreviewResponse getStore(Long storeId, User user) {
 
 		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
-		List<Review> reviews = reviewRepository.findTop10ByStoreOrderByVisitedAtDesc(store);
+		List<Review> reviews = feedRepository.findTop10ByStoreOrderByVisitedAtDesc(store);
 
 		ArrayList<String> reviewImageUrls = new ArrayList<>();
 		for (Review review : reviews) {
@@ -75,7 +68,7 @@ public class StoreService {
 			}
 		}
 
-		Long myRevisitedCount = reviewRepository.countByStoreAndUser(store, user);
+		Long myRevisitedCount = feedRepository.countByStoreAndUser(store, user);
 		StoreMeta storeMeta = store.getStoreMeta();
 		Long totalRevisitedCount = storeMeta.getTotalRevisitedCount();
 
@@ -128,11 +121,11 @@ public class StoreService {
 
 		Slice<Review> reviews = null;
 		if (reviewType.isEmpty()) {
-			reviews = reviewRepository.findByStore(store, pageRequest);
+			reviews = feedRepository.findByStore(store, pageRequest);
 		} else if (reviewType.get() == ReviewType.REVISITED) {
-			reviews = reviewRepository.findRevisitedReviews(store, pageRequest);
+			reviews = feedRepository.findRevisitedReviews(store, pageRequest);
 		} else if (reviewType.get() == ReviewType.PHOTO) {
-			reviews = reviewRepository.findByStoreAndImageUrlIsNotNullOrderByVisitedAtDesc(store, pageRequest);
+			reviews = feedRepository.findByStoreAndImageUrlIsNotNullOrderByVisitedAtDesc(store, pageRequest);
 		}
 
 		// Review 객체를 StoreLogResponse DTO로 변환하여 Slice 객체에 담아 반환
@@ -144,7 +137,7 @@ public class StoreService {
 	private Slice<StoreReviewResponse> getStoreReviewResponses(User user, Slice<Review> reviews, Store store) {
 		List<StoreReviewResponse> storeReviewResponseList = reviews.getContent().stream()
 			.map(review -> {
-				Integer maxVisitTimes = reviewRepository.maxVisitTimes(store, review.getUser());
+				Integer maxVisitTimes = feedRepository.maxVisitTimes(store, review.getUser());
 				// 현재 사용자가 리뷰 작성자와 동일한지 확인
 				Boolean isMine = review.getUser().getUserId().equals(user.getUserId()); // 사용자 비교 로직 수정
 				String imageUrl = review.getImageUrl() != null ? review.getImageUrl() : "";
@@ -311,7 +304,7 @@ public class StoreService {
 		storeMeta.increaseTotalReviewCount();
 
 		// 사용자가 이 가게에 대해 작성한 리뷰 개수 확인
-		Long userReviewCount = reviewRepository.countByStoreAndUser(store, user);
+		Long userReviewCount = feedRepository.countByStoreAndUser(store, user);
 		if (userReviewCount == 1) {
 			// 두 번째 리뷰인 경우, 재방문 횟수 증가
 			storeMeta.increaseTotalRevisitedCount();
@@ -359,20 +352,20 @@ public class StoreService {
 
 	private int getVisitTimes(Long storeId, Store store, User user) {
 		return storeId != null
-			? reviewRepository.countByStoreAndUser(store, user).intValue() + 1
+			? feedRepository.countByStoreAndUser(store, user).intValue() + 1
 			: 1;
 	}
 
 	private Review saveReview(User user, Store store, ReviewRequest reviewRequest) {
 		int visitTimes = getVisitTimes(reviewRequest.getStoreId(), store, user);
 		Review review = reviewRequest.toEntity(store, user, visitTimes);
-		reviewRepository.save(review);
+		feedRepository.save(review);
 		return review;
 	}
 
 	@Transactional
 	public void deleteStoreReview(User user, Long reviewId) {
-		Review review = reviewRepository.findById(reviewId)
+		Review review = feedRepository.findById(reviewId)
 			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_REVIEW));
 
 		if (!review.getUser().getUserId().equals(user.getUserId())) {
@@ -383,9 +376,9 @@ public class StoreService {
 		StoreMeta storeMeta = store.getStoreMeta();
 		String imageUrl = review.getImageUrl();
 
-		Long myRevisitedCount = reviewRepository.countByStoreAndUser(store, user); // 나의 재방문 횟수
+		Long myRevisitedCount = feedRepository.countByStoreAndUser(store, user); // 나의 재방문 횟수
 		Long mostVisitedCount = storeMeta.getMostVisitedCount(); // 최다 방문 유저의 방문 수
-		Long duplicateMostVisitedCount = reviewRepository.countByStoreAndReviewCount(store.getStoreId(),
+		Long duplicateMostVisitedCount = feedRepository.countByStoreAndReviewCount(store.getStoreId(),
 			mostVisitedCount); // 최다 방문자의 인원수(최다 방문자가 여러명)
 
 		boolean isDuplicateMostVisitor = duplicateMostVisitedCount > 1; // 최다 방문자가 여러명인지 여부
@@ -399,21 +392,21 @@ public class StoreService {
 		if (isMostVisitor && isDuplicateMostVisitor) { // 나도 최다 방문자이고, 최다 방문자가 여러명인 경우
 			log.info("나도 최다 방문자, 최다 방문자 여려명");
 			processReviewForDuplicateMostVisitor(storeMeta, hasVisitedThreeOrMore);
-			reviewRepository.delete(review);
+			feedRepository.delete(review);
 			return;
 		}
 
 		if (isMostVisitor) { // 나만 최다 방문자인 경우
 			log.info("나만 최다 방문자");
 			processReviewForSingleMostVisitor(storeMeta, hasVisitedThreeOrMore);
-			reviewRepository.delete(review);
+			feedRepository.delete(review);
 			return;
 		}
 
 		// 내가 최다방문자가 아닌 경우
 		log.info("내가 최다 방문자가 아니고, 최다 방문자가 여러명도 아닌 경우");
 		processReviewForNonMostVisitor(storeMeta, hasVisitedThreeOrMore);
-		reviewRepository.delete(review);
+		feedRepository.delete(review);
 
 		user.decreaseMyReviewCount();
 
@@ -472,7 +465,7 @@ public class StoreService {
 		LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
 		LocalDateTime endOfDay = LocalDate.now().atTime(23, 59, 59);
 
-		int reviewCount = reviewRepository.countStoreReviewByUserForDay(user, store, startOfDay, endOfDay);
+		int reviewCount = feedRepository.countStoreReviewByUserForDay(user, store, startOfDay, endOfDay);
 		return ReviewAddLimitResponse.of(reviewCount < 3);
 	}
 
@@ -482,7 +475,7 @@ public class StoreService {
 		User user = this.userRepository.findById(userId).orElseThrow(
 			() -> new CustomException(Result.NOT_FOUND_USER));
 
-		List<Review> reviews = this.reviewRepository.findByUser(user);
+		List<Review> reviews = this.feedRepository.findByUser(user);
 
 		// 재방문이상(리뷰 수 2개 이상)의 식당만 공유
 		List<Store> revisitedStores = reviews.stream()

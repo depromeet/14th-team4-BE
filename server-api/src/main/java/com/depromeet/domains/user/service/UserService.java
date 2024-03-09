@@ -8,8 +8,7 @@ import com.depromeet.common.exception.CustomException;
 import com.depromeet.common.exception.Result;
 import com.depromeet.domains.bookmark.entity.Bookmark;
 import com.depromeet.domains.bookmark.repository.BookmarkRepository;
-import com.depromeet.domains.review.entity.Review;
-import com.depromeet.domains.review.repository.ReviewRepository;
+import com.depromeet.domains.feed.repository.FeedRepository;
 import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.user.dto.response.UserBookmarkResponse;
 import com.depromeet.domains.user.dto.response.UserProfileResponse;
@@ -29,7 +28,7 @@ public class UserService {
 	private final RedisService redisService;
 	private final UserRepository userRepository;
 	private final BookmarkRepository bookmarkRepository;
-	private final ReviewRepository reviewRepository;
+	private final FeedRepository feedRepository;
 
 	@Transactional
 	public void updateUserNickname(User user, String nickname) {
@@ -62,7 +61,7 @@ public class UserService {
 	public Slice<UserReviewResponse> getUserReviews(User user, Pageable pageable) {
 
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "visitedAt"));
-		Slice<Review> reviews = reviewRepository.findByUser(user, pageRequest);
+		Slice<Review> reviews = feedRepository.findByUser(user, pageRequest);
 
 		List<UserReviewResponse> userReviewResponses = reviews.stream()
 				.map(this::getUserReviewResponse)
@@ -87,7 +86,7 @@ public class UserService {
 
 	private UserBookmarkResponse getUserBookemarkResponse(Bookmark bookmark) {
 		Store store = bookmark.getStore();
-		boolean isVisited = reviewRepository.existsByStoreAndUser(store, bookmark.getUser());
+		boolean isVisited = feedRepository.existsByStoreAndUser(store, bookmark.getUser());
 
 		return UserBookmarkResponse.of(
 			bookmark.getBookmarkId(),

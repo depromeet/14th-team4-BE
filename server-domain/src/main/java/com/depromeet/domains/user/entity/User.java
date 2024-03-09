@@ -1,7 +1,6 @@
 package com.depromeet.domains.user.entity;
 
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import com.depromeet.domains.common.entity.BaseTimeEntity;
 import com.depromeet.enums.Role;
@@ -50,7 +49,9 @@ public class User extends BaseTimeEntity {
 	private UserLevel level = UserLevel.LEVEL1;
 
 	@Column(nullable = false)
-	private Integer myReviewCount = 0;
+	private Integer myFeedCnt = 0;
+
+	private String profileImageUrl;
 
 	@Builder
 	public User(SocialType socialType, String nickName, Role userRole, String socialId) {
