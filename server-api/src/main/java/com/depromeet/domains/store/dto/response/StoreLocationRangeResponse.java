@@ -23,31 +23,23 @@ public class StoreLocationRangeResponse {
 		private Long storeId;
 		private Long kakaoStoreId;
 		private String storeName;
-		private Long categoryId;
-		private String categoryName;
-		private String categoryType;
 		private String address;
 		private Double longitude;
 		private Double latitude;
-		private Long totalRevisitedCount;
-		private Long totalReviewCount;
+		private Long totalFeedCount;
 		private Boolean isBookmarked;
 
-		public static StoreLocationRange of(Long storeId, Long kakaoStoreId, String storeName, Long categoryId,
-			String categoryName, String categoryType, String address, Double longitude, Double latitude,
-			Long totalRevisitedCount, Long totalReviewCount, Boolean isBookmarked) {
+		public static StoreLocationRange of(Long storeId, Long kakaoStoreId, String storeName,
+			String address, Double longitude, Double latitude, Long totalFeedCount
+			, Boolean isBookmarked) {
 			return StoreLocationRange.builder()
 				.storeId(storeId)
 				.kakaoStoreId(kakaoStoreId)
 				.storeName(storeName)
-				.categoryId(categoryId)
-				.categoryName(categoryName)
-				.categoryType(categoryType)
 				.address(address)
 				.longitude(longitude)
 				.latitude(latitude)
-				.totalRevisitedCount(totalRevisitedCount)
-				.totalReviewCount(totalReviewCount)
+				.totalFeedCount(totalFeedCount)
 				.isBookmarked(isBookmarked)
 				.build();
 		}
