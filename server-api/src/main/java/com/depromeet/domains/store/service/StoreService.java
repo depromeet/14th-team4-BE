@@ -465,7 +465,7 @@ public class StoreService {
 		LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
 		LocalDateTime endOfDay = LocalDate.now().atTime(23, 59, 59);
 
-		int reviewCount = feedRepository.countStoreReviewByUserForDay(user, store, startOfDay, endOfDay);
+		Long reviewCount = feedRepository.countStoreReviewByUserForDay(user.getUserId(), store.getStoreId(), startOfDay, endOfDay);
 		return ReviewAddLimitResponse.of(reviewCount < 3);
 	}
 
