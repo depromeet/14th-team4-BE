@@ -8,11 +8,12 @@ import com.depromeet.common.exception.CustomException;
 import com.depromeet.common.exception.Result;
 import com.depromeet.domains.bookmark.entity.Bookmark;
 import com.depromeet.domains.bookmark.repository.BookmarkRepository;
+import com.depromeet.domains.feed.entity.Feed;
 import com.depromeet.domains.feed.repository.FeedRepository;
 import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.user.dto.response.UserBookmarkResponse;
 import com.depromeet.domains.user.dto.response.UserProfileResponse;
-import com.depromeet.domains.user.dto.response.UserReviewResponse;
+import com.depromeet.domains.user.dto.response.UserFeedResponse;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.repository.UserRepository;
 
@@ -58,16 +59,16 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public Slice<UserReviewResponse> getUserReviews(User user, Pageable pageable) {
+	public Slice<UserFeedResponse> getUserFeeds(User user, Pageable pageable) {
 
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "visitedAt"));
-		Slice<Review> reviews = feedRepository.findByUser(user, pageRequest);
+		Slice<Feed> feeds = feedRepository.findByUser(user, pageRequest);
 
-		List<UserReviewResponse> userReviewResponses = reviews.stream()
-				.map(this::getUserReviewResponse)
+		List<UserFeedResponse> userFeedResponses = feeds.stream()
+				.map(this::getUserFeedResponse)
 				.collect(Collectors.toList());
 
-		return new SliceImpl<>(userReviewResponses, reviews.getPageable(), reviews.hasNext());
+		return new SliceImpl<>(userFeedResponses, feeds.getPageable(), feeds.hasNext());
 	}
 
 	private User findUserById(Long userId) {
@@ -99,17 +100,17 @@ public class UserService {
 		);
 	}
 
-	private UserReviewResponse getUserReviewResponse(Review review) {
-		return UserReviewResponse.of(
-			review.getReviewId(),
-			review.getStore().getStoreId(),
-			review.getStore().getStoreName(),
-			review.getVisitTimes(),
-			review.getVisitedAt(),
-			review.getStore().getCategory().getCategoryName(),
-			review.getRating(),
-			review.getImageUrl(),
-			review.getDescription()
+	private UserFeedResponse getUserFeedResponse(Feed feed) {
+		return UserFeedResponse.of(
+			feed.getfeedId(),
+			feed.getStore().getStoreId(),
+			feed.getStore().getStoreName(),
+			feed.getVisitTimes(),
+			feed.getVisitedAt(),
+			feed.getStore().getCategory().getCategoryName(),
+			feed.getRating(),
+			feed.getImageUrl(),
+			feed.getDescription()
 		);
 	}
 
