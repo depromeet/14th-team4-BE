@@ -6,7 +6,6 @@ import com.depromeet.domains.bookmark.dto.response.BookmarkingResponse;
 import com.depromeet.domains.bookmark.service.BookmarkService;
 import com.depromeet.domains.user.entity.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,7 +16,7 @@ public class BookmarkController {
     private final BookmarkService bookmarkService;
 
     @PatchMapping("/bookmarks/{storeId}")
-    public CustomResponseEntity<BookmarkingResponse> updateBookmark( @AuthUser User user, @PathVariable Long storeId) {
+    public CustomResponseEntity<BookmarkingResponse> updateBookmark(@AuthUser User user, @PathVariable Long storeId) {
         return CustomResponseEntity.success(bookmarkService.updateBookmark(user, storeId));
     }
 }
