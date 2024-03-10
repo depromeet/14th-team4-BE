@@ -257,27 +257,24 @@ public class StoreService {
 
 	@Transactional
 	public synchronized FeedAddResponse createStoreFeed(User user, FeedRequest feedRequest) {
-		Store store;
-		if (feedRequest.getStoreId() != null) {
-			// 기존 StoreMeta 정보 업데이트
-			store = updateStoreMeta(feedRequest.getStoreId(), user, feedRequest.getRating());
-			if (store.getThumbnailUrl() == null && feedRequest.getImageUrl() != null) {
-				store.setThumbnailUrl(feedRequest.getImageUrl());
-			}
-		} else {
-			// 새로운 Store 생성
-			store = createNewStoreWithMeta(feedRequest.getNewStore(), feedRequest.getRating());
-			if (feedRequest.getImageUrl() != null) {
-				store.setThumbnailUrl(feedRequest.getImageUrl());
-			}
-		}
-		storeRepository.save(store);
-		Feed feed = saveFeed(user, store, feedRequest);
-		user.increaseMyReviewCount();
-		user.updateUserLevel(getUserLevel(user));
-		userRepository.save(user);
+		Store store = processStore(feedRequest);
+		Feed feed = feedRepository.save(feedRequest.toEntity(user));
 
 		return FeedAddResponse.of(feed.getFeedId(), store.getStoreId());
+	}
+
+	private void updateUserProfile(User user) {
+		user.increaseMyFeedCount();
+		user.updateUserLevel(getUserLevel(user));
+		userRepository.save(user);
+	}
+
+	private Store processStore(FeedRequest feedRequest) {
+		Store store = feedRequest.hasStoreId()
+			? updateStoreInfo(feedRequest)
+			: createNewStore(feedRequest);
+
+		return storeRepository.save(store);
 	}
 
 	private UserLevel getUserLevel(User user) {
@@ -294,74 +291,28 @@ public class StoreService {
 		return UserLevel.LEVEL1;
 	}
 
-	private Store updateStoreMeta(Long storeId, User user, Integer rating) {
-		Store store = storeRepository.findById(storeId)
+	private Store updateStoreInfo(FeedRequest feedRequest) {
+		Store store = storeRepository.findById(feedRequest.getStoreId())
 			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 
-		StoreMeta storeMeta = store.getStoreMeta();
-
 		// 평점과 리뷰 개수 업데이트
-		storeMeta.updateTotalRating(rating);
-		storeMeta.increaseTotalReviewCount();
-
-		// 사용자가 이 가게에 대해 작성한 리뷰 개수 확인
-		Long userReviewCount = feedRepository.countByStoreAndUser(store, user);
-		if (userReviewCount == 1) {
-			// 두 번째 리뷰인 경우, 재방문 횟수 증가
-			storeMeta.increaseTotalRevisitedCount();
-		}
-
-		// 최다 방문자 횟수 업데이트
-		storeMeta.updateMostRevisitedCount(userReviewCount + 1);
-		storeMetaRepository.save(storeMeta);
+		store.updateTotalRating(feedRequest.getRating());
+		store.increaseTotalFeedCnt();;
 		return store;
 	}
 
-	private Store createNewStoreWithMeta(NewStoreRequest newStoreRequest, Integer rating) {
-
-		Store store = storeRepository.findByKakaoStoreId(newStoreRequest.getKakaoStoreId());
+	private Store createNewStore(FeedRequest feedRequest) {
+		NewStoreRequest newStore = feedRequest.getNewStore();
+		Store store = storeRepository.findByKakaoStoreId(newStore.getKakaoStoreId());
 		if (store != null) {
 			throw new CustomException(Result.DUPLICATED_STORE);
 		}
-		// store 객체 만들기
-		store = buildNewStore(newStoreRequest);
-		// storemeta 객체 초기화
-		StoreMeta storeMeta = StoreMeta.builder()
-			.totalRevisitedCount(0L)
-			.totalReviewCount(1L)
-			.mostVisitedCount(1L)
-			.totalRating(rating.floatValue())
-			.kakaoCategoryName(newStoreRequest.getKakaoCategoryName())
-			.build();
-
-		store.setStoreMeta(storeMeta);
-
-		return store;
+		return storeRepository.save(newStore.toEntity(feedRequest.getRating(), feedRequest.getImageUrl()));
 	}
 
-	private Store buildNewStore(NewStoreRequest newStoreRequest) {
-		String categoryName = newStoreRequest.getCategoryType(); // 예: "한식"
 
-		CategoryType categoryType = CategoryType.fromDescription(categoryName)
-			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_CATEGORY));
-
-		Category category = categoryRepository.findByCategoryType(categoryType)
-			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_CATEGORY));
-
-		return newStoreRequest.toEntity(category);
-	}
-
-	private int getVisitTimes(Long storeId, Store store, User user) {
-		return storeId != null
-			? feedRepository.countByStoreAndUser(store, user).intValue() + 1
-			: 1;
-	}
-
-	private Feed saveFeed(User user, Store store, FeedRequest feedRequest) {
-		int visitTimes = getVisitTimes(feedRequest.getStoreId(), store, user);
-		Feed feed = feedRequest.toEntity(store, user, visitTimes);
-		feedRepository.save(feed);
-		return feed;
+	private Feed saveFeed(Feed feed) {
+		return feedRepository.save(feed);
 	}
 
 	@Transactional
