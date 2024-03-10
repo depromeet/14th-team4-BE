@@ -27,7 +27,7 @@ import com.depromeet.document.RestDocsTestSupport;
 import com.depromeet.domains.user.dto.request.NicknameRequest;
 import com.depromeet.domains.user.dto.response.UserBookmarkResponse;
 import com.depromeet.domains.user.dto.response.UserProfileResponse;
-import com.depromeet.domains.user.dto.response.UserReviewResponse;
+import com.depromeet.domains.user.dto.response.UserFeedResponse;
 
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
@@ -180,7 +180,7 @@ class UserControllerTest extends RestDocsTestSupport {
 	@Test
 	void getMyReviews() throws Exception {
 		// given
-		UserReviewResponse userReviewResponse1 = UserReviewResponse.builder()
+		UserFeedResponse userReviewResponse1 = UserFeedResponse.builder()
 			.reviewId(1L)
 			.storeId(1L)
 			.storeName("칠기마라탕")
@@ -192,7 +192,7 @@ class UserControllerTest extends RestDocsTestSupport {
 			.description("맛있어요")
 			.build();
 
-		UserReviewResponse userReviewResponse2 = UserReviewResponse.builder()
+		UserFeedResponse userReviewResponse2 = UserFeedResponse.builder()
 			.reviewId(2L)
 			.storeId(1L)
 			.storeName("칠기마라탕")
@@ -204,7 +204,7 @@ class UserControllerTest extends RestDocsTestSupport {
 			.description("맛있어요")
 			.build();
 
-		UserReviewResponse userReviewResponse3 = UserReviewResponse.builder()
+		UserFeedResponse userReviewResponse3 = UserFeedResponse.builder()
 			.reviewId(3L)
 			.storeId(2L)
 			.storeName("알베르")
@@ -216,8 +216,8 @@ class UserControllerTest extends RestDocsTestSupport {
 			.description("맛있어요")
 			.build();
 
-		List<UserReviewResponse> content = Arrays.asList(userReviewResponse1, userReviewResponse2, userReviewResponse3);
-		Slice<UserReviewResponse> userReviewResponses = new SliceImpl<>(content, Pageable.unpaged(), true);
+		List<UserFeedResponse> content = Arrays.asList(userReviewResponse1, userReviewResponse2, userReviewResponse3);
+		Slice<UserFeedResponse> userReviewResponses = new SliceImpl<>(content, Pageable.unpaged(), true);
 
 		given(userService.getUserReviews(any(), any())).willReturn(userReviewResponses);
 

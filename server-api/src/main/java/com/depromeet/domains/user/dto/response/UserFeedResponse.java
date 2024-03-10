@@ -9,8 +9,8 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class UserReviewResponse {
-	private Long reviewId;
+public class UserFeedResponse {
+	private Long feedId;
 	private Long storeId;
 	private String storeName;
 	private Integer visitTimes;
@@ -21,11 +21,11 @@ public class UserReviewResponse {
 	private String imageUrl;
 	private String description;
 
-	public static UserReviewResponse of(Long reviewId, Long storeId, String storeName, Integer visitTimes, LocalDate visitedAt,
+	public static UserFeedResponse of(Long feedId, Long storeId, String storeName, Integer visitTimes, LocalDate visitedAt,
 		String categoryName,
 		Integer rating, String imageUrl, String description) {
-		return UserReviewResponse.builder()
-			.reviewId(reviewId)
+		return UserFeedResponse.builder()
+			.feedId(feedId)
 			.storeId(storeId)
 			.storeName(storeName)
 			.visitTimes(visitTimes)
