@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +24,6 @@ import com.depromeet.domains.store.dto.response.StoreReviewResponse;
 import com.depromeet.domains.store.dto.response.StoreSharingSpotResponse;
 import com.depromeet.domains.store.service.StoreService;
 import com.depromeet.domains.user.entity.User;
-import com.depromeet.enums.CategoryType;
 import com.depromeet.enums.ReviewType;
 
 import jakarta.validation.Valid;
@@ -47,13 +45,11 @@ public class StoreController {
 		@RequestParam(value = "rightBottomLatitude") Double rightBottomLatitude,
 		@RequestParam(value = "rightBottomLongitude") Double rightBottomLongitude,
 		@RequestParam(value = "level") Integer level,
-		@RequestParam(value = "type") Optional<CategoryType> categoryType,
 		@AuthUser User user) {
 
 		return CustomResponseEntity.success(storeService.getRangeStores(leftTopLatitude, leftTopLongitude,
 			rightBottomLatitude, rightBottomLongitude,
-			level, categoryType,
-			user));
+			level, user));
 	}
 
 	@GetMapping("/stores/sharing-spot")
