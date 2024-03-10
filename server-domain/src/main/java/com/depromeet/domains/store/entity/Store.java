@@ -44,7 +44,25 @@ public class Store extends BaseTimeEntity {
 
 	private String kakaoCategoryName;
 
+	private Long totalFeedCnt = 0L;
+
 	public void setThumbnailUrl(String imageUrl) {
 		this.thumbnailUrl = imageUrl;
+	}
+
+	public void increaseTotalRating(float totalRating) {
+		this.totalRating += totalRating;
+	}
+
+	public void decreaseTotalRating(float totalRating) {
+		this.totalRating -= totalRating;
+	}
+
+	public void increaseTotalFeedCnt() {
+		this.totalFeedCnt++;
+	}
+
+	public void decreaseTotalFeedCnt() {
+		this.totalFeedCnt--;
 	}
 }

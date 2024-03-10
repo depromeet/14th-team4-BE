@@ -34,8 +34,8 @@ public class BookmarkService {
         }
         // 새로운 북마크 추가
         Bookmark newBookmark = Bookmark.builder()
-                .store(store)
-                .user(user)
+                .storeId(storeId)
+                .userId(user.getUserId())
                 .build();
 
         bookmarkRepository.save(newBookmark);
