@@ -388,7 +388,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.address("서울특별시 1")
 			.longitude(127.239487)
 			.latitude(37.29472)
-			.totalReviewCount(1L)
+			.totalFeedCount(1L)
 			.isBookmarked(true)
 			.build();
 
@@ -399,7 +399,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.address("서울특별시 2")
 			.longitude(127.239487)
 			.latitude(37.29472)
-			.totalReviewCount(1L)
+			.totalFeedCount(1L)
 			.isBookmarked(true)
 			.build();
 
@@ -410,7 +410,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.address("서울특별시 3")
 			.longitude(127.239487)
 			.latitude(37.29472)
-			.totalReviewCount(1L)
+			.totalFeedCount(1L)
 			.isBookmarked(false)
 			.build();
 
@@ -421,7 +421,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.address("서울특별시 4")
 			.longitude(127.239487)
 			.latitude(37.29472)
-			.totalReviewCount(1L)
+			.totalFeedCount(1L)
 			.isBookmarked(false)
 			.build();
 
@@ -483,8 +483,8 @@ class StoreControllerTest extends RestDocsTestSupport {
 							.description("음식점 위도"),
 						fieldWithPath("data.locationStoreList[].latitude").type(JsonFieldType.NUMBER)
 							.description("음식점 경도"),
-						fieldWithPath("data.locationStoreList[].totalReviewCount").type(JsonFieldType.NUMBER) // todo total_feed?
-							.description("총 리뷰 갯수"),
+						fieldWithPath("data.locationStoreList[].totalFeedCount").type(JsonFieldType.NUMBER)
+							.description("총 피드 갯수"),
 						fieldWithPath("data.locationStoreList[].isBookmarked").type(JsonFieldType.BOOLEAN)
 							.description("북마크 여부")
 					)
