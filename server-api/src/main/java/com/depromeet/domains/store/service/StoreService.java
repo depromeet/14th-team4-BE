@@ -359,7 +359,7 @@ public class StoreService {
 
 	private int getVisitTimes(Long storeId, Store store, User user) {
 		return storeId != null
-			? reviewRepository.countByStoreAndUser(store, user).intValue() + 1
+			? reviewRepository.maxVisitTimes(store, user) + 1
 			: 1;
 	}
 
