@@ -37,8 +37,6 @@ public interface FeedRepository extends JpaRepository<Feed, Long>, FeedRepositor
 	// 사진 리뷰만 조회
 	Slice<Review> findByStoreAndImageUrlIsNotNullOrderByVisitedAtDesc(Store store, Pageable pageable);
 
-	boolean existsByStoreAndUser(Store store, User user);
-
 	Slice<Review> findByUser(User user, Pageable pageable);
 
 	List<Review> findByUser(User user);
