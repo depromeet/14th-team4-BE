@@ -11,6 +11,7 @@ import com.depromeet.domains.bookmark.repository.BookmarkRepository;
 import com.depromeet.domains.feed.entity.Feed;
 import com.depromeet.domains.feed.repository.FeedRepository;
 import com.depromeet.domains.store.entity.Store;
+import com.depromeet.domains.store.repository.StoreRepository;
 import com.depromeet.domains.user.dto.response.UserBookmarkResponse;
 import com.depromeet.domains.user.dto.response.UserProfileResponse;
 import com.depromeet.domains.user.dto.response.UserFeedResponse;
@@ -30,6 +31,7 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final BookmarkRepository bookmarkRepository;
 	private final FeedRepository feedRepository;
+	private final StoreRepository storeRepository;
 
 	@Transactional
 	public void updateUserNickname(User user, String nickname) {
@@ -52,7 +54,7 @@ public class UserService {
 		Slice<Bookmark> bookmarks = bookmarkRepository.findByUser(user, pageRequest);
 
 		List<UserBookmarkResponse> userBookmarkResponses = bookmarks.stream()
-			.map(this::getUserBookemarkResponse)
+			.map(this::getUserBookmarkResponse)
 			.collect(Collectors.toList());
 
 		return new SliceImpl<>(userBookmarkResponses, bookmarks.getPageable(), bookmarks.hasNext());
@@ -85,17 +87,19 @@ public class UserService {
 		return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, sortBy));
 	}
 
-	private UserBookmarkResponse getUserBookemarkResponse(Bookmark bookmark) {
-		Store store = bookmark.getStore();
-		boolean isVisited = feedRepository.existsByStoreAndUser(store, bookmark.getUser());
+	private UserBookmarkResponse getUserBookmarkResponse(Bookmark bookmark) {
+		Store store = storeRepository.findById(bookmark.getBookmarkId())
+			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
+		User user = userRepository.findById(bookmark.getBookmarkId())
+			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_USER));
+		boolean isVisited = feedRepository.existsByStoreAndUser(store, user);
 
 		return UserBookmarkResponse.of(
 			bookmark.getBookmarkId(),
 			store.getStoreId(),
 			store.getStoreName(),
 			store.getAddress(),
-			store.getStoreMeta().getTotalRevisitedCount(),
-			store.getCategory().getCategoryName(),
+			store.getKakaoCategoryName(),
 			isVisited
 		);
 	}
