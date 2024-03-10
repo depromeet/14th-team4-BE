@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.depromeet.annotation.AuthUser;
 import com.depromeet.common.exception.CustomResponseEntity;
 import com.depromeet.domains.store.dto.request.ReviewRequest;
-import com.depromeet.domains.store.dto.response.ReviewAddLimitResponse;
+import com.depromeet.domains.store.dto.response.FeedAddLimitResponse;
 import com.depromeet.domains.store.dto.response.ReviewAddResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
@@ -86,9 +85,9 @@ public class StoreController {
 		return CustomResponseEntity.created(storeService.createStoreReview(user, reviewRequest));
 	}
 
-	@GetMapping("/stores/{storeId}/reviews/check-limit")
-	public CustomResponseEntity<ReviewAddLimitResponse> getUserDailyStoreReviewLimit(@AuthUser User user,
+	@GetMapping("/stores/{storeId}/feeds/check-limit")
+	public CustomResponseEntity<FeedAddLimitResponse> getUserDailyStoreFeedLimit(@AuthUser User user,
 		@PathVariable Long storeId) {
-		return CustomResponseEntity.success(storeService.checkUserDailyStoreReviewLimit(user, storeId));
+		return CustomResponseEntity.success(storeService.checkUserDailyStoreFeedLimit(user, storeId));
 	}
 }

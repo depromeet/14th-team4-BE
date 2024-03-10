@@ -23,7 +23,7 @@ import com.depromeet.domains.bookmark.repository.BookmarkRepository;
 import com.depromeet.domains.feed.repository.FeedRepository;
 import com.depromeet.domains.store.dto.request.NewStoreRequest;
 import com.depromeet.domains.store.dto.request.ReviewRequest;
-import com.depromeet.domains.store.dto.response.ReviewAddLimitResponse;
+import com.depromeet.domains.store.dto.response.FeedAddLimitResponse;
 import com.depromeet.domains.store.dto.response.ReviewAddResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
@@ -458,15 +458,15 @@ public class StoreService {
 		storeMeta.decreaseTotalRevisitCount();
 	}
 
-	public ReviewAddLimitResponse checkUserDailyStoreReviewLimit(User user, Long storeId) {
+	public FeedAddLimitResponse checkUserDailyStoreFeedLimit(User user, Long storeId) {
 		Store store = storeRepository.findById(storeId)
 			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 
 		LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
 		LocalDateTime endOfDay = LocalDate.now().atTime(23, 59, 59);
 
-		Long reviewCount = feedRepository.countStoreReviewByUserForDay(user.getUserId(), store.getStoreId(), startOfDay, endOfDay);
-		return ReviewAddLimitResponse.of(reviewCount < 3);
+		Long feedCount = feedRepository.countStoreReviewByUserForDay(user.getUserId(), store.getStoreId(), startOfDay, endOfDay);
+		return FeedAddLimitResponse.of(feedCount < 3);
 	}
 
 	@Transactional(readOnly = true)
