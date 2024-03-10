@@ -1,7 +1,6 @@
 package com.depromeet.domains.store.dto.request;
 
 import com.depromeet.domains.feed.entity.Feed;
-import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.user.entity.User;
 
 import jakarta.validation.Valid;

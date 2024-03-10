@@ -27,10 +27,10 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import com.depromeet.document.RestDocsTestSupport;
-import com.depromeet.domains.store.dto.request.NewStoreRequest;
 import com.depromeet.domains.store.dto.request.FeedRequest;
-import com.depromeet.domains.store.dto.response.ReviewAddLimitResponse;
+import com.depromeet.domains.store.dto.request.NewStoreRequest;
 import com.depromeet.domains.store.dto.response.FeedAddResponse;
+import com.depromeet.domains.store.dto.response.ReviewAddLimitResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse.StoreLocationRange;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
