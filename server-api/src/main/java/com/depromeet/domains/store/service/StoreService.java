@@ -20,11 +20,12 @@ import com.depromeet.S3.S3Service;
 import com.depromeet.common.exception.CustomException;
 import com.depromeet.common.exception.Result;
 import com.depromeet.domains.bookmark.repository.BookmarkRepository;
+import com.depromeet.domains.feed.entity.Feed;
 import com.depromeet.domains.feed.repository.FeedRepository;
 import com.depromeet.domains.store.dto.request.NewStoreRequest;
-import com.depromeet.domains.store.dto.request.ReviewRequest;
+import com.depromeet.domains.store.dto.request.FeedRequest;
 import com.depromeet.domains.store.dto.response.ReviewAddLimitResponse;
-import com.depromeet.domains.store.dto.response.ReviewAddResponse;
+import com.depromeet.domains.store.dto.response.FeedAddResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
 import com.depromeet.domains.store.dto.response.StoreReportResponse;
@@ -255,39 +256,39 @@ public class StoreService {
 	}
 
 	@Transactional
-	public synchronized ReviewAddResponse createStoreReview(User user, ReviewRequest reviewRequest) {
+	public synchronized FeedAddResponse createStoreFeed(User user, FeedRequest feedRequest) {
 		Store store;
-		if (reviewRequest.getStoreId() != null) {
+		if (feedRequest.getStoreId() != null) {
 			// 기존 StoreMeta 정보 업데이트
-			store = updateStoreMeta(reviewRequest.getStoreId(), user, reviewRequest.getRating());
-			if (store.getThumbnailUrl() == null && reviewRequest.getImageUrl() != null) {
-				store.setThumbnailUrl(reviewRequest.getImageUrl());
+			store = updateStoreMeta(feedRequest.getStoreId(), user, feedRequest.getRating());
+			if (store.getThumbnailUrl() == null && feedRequest.getImageUrl() != null) {
+				store.setThumbnailUrl(feedRequest.getImageUrl());
 			}
 		} else {
 			// 새로운 Store 생성
-			store = createNewStoreWithMeta(reviewRequest.getNewStore(), reviewRequest.getRating());
-			if (reviewRequest.getImageUrl() != null) {
-				store.setThumbnailUrl(reviewRequest.getImageUrl());
+			store = createNewStoreWithMeta(feedRequest.getNewStore(), feedRequest.getRating());
+			if (feedRequest.getImageUrl() != null) {
+				store.setThumbnailUrl(feedRequest.getImageUrl());
 			}
 		}
 		storeRepository.save(store);
-		Review review = saveReview(user, store, reviewRequest);
+		Feed feed = saveFeed(user, store, feedRequest);
 		user.increaseMyReviewCount();
 		user.updateUserLevel(getUserLevel(user));
 		userRepository.save(user);
 
-		return ReviewAddResponse.of(review.getReviewId(), store.getStoreId());
+		return FeedAddResponse.of(feed.getFeedId(), store.getStoreId());
 	}
 
 	private UserLevel getUserLevel(User user) {
-		int userReviewCount = user.getMyReviewCount();
-		if (userReviewCount >= 20) {
+		int userMyFeedCnt = user.getMyFeedCnt();
+		if (userMyFeedCnt >= 20) {
 			return UserLevel.LEVEL4;
 		}
-		if (userReviewCount >= 6) {
+		if (userMyFeedCnt >= 6) {
 			return UserLevel.LEVEL3;
 		}
-		if (userReviewCount >= 1) {
+		if (userMyFeedCnt >= 1) {
 			return UserLevel.LEVEL2;
 		}
 		return UserLevel.LEVEL1;
@@ -356,11 +357,11 @@ public class StoreService {
 			: 1;
 	}
 
-	private Review saveReview(User user, Store store, ReviewRequest reviewRequest) {
-		int visitTimes = getVisitTimes(reviewRequest.getStoreId(), store, user);
-		Review review = reviewRequest.toEntity(store, user, visitTimes);
-		feedRepository.save(review);
-		return review;
+	private Feed saveFeed(User user, Store store, FeedRequest feedRequest) {
+		int visitTimes = getVisitTimes(feedRequest.getStoreId(), store, user);
+		Feed feed = feedRequest.toEntity(store, user, visitTimes);
+		feedRepository.save(feed);
+		return feed;
 	}
 
 	@Transactional

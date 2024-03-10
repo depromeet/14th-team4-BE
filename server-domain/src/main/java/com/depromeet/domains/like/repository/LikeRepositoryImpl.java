@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class LikeRepositoryImpl implements FeedRepositoryCustom {
+public class LikeRepositoryImpl implements LikeRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 }

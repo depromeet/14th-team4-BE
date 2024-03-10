@@ -28,9 +28,9 @@ import org.springframework.security.test.context.support.WithMockUser;
 
 import com.depromeet.document.RestDocsTestSupport;
 import com.depromeet.domains.store.dto.request.NewStoreRequest;
-import com.depromeet.domains.store.dto.request.ReviewRequest;
+import com.depromeet.domains.store.dto.request.FeedRequest;
 import com.depromeet.domains.store.dto.response.ReviewAddLimitResponse;
-import com.depromeet.domains.store.dto.response.ReviewAddResponse;
+import com.depromeet.domains.store.dto.response.FeedAddResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse.StoreLocationRange;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
@@ -248,7 +248,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 	public void createExistStoreReview() throws Exception {
 		// given
 		// storeId가 있는 경우
-		ReviewRequest requestWithStoreId = ReviewRequest.builder()
+		FeedRequest requestWithStoreId = FeedRequest.builder()
 			.storeId(1L)
 			.rating(5)
 			.visitedAt("2024.01.10")
@@ -256,10 +256,10 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.description("진짜진짜진짜진짜맛있어요")
 			.build();
 
-		ReviewAddResponse reviewAddResponse = ReviewAddResponse.of(7L, 1L);
+		FeedAddResponse reviewAddResponse = FeedAddResponse.of(7L, 1L);
 
 		//        given(testService.create(any(TestRequest.class))).willReturn(testResponse); 되는 코드 꼭 any로 해줘야함. 그냥 값 넣으면 response data가 안찍힘
-		given(storeService.createStoreReview(any(), any(ReviewRequest.class))).willReturn(reviewAddResponse);
+		given(storeService.createStoreReview(any(), any(FeedRequest.class))).willReturn(reviewAddResponse);
 		// when & then
 		mockMvc.perform(
 				post("/api/v1/stores/reviews")
@@ -306,7 +306,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 	@Test
 	public void createNewStoreReview() throws Exception {
 		// given
-		ReviewRequest requestWithNewStore = ReviewRequest.builder()
+		FeedRequest requestWithNewStore = FeedRequest.builder()
 			.newStore(
 				NewStoreRequest.builder()
 					.storeName("칠기마라탕")
@@ -323,10 +323,10 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.description("진짜진짜진짜진짜맛있어요")
 			.build();
 
-		ReviewAddResponse reviewAddResponse = ReviewAddResponse.of(7L, 3L);
+		FeedAddResponse reviewAddResponse = FeedAddResponse.of(7L, 3L);
 
 		//        given(testService.create(any(TestRequest.class))).willReturn(testResponse); 되는 코드 꼭 any로 해줘야함. 그냥 값 넣으면 response data가 안찍힘
-		given(storeService.createStoreReview(any(), any(ReviewRequest.class))).willReturn(reviewAddResponse);
+		given(storeService.createStoreReview(any(), any(FeedRequest.class))).willReturn(reviewAddResponse);
 		// when & then
 		mockMvc.perform(
 				post("/api/v1/stores/reviews")

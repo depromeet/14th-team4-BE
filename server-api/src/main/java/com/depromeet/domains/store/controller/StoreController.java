@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.depromeet.annotation.AuthUser;
 import com.depromeet.common.exception.CustomResponseEntity;
-import com.depromeet.domains.store.dto.request.ReviewRequest;
+import com.depromeet.domains.store.dto.request.FeedRequest;
 import com.depromeet.domains.store.dto.response.ReviewAddLimitResponse;
-import com.depromeet.domains.store.dto.response.ReviewAddResponse;
+import com.depromeet.domains.store.dto.response.FeedAddResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
 import com.depromeet.domains.store.dto.response.StoreReportResponse;
@@ -80,10 +79,10 @@ public class StoreController {
 		return CustomResponseEntity.success(storeService.getStoreReview(user, storeId, reviewType, pageable));
 	}
 
-	@PostMapping("/stores/reviews")
-	public CustomResponseEntity<ReviewAddResponse> createStoreReview(@AuthUser User user, @Valid @RequestBody
-	ReviewRequest reviewRequest) {
-		return CustomResponseEntity.created(storeService.createStoreReview(user, reviewRequest));
+	@PostMapping("/stores/feeds")
+	public CustomResponseEntity<FeedAddResponse> createStoreFeed(@AuthUser User user, @Valid @RequestBody
+	FeedRequest feedRequest) {
+		return CustomResponseEntity.created(storeService.createStoreFeed(user, feedRequest));
 	}
 
 	@GetMapping("/stores/{storeId}/reviews/check-limit")

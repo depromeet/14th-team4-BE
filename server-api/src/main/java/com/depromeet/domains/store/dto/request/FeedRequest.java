@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import com.depromeet.annotation.VisitedDateFormat;
-import com.depromeet.domains.feed.entity.Review;
+import com.depromeet.domains.feed.entity.Feed;
 import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.user.entity.User;
 
@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ReviewRequest {
+public class FeedRequest {
 	private Long storeId;
 	@Valid
 	private NewStoreRequest newStore;
@@ -36,11 +36,11 @@ public class ReviewRequest {
 	@Size(min = 10, max = 300)
 	private String description;
 
-	public Review toEntity(Store store, User user, Integer visitTimes) {
+	public Feed toEntity(Store store, User user, Integer visitTimes) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
 		LocalDate dateformat = LocalDate.parse(visitedAt, formatter);
 
-		return Review.builder()
+		return Feed.builder()
 			.store(store)
 			.user(user)
 			.rating(this.rating)
