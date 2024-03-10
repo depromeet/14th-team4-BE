@@ -51,8 +51,7 @@ public class UserService {
 	@Transactional(readOnly = true)
 	public Slice<UserBookmarkResponse> getUserBookmarks(User user, Pageable pageable) {
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
-		Slice<Bookmark> bookmarks = bookmarkRepository.findByUser(user, pageRequest);
-
+		Slice<Bookmark> bookmarks = bookmarkRepository.findByUserId(user.getUserId(), pageRequest);
 		List<UserBookmarkResponse> userBookmarkResponses = bookmarks.stream()
 			.map(this::getUserBookmarkResponse)
 			.collect(Collectors.toList());
@@ -64,7 +63,7 @@ public class UserService {
 	public Slice<UserFeedResponse> getUserFeeds(User user, Pageable pageable) {
 
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "visitedAt"));
-		Slice<Feed> feeds = feedRepository.findByUser(user, pageRequest);
+		Slice<Feed> feeds = feedRepository.findByUserId(user.getUserId(), pageRequest);
 
 		List<UserFeedResponse> userFeedResponses = feeds.stream()
 				.map(this::getUserFeedResponse)
@@ -92,7 +91,7 @@ public class UserService {
 			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 		User user = userRepository.findById(bookmark.getBookmarkId())
 			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_USER));
-		boolean isVisited = feedRepository.existsByStoreAndUser(store, user);
+		boolean isVisited = feedRepository.existsByStoreAndUser(store.getStoreId(), user.getUserId());
 
 		return UserBookmarkResponse.of(
 			bookmark.getBookmarkId(),
@@ -105,7 +104,7 @@ public class UserService {
 	}
 
 	private UserFeedResponse getUserFeedResponse(Feed feed) {
-		Store store = storeRepository.findById(feed.getFeedId())
+		Store store = storeRepository.findById(feed.getStoreId())
 			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 
 		return UserFeedResponse.of(
