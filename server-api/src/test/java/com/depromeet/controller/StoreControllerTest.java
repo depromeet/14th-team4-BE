@@ -30,7 +30,9 @@ import com.depromeet.document.RestDocsTestSupport;
 import com.depromeet.domains.store.dto.request.FeedRequest;
 import com.depromeet.domains.store.dto.request.NewStoreRequest;
 import com.depromeet.domains.store.dto.response.FeedAddResponse;
-import com.depromeet.domains.store.dto.response.ReviewAddLimitResponse;
+
+import com.depromeet.domains.store.dto.response.FeedAddLimitResponse;
+
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse.StoreLocationRange;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
@@ -662,11 +664,11 @@ class StoreControllerTest extends RestDocsTestSupport {
 	@Test
 	void getUserDailyStoreReviewLimit() throws Exception {
 		// given
-		given(storeService.checkUserDailyStoreReviewLimit(any(), eq(1L))).willReturn(ReviewAddLimitResponse.of(false));
+		given(storeService.checkUserDailyStoreFeedLimit(any(), eq(1L))).willReturn(FeedAddLimitResponse.of(false));
 
 		// when
 		mockMvc.perform(
-				get("/api/v1/stores/{storeId}/reviews/check-limit", 1L)
+				get("/api/v1/stores/{storeId}/feeds/check-limit", 1L)
 					.with(csrf())
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer accessToken"))

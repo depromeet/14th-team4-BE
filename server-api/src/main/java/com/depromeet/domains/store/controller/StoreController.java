@@ -16,7 +16,8 @@ import com.depromeet.annotation.AuthUser;
 import com.depromeet.common.exception.CustomResponseEntity;
 import com.depromeet.domains.store.dto.request.FeedRequest;
 import com.depromeet.domains.store.dto.response.FeedAddResponse;
-import com.depromeet.domains.store.dto.response.ReviewAddLimitResponse;
+import com.depromeet.domains.store.dto.response.FeedAddLimitResponse;
+
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
 import com.depromeet.domains.store.dto.response.StoreReportResponse;
@@ -85,9 +86,9 @@ public class StoreController {
 		return CustomResponseEntity.created(storeService.createStoreFeed(user, feedRequest));
 	}
 
-	@GetMapping("/stores/{storeId}/reviews/check-limit")
-	public CustomResponseEntity<ReviewAddLimitResponse> getUserDailyStoreReviewLimit(@AuthUser User user,
+	@GetMapping("/stores/{storeId}/feeds/check-limit")
+	public CustomResponseEntity<FeedAddLimitResponse> getUserDailyStoreFeedLimit(@AuthUser User user,
 		@PathVariable Long storeId) {
-		return CustomResponseEntity.success(storeService.checkUserDailyStoreReviewLimit(user, storeId));
+		return CustomResponseEntity.success(storeService.checkUserDailyStoreFeedLimit(user, storeId));
 	}
 }
