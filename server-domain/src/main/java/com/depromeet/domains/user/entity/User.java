@@ -73,11 +73,11 @@ public class User extends BaseTimeEntity {
 		this.level = level;
 	}
 
-	public void increaseMyReviewCount() {
-		this.myReviewCount++;
+	public void increaseMyFeedCount() {
+		this.myFeedCnt++;
 	}
 
-	public void decreaseMyReviewCount() {
-		this.myReviewCount = Math.max(0, this.myReviewCount - 1);
+	public void decreaseMyFeedCount() {
+		this.myFeedCnt = Math.max(0, this.myFeedCnt - 1);
 	}
 }

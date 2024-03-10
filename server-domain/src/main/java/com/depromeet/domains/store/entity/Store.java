@@ -47,4 +47,12 @@ public class Store extends BaseTimeEntity {
 	public void setThumbnailUrl(String imageUrl) {
 		this.thumbnailUrl = imageUrl;
 	}
+
+	public void increaseTotalRating(float totalRating) {
+		this.totalRating += totalRating;
+	}
+
+	public void decreaseTotalRating(float totalRating) {
+		this.totalRating -= totalRating;
+	}
 }
