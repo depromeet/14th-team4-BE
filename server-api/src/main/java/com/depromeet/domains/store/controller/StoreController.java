@@ -91,12 +91,4 @@ public class StoreController {
 		@PathVariable Long storeId) {
 		return CustomResponseEntity.success(storeService.checkUserDailyStoreReviewLimit(user, storeId));
 	}
-
-	// 리뷰 삭제
-	@DeleteMapping("/reviews/{reviewId}")
-	public CustomResponseEntity<Void> deleteStoreReview(@AuthUser User user,
-		@PathVariable Long reviewId) {
-		storeService.deleteStoreReview(user, reviewId);
-		return CustomResponseEntity.success();
-	}
 }
