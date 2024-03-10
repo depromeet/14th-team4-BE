@@ -105,13 +105,15 @@ public class UserService {
 	}
 
 	private UserFeedResponse getUserFeedResponse(Feed feed) {
+		Store store = storeRepository.findById(feed.getFeedId())
+			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
+
 		return UserFeedResponse.of(
-			feed.getfeedId(),
-			feed.getStore().getStoreId(),
-			feed.getStore().getStoreName(),
-			feed.getVisitTimes(),
-			feed.getVisitedAt(),
-			feed.getStore().getCategory().getCategoryName(),
+			feed.getFeedId(),
+			store.getStoreId(),
+			store.getStoreName(),
+			feed.getCreatedAt(),
+			store.getKakaoCategoryName(),
 			feed.getRating(),
 			feed.getImageUrl(),
 			feed.getDescription()
