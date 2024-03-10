@@ -52,6 +52,7 @@ public class UserService {
 	public Slice<UserBookmarkResponse> getUserBookmarks(User user, Pageable pageable) {
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
 		Slice<Bookmark> bookmarks = bookmarkRepository.findByUserId(user.getUserId(), pageRequest);
+		// TODO : 쿼리 최적화 (store 정보를 한번에 가져오기)
 		List<UserBookmarkResponse> userBookmarkResponses = bookmarks.stream()
 			.map(this::getUserBookmarkResponse)
 			.collect(Collectors.toList());
@@ -65,6 +66,7 @@ public class UserService {
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "visitedAt"));
 		Slice<Feed> feeds = feedRepository.findByUserId(user.getUserId(), pageRequest);
 
+		// TODO : 쿼리 최적화 (store 정보를 한번에 가져오기)
 		List<UserFeedResponse> userFeedResponses = feeds.stream()
 				.map(this::getUserFeedResponse)
 				.collect(Collectors.toList());
@@ -89,9 +91,8 @@ public class UserService {
 	private UserBookmarkResponse getUserBookmarkResponse(Bookmark bookmark) {
 		Store store = storeRepository.findById(bookmark.getBookmarkId())
 			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
-		User user = userRepository.findById(bookmark.getBookmarkId())
-			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_USER));
-		boolean isVisited = feedRepository.existsByStoreAndUser(store.getStoreId(), user.getUserId());
+
+		boolean isVisited = feedRepository.existsByStoreAndUser(bookmark.getStoreId(), bookmark.getUserId());
 
 		return UserBookmarkResponse.of(
 			bookmark.getBookmarkId(),
