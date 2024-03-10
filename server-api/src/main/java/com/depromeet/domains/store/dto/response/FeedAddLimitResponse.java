@@ -5,11 +5,11 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ReviewAddLimitResponse {
+public class FeedAddLimitResponse {
 	private Boolean isAvailable;
 
-	public static ReviewAddLimitResponse of(boolean isAvailable) {
-		return ReviewAddLimitResponse.builder()
+	public static FeedAddLimitResponse of(boolean isAvailable) {
+		return FeedAddLimitResponse.builder()
 			.isAvailable(isAvailable)
 			.build();
 	}
