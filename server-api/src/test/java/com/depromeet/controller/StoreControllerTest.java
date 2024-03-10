@@ -27,10 +27,12 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import com.depromeet.document.RestDocsTestSupport;
+import com.depromeet.domains.store.dto.request.FeedRequest;
 import com.depromeet.domains.store.dto.request.NewStoreRequest;
-import com.depromeet.domains.store.dto.request.ReviewRequest;
+import com.depromeet.domains.store.dto.response.FeedAddResponse;
+
 import com.depromeet.domains.store.dto.response.FeedAddLimitResponse;
-import com.depromeet.domains.store.dto.response.ReviewAddResponse;
+
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse.StoreLocationRange;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
@@ -248,21 +250,19 @@ class StoreControllerTest extends RestDocsTestSupport {
 	public void createExistStoreReview() throws Exception {
 		// given
 		// storeId가 있는 경우
-		ReviewRequest requestWithStoreId = ReviewRequest.builder()
+		FeedRequest requestWithStoreId = FeedRequest.builder()
 			.storeId(1L)
 			.rating(5)
-			.visitedAt("2024.01.10")
 			.imageUrl("https://exampleimageurl.com")
 			.description("진짜진짜진짜진짜맛있어요")
 			.build();
 
-		ReviewAddResponse reviewAddResponse = ReviewAddResponse.of(7L, 1L);
+		FeedAddResponse reviewAddResponse = FeedAddResponse.of(7L, 1L);
 
-		//        given(testService.create(any(TestRequest.class))).willReturn(testResponse); 되는 코드 꼭 any로 해줘야함. 그냥 값 넣으면 response data가 안찍힘
-		given(storeService.createStoreReview(any(), any(ReviewRequest.class))).willReturn(reviewAddResponse);
+		given(storeService.createStoreFeed(any(), any(FeedRequest.class))).willReturn(reviewAddResponse);
 		// when & then
 		mockMvc.perform(
-				post("/api/v1/stores/reviews")
+				post("/api/v1/stores/feeds")
 					.with(csrf()) // Spring Security Test에서 csrf로 발생하는 403을  해결하기 위해
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer accessToken")
@@ -281,15 +281,12 @@ class StoreControllerTest extends RestDocsTestSupport {
 							.description("가게 이름"),
 						fieldWithPath("newStore.latitude").type(JsonFieldType.NUMBER).description("위도"),
 						fieldWithPath("newStore.longitude").type(JsonFieldType.NUMBER).description("경도"),
-						fieldWithPath("newStore.categoryType").type(JsonFieldType.STRING)
-							.description("또잇 카테고리 타입 (KOREAN, JAPANESE, CHINESE, CAFE, WESTERN, BARS, ETC..)"),
 						fieldWithPath("newStore.kakaoStoreId").type(JsonFieldType.NUMBER).description("카카오 가게 고유 ID"),
 						fieldWithPath("newStore.kakaoCategoryName").type(JsonFieldType.STRING)
 							.description("카카오 카테고리 분류 기준 (빵집, 뷔페 등 카카오에서 내려오는 값 저장하기 위함)"),
 						fieldWithPath("newStore.address").type(JsonFieldType.STRING).description("가게 주소"),
 						fieldWithPath("rating").type(JsonFieldType.NUMBER).description("별점"),
-						fieldWithPath("visitedAt").type(JsonFieldType.STRING).description("방문 날짜"),
-						fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("첨부된 이미지 url").optional(),
+						fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("첨부된 이미지 url"),
 						fieldWithPath("description").type(JsonFieldType.STRING).description("리뷰 내용")
 					),
 					responseFields(
@@ -306,30 +303,28 @@ class StoreControllerTest extends RestDocsTestSupport {
 	@Test
 	public void createNewStoreReview() throws Exception {
 		// given
-		ReviewRequest requestWithNewStore = ReviewRequest.builder()
+		FeedRequest requestWithNewStore = FeedRequest.builder()
 			.newStore(
 				NewStoreRequest.builder()
 					.storeName("칠기마라탕")
 					.latitude(127.239487)
 					.longitude(37.29472)
-					.categoryType("KOREAN")
 					.kakaoStoreId(1234L)
 					.kakaoCategoryName("간식")
 					.address("서울시 강남구 역삼동 123-123")
 					.build())
 			.rating(5)
-			.visitedAt("2024.01.10")
 			.imageUrl("https://exampleimageurl.com")
 			.description("진짜진짜진짜진짜맛있어요")
 			.build();
 
-		ReviewAddResponse reviewAddResponse = ReviewAddResponse.of(7L, 3L);
+		FeedAddResponse reviewAddResponse = FeedAddResponse.of(7L, 3L);
 
-		//        given(testService.create(any(TestRequest.class))).willReturn(testResponse); 되는 코드 꼭 any로 해줘야함. 그냥 값 넣으면 response data가 안찍힘
-		given(storeService.createStoreReview(any(), any(ReviewRequest.class))).willReturn(reviewAddResponse);
+		given(storeService.createStoreFeed(any(), any(FeedRequest.class))).willReturn(reviewAddResponse);
+
 		// when & then
 		mockMvc.perform(
-				post("/api/v1/stores/reviews")
+				post("/api/v1/stores/feeds")
 					.with(csrf()) // Spring Security Test에서 csrf로 발생하는 403을  해결하기 위해
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer accessToken")
@@ -348,15 +343,12 @@ class StoreControllerTest extends RestDocsTestSupport {
 							.description("가게 이름"),
 						fieldWithPath("newStore.latitude").type(JsonFieldType.NUMBER).description("위도"),
 						fieldWithPath("newStore.longitude").type(JsonFieldType.NUMBER).description("경도"),
-						fieldWithPath("newStore.categoryType").type(JsonFieldType.STRING)
-							.description("또잇 카테고리 타입 (KOREAN, JAPANESE, CHINESE, CAFE, WESTERN, BARS, ETC..)"),
 						fieldWithPath("newStore.kakaoStoreId").type(JsonFieldType.NUMBER).description("카카오 가게 고유 ID"),
 						fieldWithPath("newStore.kakaoCategoryName").type(JsonFieldType.STRING)
 							.description("카카오 카테고리 분류 기준 (빵집, 뷔페 등 카카오에서 내려오는 값 저장하기 위함)"),
 						fieldWithPath("newStore.address").type(JsonFieldType.STRING).description("가게 주소"),
 						fieldWithPath("rating").type(JsonFieldType.NUMBER).description("별점"),
-						fieldWithPath("visitedAt").type(JsonFieldType.STRING).description("방문 날짜"),
-						fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("첨부된 이미지 url").optional(),
+						fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("첨부된 이미지 url"),
 						fieldWithPath("description").type(JsonFieldType.STRING).description("리뷰 내용")
 					),
 					responseFields(

@@ -65,4 +65,13 @@ public class Store extends BaseTimeEntity {
 	public void decreaseTotalFeedCnt() {
 		this.totalFeedCnt--;
 	}
+
+	public void updateTotalRating(Integer newRating) {
+		this.totalRating = (this.totalRating * this.totalRating + newRating) / (this.totalFeedCnt + 1); // 새 평균 평점 계산
+		this.totalRating = Math.round(this.totalRating * 10.0f) / 10.0f; // 반올림하여 저장
+	}
+
+	public void updateThumbnailUrl(String imageUrl) {
+		this.thumbnailUrl = imageUrl;
+	}
 }

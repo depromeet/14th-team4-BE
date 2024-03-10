@@ -20,11 +20,12 @@ import com.depromeet.S3.S3Service;
 import com.depromeet.common.exception.CustomException;
 import com.depromeet.common.exception.Result;
 import com.depromeet.domains.bookmark.repository.BookmarkRepository;
+import com.depromeet.domains.feed.entity.Feed;
 import com.depromeet.domains.feed.repository.FeedRepository;
+import com.depromeet.domains.store.dto.request.FeedRequest;
 import com.depromeet.domains.store.dto.request.NewStoreRequest;
-import com.depromeet.domains.store.dto.request.ReviewRequest;
+import com.depromeet.domains.store.dto.response.FeedAddResponse;
 import com.depromeet.domains.store.dto.response.FeedAddLimitResponse;
-import com.depromeet.domains.store.dto.response.ReviewAddResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
 import com.depromeet.domains.store.dto.response.StoreReportResponse;
@@ -255,112 +256,63 @@ public class StoreService {
 	}
 
 	@Transactional
-	public synchronized ReviewAddResponse createStoreReview(User user, ReviewRequest reviewRequest) {
-		Store store;
-		if (reviewRequest.getStoreId() != null) {
-			// 기존 StoreMeta 정보 업데이트
-			store = updateStoreMeta(reviewRequest.getStoreId(), user, reviewRequest.getRating());
-			if (store.getThumbnailUrl() == null && reviewRequest.getImageUrl() != null) {
-				store.setThumbnailUrl(reviewRequest.getImageUrl());
-			}
-		} else {
-			// 새로운 Store 생성
-			store = createNewStoreWithMeta(reviewRequest.getNewStore(), reviewRequest.getRating());
-			if (reviewRequest.getImageUrl() != null) {
-				store.setThumbnailUrl(reviewRequest.getImageUrl());
-			}
-		}
-		storeRepository.save(store);
-		Review review = saveReview(user, store, reviewRequest);
-		user.increaseMyReviewCount();
+	public synchronized FeedAddResponse createStoreFeed(User user, FeedRequest feedRequest) {
+		Store store = processStore(feedRequest);
+		Feed feed = feedRepository.save(feedRequest.toEntity(user));
+
+		return FeedAddResponse.of(feed.getFeedId(), store.getStoreId());
+	}
+
+	private void updateUserProfile(User user) {
+		user.increaseMyFeedCount();
 		user.updateUserLevel(getUserLevel(user));
 		userRepository.save(user);
+	}
 
-		return ReviewAddResponse.of(review.getReviewId(), store.getStoreId());
+	private Store processStore(FeedRequest feedRequest) {
+		Store store = feedRequest.hasStoreId()
+			? updateStoreInfo(feedRequest)
+			: createNewStore(feedRequest);
+
+		return storeRepository.save(store);
 	}
 
 	private UserLevel getUserLevel(User user) {
-		int userReviewCount = user.getMyReviewCount();
-		if (userReviewCount >= 20) {
+		int userMyFeedCnt = user.getMyFeedCnt();
+		if (userMyFeedCnt >= 20) {
 			return UserLevel.LEVEL4;
 		}
-		if (userReviewCount >= 6) {
+		if (userMyFeedCnt >= 6) {
 			return UserLevel.LEVEL3;
 		}
-		if (userReviewCount >= 1) {
+		if (userMyFeedCnt >= 1) {
 			return UserLevel.LEVEL2;
 		}
 		return UserLevel.LEVEL1;
 	}
 
-	private Store updateStoreMeta(Long storeId, User user, Integer rating) {
-		Store store = storeRepository.findById(storeId)
+	private Store updateStoreInfo(FeedRequest feedRequest) {
+		Store store = storeRepository.findById(feedRequest.getStoreId())
 			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 
-		StoreMeta storeMeta = store.getStoreMeta();
-
 		// 평점과 리뷰 개수 업데이트
-		storeMeta.updateTotalRating(rating);
-		storeMeta.increaseTotalReviewCount();
-
-		// 사용자가 이 가게에 대해 작성한 리뷰 개수 확인
-		Long userReviewCount = feedRepository.countByStoreAndUser(store, user);
-		if (userReviewCount == 1) {
-			// 두 번째 리뷰인 경우, 재방문 횟수 증가
-			storeMeta.increaseTotalRevisitedCount();
-		}
-
-		// 최다 방문자 횟수 업데이트
-		storeMeta.updateMostRevisitedCount(userReviewCount + 1);
-		storeMetaRepository.save(storeMeta);
+		store.updateTotalRating(feedRequest.getRating());
+		store.increaseTotalFeedCnt();;
 		return store;
 	}
 
-	private Store createNewStoreWithMeta(NewStoreRequest newStoreRequest, Integer rating) {
-
-		Store store = storeRepository.findByKakaoStoreId(newStoreRequest.getKakaoStoreId());
+	private Store createNewStore(FeedRequest feedRequest) {
+		NewStoreRequest newStore = feedRequest.getNewStore();
+		Store store = storeRepository.findByKakaoStoreId(newStore.getKakaoStoreId());
 		if (store != null) {
 			throw new CustomException(Result.DUPLICATED_STORE);
 		}
-		// store 객체 만들기
-		store = buildNewStore(newStoreRequest);
-		// storemeta 객체 초기화
-		StoreMeta storeMeta = StoreMeta.builder()
-			.totalRevisitedCount(0L)
-			.totalReviewCount(1L)
-			.mostVisitedCount(1L)
-			.totalRating(rating.floatValue())
-			.kakaoCategoryName(newStoreRequest.getKakaoCategoryName())
-			.build();
-
-		store.setStoreMeta(storeMeta);
-
-		return store;
+		return storeRepository.save(newStore.toEntity(feedRequest.getRating(), feedRequest.getImageUrl()));
 	}
 
-	private Store buildNewStore(NewStoreRequest newStoreRequest) {
-		String categoryName = newStoreRequest.getCategoryType(); // 예: "한식"
 
-		CategoryType categoryType = CategoryType.fromDescription(categoryName)
-			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_CATEGORY));
-
-		Category category = categoryRepository.findByCategoryType(categoryType)
-			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_CATEGORY));
-
-		return newStoreRequest.toEntity(category);
-	}
-
-	private int getVisitTimes(Long storeId, Store store, User user) {
-		return storeId != null
-			? feedRepository.countByStoreAndUser(store, user).intValue() + 1
-			: 1;
-	}
-
-	private Review saveReview(User user, Store store, ReviewRequest reviewRequest) {
-		int visitTimes = getVisitTimes(reviewRequest.getStoreId(), store, user);
-		Review review = reviewRequest.toEntity(store, user, visitTimes);
-		feedRepository.save(review);
-		return review;
+	private Feed saveFeed(Feed feed) {
+		return feedRepository.save(feed);
 	}
 
 	@Transactional
