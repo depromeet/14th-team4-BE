@@ -3,16 +3,10 @@ package com.depromeet.domains.feed.controller;
 import com.depromeet.annotation.AuthUser;
 import com.depromeet.common.exception.CustomResponseEntity;
 import com.depromeet.domains.feed.service.FeedService;
-import com.depromeet.domains.store.dto.response.StoreReviewResponse;
 import com.depromeet.domains.user.entity.User;
-import com.depromeet.enums.ReviewType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @Slf4j
 @RequestMapping("/api/v1/feeds")

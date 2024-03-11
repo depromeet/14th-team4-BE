@@ -1,6 +1,7 @@
 package com.depromeet.domains.feed.repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.depromeet.domains.feed.entity.Feed;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +16,7 @@ import com.depromeet.domains.user.entity.User;
 public interface FeedRepository extends JpaRepository<Feed, Long>, FeedRepositoryCustom {
 
 	//리뷰 이미지가 존재하는 가장 최근 10개의 리뷰 조회
-	List<Review> findTop10ByStoreOrderByVisitedAtDesc(Store store);
+	List<Feed> findTop10ByStoreOrderByVisitedAtDesc(Store store);
 
 	// 자신이 특정 음식점에 몇번째 재방문인지 조회
 	Long countByStoreAndUser(Store store, User user);
