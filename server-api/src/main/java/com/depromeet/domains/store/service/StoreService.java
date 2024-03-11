@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.depromeet.domains.feed.entity.Feed;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -29,14 +30,14 @@ import com.depromeet.domains.store.dto.response.FeedAddLimitResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
 import com.depromeet.domains.store.dto.response.StoreReportResponse;
-import com.depromeet.domains.store.dto.response.StoreReviewResponse;
+import com.depromeet.domains.store.dto.response.StoreFeedResponse;
 import com.depromeet.domains.store.dto.response.StoreSharingSpotResponse;
 import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.store.repository.StoreRepository;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.repository.UserRepository;
 import com.depromeet.enums.CategoryType;
-import com.depromeet.enums.ReviewType;
+import com.depromeet.enums.FeedType;
 import com.depromeet.enums.UserLevel;
 import com.depromeet.enums.ViewLevel;
 
@@ -59,19 +60,7 @@ public class StoreService {
 	public StorePreviewResponse getStore(Long storeId, User user) {
 
 		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
-		List<Review> reviews = feedRepository.findTop10ByStoreOrderByVisitedAtDesc(store);
-
-		ArrayList<String> reviewImageUrls = new ArrayList<>();
-		for (Review review : reviews) {
-			String imageUrl = review.getImageUrl();
-			if (imageUrl != null) {
-				reviewImageUrls.add(imageUrl);
-			}
-		}
-
-		Long myRevisitedCount = feedRepository.countByStoreAndUser(store, user);
-		StoreMeta storeMeta = store.getStoreMeta();
-		Long totalRevisitedCount = storeMeta.getTotalRevisitedCount();
+		List<String > feedImageUrls = feedRepository.findTop10FeedImagesByCreatedAtDesc(store.getStoreId());
 
 		Boolean isBookmarked = false;
 		if (bookmarkRepository.findByUserAndStore(user, store).isPresent()) {
@@ -80,15 +69,13 @@ public class StoreService {
 
 		return StorePreviewResponse.of(
 			store.getStoreId(),
-			store.getCategory().getCategoryName(),
+			store.getKakaoCategoryName(),
 			store.getStoreName(),
 			store.getAddress(),
-			storeMeta.getTotalRating(),
-			storeMeta.getTotalReviewCount(),
-			reviewImageUrls,
+			store.getTotalRating(),
+			store.getTotalFeedCnt(),
+			feedImageUrls,
 			user.getUserId(),
-			myRevisitedCount,
-			totalRevisitedCount,
 			isBookmarked);
 	}
 
@@ -97,69 +84,26 @@ public class StoreService {
 	public StoreReportResponse getStoreReport(Long storeId) {
 		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 
-		StoreMeta storeMeta = store.getStoreMeta();
-
-		Long mostVisitedCount = storeMeta.getMostVisitedCount();
-		Long totalRevisitedCount = storeMeta.getTotalRevisitedCount();
-
 		return StoreReportResponse.of(
 			store.getStoreId(),
 			store.getThumbnailUrl(),
-			mostVisitedCount,
-			totalRevisitedCount);
+				null, null);
 	}
 
 	// 음식점 리뷰 조회(타입별 조회)
 	@Transactional(readOnly = true)
-	public Slice<StoreReviewResponse> getStoreReview(User user, Long storeId, Optional<ReviewType> reviewType,
-		Pageable pageable) {
+	public Slice<StoreFeedResponse> getStoreFeed(User user, Long storeId,
+												   Pageable pageable) {
 
 		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 
 		Integer size = 10;
-		Sort sort = Sort.by(Sort.Direction.DESC, "visitedAt");
+		Sort sort = Sort.by(Sort.Direction.DESC, "createAt");
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), size, sort);
 
-		Slice<Review> reviews = null;
-		if (reviewType.isEmpty()) {
-			reviews = feedRepository.findByStore(store, pageRequest);
-		} else if (reviewType.get() == ReviewType.REVISITED) {
-			reviews = feedRepository.findRevisitedReviews(store, pageRequest);
-		} else if (reviewType.get() == ReviewType.PHOTO) {
-			reviews = feedRepository.findByStoreAndImageUrlIsNotNullOrderByVisitedAtDesc(store, pageRequest);
-		}
-
+		Slice<StoreFeedResponse> feeds = feedRepository.findFeedByStoreId(storeId, (PageRequest) pageable, user.getUserId());
 		// Review 객체를 StoreLogResponse DTO로 변환하여 Slice 객체에 담아 반환
-		Slice<StoreReviewResponse> storeReviewResponse = getStoreReviewResponses(user, reviews, store);
-
-		return storeReviewResponse;
-	}
-
-	private Slice<StoreReviewResponse> getStoreReviewResponses(User user, Slice<Review> reviews, Store store) {
-		List<StoreReviewResponse> storeReviewResponseList = reviews.getContent().stream()
-			.map(review -> {
-				Integer maxVisitTimes = feedRepository.maxVisitTimes(store, review.getUser());
-				// 현재 사용자가 리뷰 작성자와 동일한지 확인
-				Boolean isMine = review.getUser().getUserId().equals(user.getUserId()); // 사용자 비교 로직 수정
-				String imageUrl = review.getImageUrl() != null ? review.getImageUrl() : "";
-				// 필요한 정보를 포함하여 StoreReviewResponse 객체 생성
-				return StoreReviewResponse.of(
-					review.getUser().getUserId(),
-					review.getReviewId(),
-					review.getUser().getNickName(),
-					review.getRating(),
-					imageUrl,
-					maxVisitTimes,
-					review.getVisitedAt(),
-					review.getDescription(),
-					isMine
-				);
-			})
-			.collect(Collectors.toList());
-
-		Slice<StoreReviewResponse> storeReviewResponse = new SliceImpl<>(storeReviewResponseList, reviews.getPageable(),
-			reviews.hasNext());
-		return storeReviewResponse;
+		return feeds;
 	}
 
 	@Transactional(readOnly = true)

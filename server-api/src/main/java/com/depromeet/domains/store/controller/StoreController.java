@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,12 +22,12 @@ import com.depromeet.domains.store.dto.response.FeedAddLimitResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
 import com.depromeet.domains.store.dto.response.StoreReportResponse;
-import com.depromeet.domains.store.dto.response.StoreReviewResponse;
+import com.depromeet.domains.store.dto.response.StoreFeedResponse;
 import com.depromeet.domains.store.dto.response.StoreSharingSpotResponse;
 import com.depromeet.domains.store.service.StoreService;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.enums.CategoryType;
-import com.depromeet.enums.ReviewType;
+import com.depromeet.enums.FeedType;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -67,17 +68,17 @@ public class StoreController {
 		return CustomResponseEntity.success(storeService.getStore(storeId, user));
 	}
 
+	// 보류
 	@GetMapping("/stores/{storeId}/reports")
 	public CustomResponseEntity<StoreReportResponse> getStoreReport(@PathVariable Long storeId) {
 		return CustomResponseEntity.success(storeService.getStoreReport(storeId));
 	}
 
 	@GetMapping("/stores/{storeId}/reviews")
-	public CustomResponseEntity<Slice<StoreReviewResponse>> getStoreReview(@AuthUser User user,
-		@PathVariable Long storeId,
-		@RequestParam("type") Optional<ReviewType> reviewType,
-		Pageable pageable) {
-		return CustomResponseEntity.success(storeService.getStoreReview(user, storeId, reviewType, pageable));
+	public CustomResponseEntity<Slice<StoreFeedResponse>> getStoreFeed(@AuthUser User user,
+																		 @PathVariable Long storeId,
+																		 Pageable pageable) {
+		return CustomResponseEntity.success(storeService.getStoreFeed(user, storeId, pageable));
 	}
 
 	@PostMapping("/stores/feeds")

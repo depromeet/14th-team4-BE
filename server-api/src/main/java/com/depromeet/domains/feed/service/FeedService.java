@@ -37,6 +37,7 @@ public class FeedService {
 
         // 음식점 별점 감소, 사용자 피드 수 감소
         store.decreaseTotalRating(feed.getRating());
+        store.decreaseTotalFeedCnt();
         user.decreaseMyFeedCount();
 
         feedRepository.delete(feed);
