@@ -41,6 +41,7 @@ import com.depromeet.domains.store.dto.response.StoreFeedResponse;
 import com.depromeet.domains.store.dto.response.StoreSharingSpotResponse;
 import com.depromeet.enums.CategoryType;
 import com.depromeet.enums.FeedType;
+import com.depromeet.enums.ReviewType;
 
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
@@ -365,7 +366,6 @@ class StoreControllerTest extends RestDocsTestSupport {
 		Double rightBottomLatitude = 30.11111;
 		Double rightBottomLongitude = 140.0000;
 		int level = 4;
-		CategoryType type = CategoryType.CAFE;
 		Long userId = 1L; // userId 로 하면 null
 
 		//given
@@ -373,14 +373,10 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.storeId(1L)
 			.kakaoStoreId(2L)
 			.storeName("칠기마라탕1")
-			.categoryId(1L)
-			.categoryName("한식")
-			.categoryType("KOREAN")
 			.address("서울특별시 1")
 			.longitude(127.239487)
 			.latitude(37.29472)
-			.totalRevisitedCount(1L)
-			.totalReviewCount(1L)
+			.totalFeedCount(1L)
 			.isBookmarked(true)
 			.build();
 
@@ -388,14 +384,10 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.storeId(2L)
 			.kakaoStoreId(2L)
 			.storeName("칠기마라탕2")
-			.categoryId(1L)
-			.categoryName("중식")
-			.categoryType("CHINESE")
 			.address("서울특별시 2")
 			.longitude(127.239487)
 			.latitude(37.29472)
-			.totalRevisitedCount(1L)
-			.totalReviewCount(1L)
+			.totalFeedCount(1L)
 			.isBookmarked(true)
 			.build();
 
@@ -403,14 +395,10 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.storeId(3L)
 			.kakaoStoreId(3L)
 			.storeName("칠기마라탕3")
-			.categoryId(1L)
-			.categoryName("일식")
-			.categoryType("JAPANESE")
 			.address("서울특별시 3")
 			.longitude(127.239487)
 			.latitude(37.29472)
-			.totalRevisitedCount(1L)
-			.totalReviewCount(1L)
+			.totalFeedCount(1L)
 			.isBookmarked(false)
 			.build();
 
@@ -418,14 +406,10 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.storeId(4L)
 			.kakaoStoreId(4L)
 			.storeName("칠기마라탕4")
-			.categoryId(1L)
-			.categoryName("양식")
-			.categoryType("WESTERN")
 			.address("서울특별시 4")
 			.longitude(127.239487)
 			.latitude(37.29472)
-			.totalRevisitedCount(1L)
-			.totalReviewCount(1L)
+			.totalFeedCount(1L)
 			.isBookmarked(false)
 			.build();
 
@@ -441,7 +425,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 
 		// given
 		given(storeService.getRangeStores(eq(leftTopLatitude), eq(leftTopLongitude), eq(rightBottomLatitude)
-			, eq(rightBottomLongitude), eq(level), eq(java.util.Optional.ofNullable(type)), any()))
+			, eq(rightBottomLongitude), eq(level), any()))
 			.willReturn(storeLocationRangeResponse);
 
 		// when
@@ -454,8 +438,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 					.param("leftTopLongitude", String.valueOf(leftTopLongitude))
 					.param("rightBottomLatitude", String.valueOf(rightBottomLatitude))
 					.param("rightBottomLongitude", String.valueOf(rightBottomLongitude))
-					.param("level", String.valueOf(level))
-					.param("type", String.valueOf(type.getType())))
+					.param("level", String.valueOf(level)))
 			.andExpect(status().isOk())
 			.andDo(
 				restDocs.document(
@@ -467,16 +450,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 						parameterWithName("leftTopLongitude").description("두번째 경도(좌측최상단)"),
 						parameterWithName("rightBottomLatitude").description("두번째 위도(우측최하단)"),
 						parameterWithName("rightBottomLongitude").description("두번째 경도(우측최하단)"),
-						parameterWithName("level").description("확대/축소 레벨"),
-						parameterWithName("type").description("식당 카테고리(optional) - "
-								+ "\nKOREAN(한식)"
-								+ "\nCHINESE(중식)"
-								+ "\nJAPANESE(일식)"
-								+ "\nWESTERN(양식)"
-								+ "\nCAFE(카페,디저트)"
-								+ "\nBARS(술집)"
-								+ "\nSCHOOLFOOD(분식)")
-							.optional()
+						parameterWithName("level").description("확대/축소 레벨")
 					),
 					responseFields(
 						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
@@ -491,30 +465,14 @@ class StoreControllerTest extends RestDocsTestSupport {
 							.description("카카오 DB상 음식점 ID"),
 						fieldWithPath("data.locationStoreList[].storeName").type(JsonFieldType.STRING)
 							.description("음식점 명"),
-						fieldWithPath("data.locationStoreList[].categoryId").type(JsonFieldType.NUMBER)
-							.description("음식점 카테고리 ID"),
-						fieldWithPath("data.locationStoreList[].categoryName").type(JsonFieldType.STRING)
-							.description("음식점 카테고리 명"),
-						fieldWithPath("data.locationStoreList[].categoryType").type(JsonFieldType.STRING)
-							.description("음식점 카테고리 타입"
-								+ "\nKOREAN(한식)"
-								+ "\nCHINESE(중식)"
-								+ "\nJAPANESE(일식)"
-								+ "\nWESTERN(양식)"
-								+ "\nCAFE(카페,디저트)"
-								+ "\nBARS(술집)"
-								+ "\nSCHOOLFOOD(분식)"
-								+ "\nETC(기타)"),
 						fieldWithPath("data.locationStoreList[].address").type(JsonFieldType.STRING)
 							.description("음식점 주소"),
 						fieldWithPath("data.locationStoreList[].longitude").type(JsonFieldType.NUMBER)
 							.description("음식점 위도"),
 						fieldWithPath("data.locationStoreList[].latitude").type(JsonFieldType.NUMBER)
 							.description("음식점 경도"),
-						fieldWithPath("data.locationStoreList[].totalRevisitedCount").type(JsonFieldType.NUMBER)
-							.description("재방문한 인원수 (N명 재방문)"),
-						fieldWithPath("data.locationStoreList[].totalReviewCount").type(JsonFieldType.NUMBER)
-							.description("총 리뷰 갯수"),
+						fieldWithPath("data.locationStoreList[].totalFeedCount").type(JsonFieldType.NUMBER)
+							.description("총 피드 갯수"),
 						fieldWithPath("data.locationStoreList[].isBookmarked").type(JsonFieldType.BOOLEAN)
 							.description("북마크 여부")
 					)
@@ -535,13 +493,9 @@ class StoreControllerTest extends RestDocsTestSupport {
 				.storeId(1L)
 				.kakaoStoreId(2L)
 				.storeName("칠기마라탕1")
-				.categoryId(1L)
-				.categoryName("한식")
-				.categoryType("KOREAN")
 				.address("서울특별시 1")
 				.longitude(127.239487)
 				.latitude(37.29472)
-				.totalRevisitedCount(1L)
 				.totalReviewCount(1L)
 				.build();
 
@@ -550,13 +504,9 @@ class StoreControllerTest extends RestDocsTestSupport {
 				.storeId(2L)
 				.kakaoStoreId(2L)
 				.storeName("칠기마라탕2")
-				.categoryId(1L)
-				.categoryName("중식")
-				.categoryType("CHINESE")
 				.address("서울특별시 2")
 				.longitude(127.239487)
 				.latitude(37.29472)
-				.totalRevisitedCount(1L)
 				.totalReviewCount(1L)
 				.build();
 
@@ -565,13 +515,9 @@ class StoreControllerTest extends RestDocsTestSupport {
 				.storeId(3L)
 				.kakaoStoreId(3L)
 				.storeName("칠기마라탕3")
-				.categoryId(1L)
-				.categoryName("일식")
-				.categoryType("JAPANESE")
 				.address("서울특별시 3")
 				.longitude(127.239487)
 				.latitude(37.29472)
-				.totalRevisitedCount(1L)
 				.totalReviewCount(1L)
 				.build();
 
@@ -580,13 +526,9 @@ class StoreControllerTest extends RestDocsTestSupport {
 				.storeId(4L)
 				.kakaoStoreId(4L)
 				.storeName("칠기마라탕4")
-				.categoryId(1L)
-				.categoryName("양식")
-				.categoryType("WESTERN")
 				.address("서울특별시 4")
 				.longitude(127.239487)
 				.latitude(37.29472)
-				.totalRevisitedCount(1L)
 				.totalReviewCount(1L)
 				.build();
 
@@ -626,28 +568,12 @@ class StoreControllerTest extends RestDocsTestSupport {
 							.description("카카오 DB상 음식점 ID"),
 						fieldWithPath("data.locationStoreList[].storeName").type(JsonFieldType.STRING)
 							.description("음식점 명"),
-						fieldWithPath("data.locationStoreList[].categoryId").type(JsonFieldType.NUMBER)
-							.description("음식점 카테고리 ID"),
-						fieldWithPath("data.locationStoreList[].categoryName").type(JsonFieldType.STRING)
-							.description("음식점 카테고리 명"),
-						fieldWithPath("data.locationStoreList[].categoryType").type(JsonFieldType.STRING)
-							.description("음식점 카테고리 타입"
-								+ "\nKOREAN(한식)"
-								+ "\nCHINESE(중식)"
-								+ "\nJAPANESE(일식)"
-								+ "\nWESTERN(양식)"
-								+ "\nCAFE(카페,디저트)"
-								+ "\nBARS(술집)"
-								+ "\nSCHOOLFOOD(분식)"
-								+ "\nETC(기타)"),
 						fieldWithPath("data.locationStoreList[].address").type(JsonFieldType.STRING)
 							.description("음식점 주소"),
 						fieldWithPath("data.locationStoreList[].longitude").type(JsonFieldType.NUMBER)
 							.description("음식점 위도"),
 						fieldWithPath("data.locationStoreList[].latitude").type(JsonFieldType.NUMBER)
 							.description("음식점 경도"),
-						fieldWithPath("data.locationStoreList[].totalRevisitedCount").type(JsonFieldType.NUMBER)
-							.description("재방문한 인원수 (N명 재방문)"),
 						fieldWithPath("data.locationStoreList[].totalReviewCount").type(JsonFieldType.NUMBER)
 							.description("총 리뷰 갯수")
 					)

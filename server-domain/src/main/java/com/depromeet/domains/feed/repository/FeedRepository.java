@@ -6,6 +6,7 @@ import java.util.List;
 import com.depromeet.domains.feed.entity.Feed;
 import org.springframework.data.domain.Pageable;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -33,23 +34,23 @@ public interface FeedRepository extends JpaRepository<Feed, Long>, FeedRepositor
 	@Query("SELECT r FROM Review r WHERE r.store = :store AND r.user IN " +
 		"(SELECT u.user FROM Review u WHERE u.store = :store GROUP BY u.user HAVING COUNT(u) >= 2) " +
 		"ORDER BY r.visitedAt DESC")
-	Slice<Review> findRevisitedReviews(@Param("store") Store store, Pageable pageable);
+	Slice<Feed> findRevisitedReviews(@Param("store") Store store, Pageable pageable);
 
 	// 사진 리뷰만 조회
-	Slice<Review> findByStoreAndImageUrlIsNotNullOrderByVisitedAtDesc(Store store, Pageable pageable);
+	Slice<Feed> findByStoreAndImageUrlIsNotNullOrderByVisitedAtDesc(Store store, Pageable pageable);
 
 	boolean existsByStoreAndUser(Store store, User user);
 
-	Slice<Review> findByUser(User user, Pageable pageable);
+	Slice<Feed> findByUser(User user, Pageable pageable);
 
-	List<Review> findByUser(User user);
+	List<Feed> findByUser(User user);
 
-	List<Review> findByStore(Store store);
+	List<Feed> findByStore(Store store);
 
 	@Query(value = "SELECT COUNT(*) FROM (SELECT COUNT(reviewId) AS review_count FROM Review WHERE store_id = :storeId GROUP BY user_id) AS subquery WHERE review_count = :count", nativeQuery = true)
 	Long countByStoreAndReviewCount(@Param("storeId") Long storeId, @Param("count") Long count);
 
-	Slice<Review> findByStore(Store store, Pageable pageable);
+	Slice<Feed> findByStore(Store store, Pageable pageable);
 
     @Query("SELECT MAX(r.visitTimes) FROM Review r WHERE r.store = :store AND r.user = :user")
     int maxVisitTimes(@Param("store") Store store, @Param("user") User user);

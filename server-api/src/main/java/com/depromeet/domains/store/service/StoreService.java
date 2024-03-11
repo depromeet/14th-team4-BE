@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -20,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.depromeet.S3.S3Service;
 import com.depromeet.common.exception.CustomException;
 import com.depromeet.common.exception.Result;
+import com.depromeet.domains.bookmark.entity.Bookmark;
 import com.depromeet.domains.bookmark.repository.BookmarkRepository;
 import com.depromeet.domains.feed.entity.Feed;
 import com.depromeet.domains.feed.repository.FeedRepository;
@@ -36,6 +36,7 @@ import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.store.repository.StoreRepository;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.repository.UserRepository;
+import com.depromeet.enums.ReviewType;
 import com.depromeet.enums.CategoryType;
 import com.depromeet.enums.FeedType;
 import com.depromeet.enums.UserLevel;
@@ -108,13 +109,16 @@ public class StoreService {
 
 	@Transactional(readOnly = true)
 	public StoreLocationRangeResponse getRangeStores(Double leftTopLatitude, Double leftTopLongitude,
-		Double rightBottomLatitude, Double rightBottomLongitude, Integer level, Optional<CategoryType> categoryType,
-		User user) {
+		Double rightBottomLatitude, Double rightBottomLongitude, Integer level, User user) {
 
 		List<StoreLocationRangeResponse.StoreLocationRange> totalList = new ArrayList<>();
 
-		List<Store> bookMarkStoreList = this.storeRepository.findByUsersBookMarkList(user.getUserId());
-		List<Long> bookMarkStoreIdList = storeToIdList(bookMarkStoreList);
+		List<Bookmark> bookmarks = this.bookmarkRepository.findByUserId(user.getUserId());
+		List<Long> bookMarkStoreIdList = bookmarks.stream()
+			.map(Bookmark::getStoreId)
+			.collect(Collectors.toList());
+
+		List<Store> bookMarkStoreList = this.storeRepository.findByStoreIdList(bookMarkStoreIdList);
 
 		double maxLatitude = Double.max(leftTopLatitude, rightBottomLatitude);
 		double minLatitude = Double.min(leftTopLatitude, rightBottomLatitude);
@@ -122,15 +126,10 @@ public class StoreService {
 		double minLongitude = Double.min(leftTopLongitude, rightBottomLongitude);
 
 		ViewLevel viewLevel = ViewLevel.findByLevel(level);
-		CategoryType type = categoryType.isEmpty() ? null : CategoryType.findByType(categoryType.get().getType());
 
-		List<Store> storeListWithCondition = this.storeRepository.findByLocationRangesWithCategory(maxLatitude,
-			minLatitude, maxLongitude, minLongitude, type, bookMarkStoreIdList);
-
-		if (bookMarkStoreIdList.size() == 0) {
-			storeListWithCondition = this.storeRepository.findByLocationRangesWithCategoryNoExcept(maxLatitude,
-				minLatitude, maxLongitude, minLongitude, type);
-		}
+		List<Store> storeListWithCondition
+								= this.storeRepository.findByLocationRangesNotInBookmarks(maxLatitude,
+											minLatitude, maxLongitude, minLongitude, bookMarkStoreIdList);
 
 		int viewStoreListCount = calculateViewStoreListRatio(storeListWithCondition.size(), viewLevel);
 
@@ -163,20 +162,17 @@ public class StoreService {
 
 	private List<StoreLocationRangeResponse.StoreLocationRange> toStoreLocationRange(List<Store> storeList,
 		Boolean isBookmarked) {
+
 		return storeList.stream()
 			.map(store ->
 				StoreLocationRangeResponse.StoreLocationRange.of(
 					store.getStoreId(),
 					store.getKakaoStoreId(),
 					store.getStoreName(),
-					store.getCategory().getCategoryId(),
-					store.getCategory().getCategoryName(),
-					store.getCategory().getCategoryType().getName(),
 					store.getAddress(),
 					store.getLocation().getLongitude(),
 					store.getLocation().getLatitude(),
-					store.getStoreMeta().getTotalRevisitedCount(),
-					store.getStoreMeta().getTotalReviewCount(),
+					store.getTotalFeedCnt(),
 					isBookmarked))
 			.collect(Collectors.toList());
 	}
@@ -371,17 +367,14 @@ public class StoreService {
 		User user = this.userRepository.findById(userId).orElseThrow(
 			() -> new CustomException(Result.NOT_FOUND_USER));
 
-		List<Review> reviews = this.feedRepository.findByUser(user);
+		List<Feed> feeds = this.feedRepository.findByUser(user);
 
-		// 재방문이상(리뷰 수 2개 이상)의 식당만 공유
-		List<Store> revisitedStores = reviews.stream()
-			.collect(Collectors.groupingBy(Review::getStore))
-			.entrySet()
-			.stream()
-			.filter(entry -> entry.getValue().size() >= 2)
-			.map(Map.Entry::getKey)
+		List<Store> storesMoreThanTwoFeeds = feeds.stream()
+			.map(feed -> storeRepository.findById(feed.getStoreId())
+				.orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE)))
+			.filter(store -> store.getTotalFeedCnt() >= 2)
 			.collect(Collectors.toList());
 
-		return StoreSharingSpotResponse.of(user.getNickName(), toStoreSharingSpot(revisitedStores));
+		return StoreSharingSpotResponse.of(user.getNickName(), toStoreSharingSpot(storesMoreThanTwoFeeds));
 	}
 }
