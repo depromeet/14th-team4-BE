@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.depromeet.S3.S3Service;
 import com.depromeet.common.exception.CustomException;
 import com.depromeet.common.exception.Result;
+import com.depromeet.domains.bookmark.entity.Bookmark;
 import com.depromeet.domains.bookmark.repository.BookmarkRepository;
 import com.depromeet.domains.feed.entity.Feed;
 import com.depromeet.domains.feed.repository.FeedRepository;
@@ -166,11 +167,12 @@ public class StoreService {
 
 		List<StoreLocationRangeResponse.StoreLocationRange> totalList = new ArrayList<>();
 
-		// todo - queryDsl
-		List<Store> bookMarkStoreList
-		// 							= this.storeRepository.findByUsersBookMarkList(user.getUserId());
-									 = new ArrayList<>();
-		List<Long> bookMarkStoreIdList = storeToIdList(bookMarkStoreList);
+		List<Bookmark> bookmarks = this.bookmarkRepository.findByUserId(user.getUserId());
+		List<Long> bookMarkStoreIdList = bookmarks.stream()
+			.map(Bookmark::getStoreId)
+			.collect(Collectors.toList());
+
+		List<Store> bookMarkStoreList = this.storeRepository.findByStoreIdList(bookMarkStoreIdList);
 
 		double maxLatitude = Double.max(leftTopLatitude, rightBottomLatitude);
 		double minLatitude = Double.min(leftTopLatitude, rightBottomLatitude);
@@ -179,17 +181,9 @@ public class StoreService {
 
 		ViewLevel viewLevel = ViewLevel.findByLevel(level);
 
-		// todo - queryDsl
 		List<Store> storeListWithCondition
-								// = this.storeRepository.findByLocationRangesWithCategory(maxLatitude,
-								// 		minLatitude, maxLongitude, minLongitude, bookMarkStoreIdList);
-									= new ArrayList<>();
-		if (bookMarkStoreIdList.size() == 0) {
-			storeListWithCondition
-			// 	= this.storeRepository.findByLocationRangesWithCategoryNoExcept(maxLatitude,
-			//				 	minLatitude, maxLongitude, minLongitude, type);
-									 = new ArrayList<>();
-		}
+								= this.storeRepository.findByLocationRangesNotInBookmarks(maxLatitude,
+											minLatitude, maxLongitude, minLongitude, bookMarkStoreIdList);
 
 		int viewStoreListCount = calculateViewStoreListRatio(storeListWithCondition.size(), viewLevel);
 
@@ -478,7 +472,6 @@ public class StoreService {
 
 		List<Feed> feeds = this.feedRepository.findByUser(user);
 
-		// todo) 총 피드 갯수 2개 이상으로 변경했는데 얘기해야할듯(원래는 재방문수 2회 이상이었음)
 		List<Store> storesMoreThanTwoFeeds = feeds.stream()
 			.map(feed -> storeRepository.findById(feed.getStoreId())
 				.orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE)))
