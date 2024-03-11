@@ -8,6 +8,9 @@ tasks.register('copySecret', Copy) {
 
 dependencies {
 
+    implementation project(":server-api")
+
+
     // jpa
     api('org.springframework.boot:spring-boot-starter-data-jpa')
 
