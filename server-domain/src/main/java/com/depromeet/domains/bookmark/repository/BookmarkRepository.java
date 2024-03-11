@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.depromeet.domains.bookmark.entity.Bookmark;
 import com.depromeet.domains.user.entity.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, BookmarkRepositoryCustom {
@@ -15,4 +16,8 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, Bookm
 	Slice<Bookmark> findByUser(User user, Pageable pageable);
 
 	Optional<Bookmark> findByUserAndStore(User user, Store store);
+
+	List<Bookmark> findByUserId(Long userId);
+
+
 }
