@@ -27,16 +27,20 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import com.depromeet.document.RestDocsTestSupport;
+import com.depromeet.domains.store.dto.request.FeedRequest;
 import com.depromeet.domains.store.dto.request.NewStoreRequest;
-import com.depromeet.domains.store.dto.request.ReviewRequest;
-import com.depromeet.domains.store.dto.response.ReviewAddLimitResponse;
-import com.depromeet.domains.store.dto.response.ReviewAddResponse;
+import com.depromeet.domains.store.dto.response.FeedAddResponse;
+
+import com.depromeet.domains.store.dto.response.FeedAddLimitResponse;
+
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse.StoreLocationRange;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
 import com.depromeet.domains.store.dto.response.StoreReportResponse;
-import com.depromeet.domains.store.dto.response.StoreReviewResponse;
+import com.depromeet.domains.store.dto.response.StoreFeedResponse;
 import com.depromeet.domains.store.dto.response.StoreSharingSpotResponse;
+import com.depromeet.enums.CategoryType;
+import com.depromeet.enums.FeedType;
 import com.depromeet.enums.ReviewType;
 
 @AutoConfigureMockMvc
@@ -49,15 +53,13 @@ class StoreControllerTest extends RestDocsTestSupport {
 		// given
 		StorePreviewResponse storePreviewResponse = StorePreviewResponse.builder()
 			.storeId(1L)
-			.categoryName("중식")
+			.kakaoCategoryName("중식")
 			.storeName("칠기마라탕")
 			.address("서울시 강남구 역삼동 123-123")
 			.totalRating(4.1F)
-			.totalReviewCount(10L)
-			.reviewImageUrls(List.of("https://image.com/1.jpg", "https://image.com/2.jpg"))
+			.totalFeedCnt(10L)
+			.feedImageUrls(List.of("https://image.com/1.jpg", "https://image.com/2.jpg"))
 			.userId(1L)
-			.myRevisitedCount(5L)
-			.totalRevisitedCount(2L)
 			.isBookmarked(true)
 			.build();
 
@@ -82,17 +84,13 @@ class StoreControllerTest extends RestDocsTestSupport {
 						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
 						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
 						fieldWithPath("data.storeId").type(JsonFieldType.NUMBER).description("음식점 ID"),
-						fieldWithPath("data.categoryName").type(JsonFieldType.STRING).description("카테고리 명"),
+						fieldWithPath("data.kakaoCategoryName").type(JsonFieldType.STRING).description("카테고리 명"),
 						fieldWithPath("data.storeName").type(JsonFieldType.STRING).description("음식점 명"),
 						fieldWithPath("data.address").type(JsonFieldType.STRING).description("음식점 주소"),
 						fieldWithPath("data.totalRating").type(JsonFieldType.NUMBER).description("음식점 별점"),
-						fieldWithPath("data.totalReviewCount").type(JsonFieldType.NUMBER).description("리뷰 개수"),
-						fieldWithPath("data.reviewImageUrls").type(JsonFieldType.ARRAY).description("리뷰 이미지 URL"),
+						fieldWithPath("data.totalFeedCnt").type(JsonFieldType.NUMBER).description("리뷰 개수"),
+						fieldWithPath("data.feedImageUrls").type(JsonFieldType.ARRAY).description("리뷰 이미지 URL"),
 						fieldWithPath("data.userId").type(JsonFieldType.NUMBER).description("사용자 ID"),
-						fieldWithPath("data.myRevisitedCount").type(JsonFieldType.NUMBER)
-							.description("자신이 재방문한 횟수(N번 방문)"),
-						fieldWithPath("data.totalRevisitedCount").type(JsonFieldType.NUMBER)
-							.description("전체 재방문 인원 수(00명이 재방문했어요)"),
 						fieldWithPath("data.isBookmarked").type(JsonFieldType.BOOLEAN).description("북마크 여부")
 					)
 				)
@@ -144,56 +142,56 @@ class StoreControllerTest extends RestDocsTestSupport {
 	@Test
 	void getStoreReview() throws Exception {
 		// given
-		StoreReviewResponse storeReviewResponse1 = StoreReviewResponse.builder()
+		StoreFeedResponse storeReviewResponse1 = StoreFeedResponse.builder()
 			.userId(1L)
-			.reviewId(1L)
-			.nickName("김철수")
-			.rating(4)
-			.imageUrl("https://image.com/1.jpg")
-			.visitTimes(3)
-			.visitedAt(LocalDate.now())
+			.feedId(1L)
+			.profileImageUrl("https://image.com/1.jpg")
+			.nickName("홍길동")
+			.rating(5)
+			.feedImageUrl("https://image.com/1.jpg")
+			.createdAt(LocalDate.now())
 			.description("맛있어요")
 			.isMine(true)
 			.build();
 
-		StoreReviewResponse storeReviewResponse2 = StoreReviewResponse.builder()
-			.userId(2L)
-			.reviewId(2L)
-			.nickName("김길동")
-			.rating(2)
-			.imageUrl("https://image.com/2.jpg")
-			.visitTimes(1)
-			.visitedAt(LocalDate.now())
-			.description("맛있어요")
-			.isMine(false)
-			.build();
+		StoreFeedResponse storeReviewResponse2 = StoreFeedResponse.builder()
+				.userId(2L)
+				.feedId(2L)
+				.profileImageUrl("https://image.com/1.jpg")
+				.nickName("홍길동")
+				.rating(5)
+				.feedImageUrl("https://image.com/1.jpg")
+				.createdAt(LocalDate.now())
+				.description("맛있어요")
+				.isMine(true)
+				.build();
 
-		StoreReviewResponse storeReviewResponse3 = StoreReviewResponse.builder()
-			.userId(3L)
-			.reviewId(3L)
-			.nickName("맛있는 음식을보면 짖는 개")
-			.rating(3)
-			.imageUrl(null)
-			.visitTimes(1)
-			.visitedAt(LocalDate.now())
-			.description("왈왈왈왈왈왈왈")
-			.isMine(false)
-			.build();
+		StoreFeedResponse storeReviewResponse3 = StoreFeedResponse.builder()
+				.userId(3L)
+				.feedId(3L)
+				.profileImageUrl("https://image.com/1.jpg")
+				.nickName("홍길동")
+				.rating(5)
+				.feedImageUrl("https://image.com/1.jpg")
+				.createdAt(LocalDate.now())
+				.description("맛있어요")
+				.isMine(true)
+				.build();
 
-		ReviewType reviewType = ReviewType.REVISITED;
+		FeedType feedType = FeedType.REVISITED;
 
-		List<StoreReviewResponse> content = Arrays.asList(storeReviewResponse1, storeReviewResponse2,
+		List<StoreFeedResponse> content = Arrays.asList(storeReviewResponse1, storeReviewResponse2,
 			storeReviewResponse3);
-		Slice<StoreReviewResponse> storeReviewResponses = new SliceImpl<>(content, Pageable.unpaged(), true);
+		Slice<StoreFeedResponse> storeReviewResponses = new SliceImpl<>(content, Pageable.unpaged(), true);
 
-		given(storeService.getStoreReview(any(), eq(1L), eq(Optional.of(ReviewType.REVISITED)),
+		given(storeService.getStoreReview(any(), eq(1L), eq(Optional.of(FeedType.REVISITED)),
 			any(Pageable.class))).willReturn(storeReviewResponses);
 
 		// when
 		mockMvc.perform(
 				get("/api/v1/stores/{storeId}/reviews", 1L)
 					//                                .with(csrf())
-					.param("type", ReviewType.REVISITED.name())
+					.param("type", FeedType.REVISITED.name())
 					.param("page", "0")
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer accessToken"))
@@ -247,21 +245,19 @@ class StoreControllerTest extends RestDocsTestSupport {
 	public void createExistStoreReview() throws Exception {
 		// given
 		// storeId가 있는 경우
-		ReviewRequest requestWithStoreId = ReviewRequest.builder()
+		FeedRequest requestWithStoreId = FeedRequest.builder()
 			.storeId(1L)
 			.rating(5)
-			.visitedAt("2024.01.10")
 			.imageUrl("https://exampleimageurl.com")
 			.description("진짜진짜진짜진짜맛있어요")
 			.build();
 
-		ReviewAddResponse reviewAddResponse = ReviewAddResponse.of(7L, 1L);
+		FeedAddResponse reviewAddResponse = FeedAddResponse.of(7L, 1L);
 
-		//        given(testService.create(any(TestRequest.class))).willReturn(testResponse); 되는 코드 꼭 any로 해줘야함. 그냥 값 넣으면 response data가 안찍힘
-		given(storeService.createStoreReview(any(), any(ReviewRequest.class))).willReturn(reviewAddResponse);
+		given(storeService.createStoreFeed(any(), any(FeedRequest.class))).willReturn(reviewAddResponse);
 		// when & then
 		mockMvc.perform(
-				post("/api/v1/stores/reviews")
+				post("/api/v1/stores/feeds")
 					.with(csrf()) // Spring Security Test에서 csrf로 발생하는 403을  해결하기 위해
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer accessToken")
@@ -280,15 +276,12 @@ class StoreControllerTest extends RestDocsTestSupport {
 							.description("가게 이름"),
 						fieldWithPath("newStore.latitude").type(JsonFieldType.NUMBER).description("위도"),
 						fieldWithPath("newStore.longitude").type(JsonFieldType.NUMBER).description("경도"),
-						fieldWithPath("newStore.categoryType").type(JsonFieldType.STRING)
-							.description("또잇 카테고리 타입 (KOREAN, JAPANESE, CHINESE, CAFE, WESTERN, BARS, ETC..)"),
 						fieldWithPath("newStore.kakaoStoreId").type(JsonFieldType.NUMBER).description("카카오 가게 고유 ID"),
 						fieldWithPath("newStore.kakaoCategoryName").type(JsonFieldType.STRING)
 							.description("카카오 카테고리 분류 기준 (빵집, 뷔페 등 카카오에서 내려오는 값 저장하기 위함)"),
 						fieldWithPath("newStore.address").type(JsonFieldType.STRING).description("가게 주소"),
 						fieldWithPath("rating").type(JsonFieldType.NUMBER).description("별점"),
-						fieldWithPath("visitedAt").type(JsonFieldType.STRING).description("방문 날짜"),
-						fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("첨부된 이미지 url").optional(),
+						fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("첨부된 이미지 url"),
 						fieldWithPath("description").type(JsonFieldType.STRING).description("리뷰 내용")
 					),
 					responseFields(
@@ -305,30 +298,28 @@ class StoreControllerTest extends RestDocsTestSupport {
 	@Test
 	public void createNewStoreReview() throws Exception {
 		// given
-		ReviewRequest requestWithNewStore = ReviewRequest.builder()
+		FeedRequest requestWithNewStore = FeedRequest.builder()
 			.newStore(
 				NewStoreRequest.builder()
 					.storeName("칠기마라탕")
 					.latitude(127.239487)
 					.longitude(37.29472)
-					.categoryType("KOREAN")
 					.kakaoStoreId(1234L)
 					.kakaoCategoryName("간식")
 					.address("서울시 강남구 역삼동 123-123")
 					.build())
 			.rating(5)
-			.visitedAt("2024.01.10")
 			.imageUrl("https://exampleimageurl.com")
 			.description("진짜진짜진짜진짜맛있어요")
 			.build();
 
-		ReviewAddResponse reviewAddResponse = ReviewAddResponse.of(7L, 3L);
+		FeedAddResponse reviewAddResponse = FeedAddResponse.of(7L, 3L);
 
-		//        given(testService.create(any(TestRequest.class))).willReturn(testResponse); 되는 코드 꼭 any로 해줘야함. 그냥 값 넣으면 response data가 안찍힘
-		given(storeService.createStoreReview(any(), any(ReviewRequest.class))).willReturn(reviewAddResponse);
+		given(storeService.createStoreFeed(any(), any(FeedRequest.class))).willReturn(reviewAddResponse);
+
 		// when & then
 		mockMvc.perform(
-				post("/api/v1/stores/reviews")
+				post("/api/v1/stores/feeds")
 					.with(csrf()) // Spring Security Test에서 csrf로 발생하는 403을  해결하기 위해
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer accessToken")
@@ -347,15 +338,12 @@ class StoreControllerTest extends RestDocsTestSupport {
 							.description("가게 이름"),
 						fieldWithPath("newStore.latitude").type(JsonFieldType.NUMBER).description("위도"),
 						fieldWithPath("newStore.longitude").type(JsonFieldType.NUMBER).description("경도"),
-						fieldWithPath("newStore.categoryType").type(JsonFieldType.STRING)
-							.description("또잇 카테고리 타입 (KOREAN, JAPANESE, CHINESE, CAFE, WESTERN, BARS, ETC..)"),
 						fieldWithPath("newStore.kakaoStoreId").type(JsonFieldType.NUMBER).description("카카오 가게 고유 ID"),
 						fieldWithPath("newStore.kakaoCategoryName").type(JsonFieldType.STRING)
 							.description("카카오 카테고리 분류 기준 (빵집, 뷔페 등 카카오에서 내려오는 값 저장하기 위함)"),
 						fieldWithPath("newStore.address").type(JsonFieldType.STRING).description("가게 주소"),
 						fieldWithPath("rating").type(JsonFieldType.NUMBER).description("별점"),
-						fieldWithPath("visitedAt").type(JsonFieldType.STRING).description("방문 날짜"),
-						fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("첨부된 이미지 url").optional(),
+						fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("첨부된 이미지 url"),
 						fieldWithPath("description").type(JsonFieldType.STRING).description("리뷰 내용")
 					),
 					responseFields(
@@ -596,11 +584,11 @@ class StoreControllerTest extends RestDocsTestSupport {
 	@Test
 	void getUserDailyStoreReviewLimit() throws Exception {
 		// given
-		given(storeService.checkUserDailyStoreReviewLimit(any(), eq(1L))).willReturn(ReviewAddLimitResponse.of(false));
+		given(storeService.checkUserDailyStoreFeedLimit(any(), eq(1L))).willReturn(FeedAddLimitResponse.of(false));
 
 		// when
 		mockMvc.perform(
-				get("/api/v1/stores/{storeId}/reviews/check-limit", 1L)
+				get("/api/v1/stores/{storeId}/feeds/check-limit", 1L)
 					.with(csrf())
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer accessToken"))
