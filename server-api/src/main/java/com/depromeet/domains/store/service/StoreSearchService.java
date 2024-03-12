@@ -7,11 +7,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.depromeet.domains.store.controller.KakaoSearchClient;
-import com.depromeet.enums.CategoryType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.depromeet.domains.store.controller.KakaoSearchClient;
 import com.depromeet.domains.store.dto.response.StoreSearchResponse;
 import com.depromeet.domains.store.dto.response.StoreSearchResult;
 import com.depromeet.domains.store.entity.Store;

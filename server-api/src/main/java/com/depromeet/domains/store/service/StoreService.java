@@ -4,14 +4,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,23 +16,23 @@ import org.springframework.transaction.annotation.Transactional;
 import com.depromeet.S3.S3Service;
 import com.depromeet.common.exception.CustomException;
 import com.depromeet.common.exception.Result;
+import com.depromeet.domains.bookmark.entity.Bookmark;
 import com.depromeet.domains.bookmark.repository.BookmarkRepository;
+import com.depromeet.domains.feed.entity.Feed;
 import com.depromeet.domains.feed.repository.FeedRepository;
+import com.depromeet.domains.store.dto.request.FeedRequest;
 import com.depromeet.domains.store.dto.request.NewStoreRequest;
-import com.depromeet.domains.store.dto.request.ReviewRequest;
-import com.depromeet.domains.store.dto.response.ReviewAddLimitResponse;
-import com.depromeet.domains.store.dto.response.ReviewAddResponse;
+import com.depromeet.domains.store.dto.response.FeedAddLimitResponse;
+import com.depromeet.domains.store.dto.response.FeedAddResponse;
+import com.depromeet.domains.store.dto.response.StoreFeedResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
 import com.depromeet.domains.store.dto.response.StoreReportResponse;
-import com.depromeet.domains.store.dto.response.StoreReviewResponse;
 import com.depromeet.domains.store.dto.response.StoreSharingSpotResponse;
 import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.store.repository.StoreRepository;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.repository.UserRepository;
-import com.depromeet.enums.CategoryType;
-import com.depromeet.enums.ReviewType;
 import com.depromeet.enums.UserLevel;
 import com.depromeet.enums.ViewLevel;
 
@@ -58,19 +55,7 @@ public class StoreService {
 	public StorePreviewResponse getStore(Long storeId, User user) {
 
 		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
-		List<Review> reviews = feedRepository.findTop10ByStoreOrderByVisitedAtDesc(store);
-
-		ArrayList<String> reviewImageUrls = new ArrayList<>();
-		for (Review review : reviews) {
-			String imageUrl = review.getImageUrl();
-			if (imageUrl != null) {
-				reviewImageUrls.add(imageUrl);
-			}
-		}
-
-		Long myRevisitedCount = feedRepository.countByStoreAndUser(store, user);
-		StoreMeta storeMeta = store.getStoreMeta();
-		Long totalRevisitedCount = storeMeta.getTotalRevisitedCount();
+		List<String> feedImageUrls = feedRepository.findTop10FeedImagesByCreatedAtDesc(store.getStoreId());
 
 		Boolean isBookmarked = false;
 		if (bookmarkRepository.findByUserAndStore(user, store).isPresent()) {
@@ -79,15 +64,13 @@ public class StoreService {
 
 		return StorePreviewResponse.of(
 			store.getStoreId(),
-			store.getCategory().getCategoryName(),
+			store.getKakaoCategoryName(),
 			store.getStoreName(),
 			store.getAddress(),
-			storeMeta.getTotalRating(),
-			storeMeta.getTotalReviewCount(),
-			reviewImageUrls,
+			store.getTotalRating(),
+			store.getTotalFeedCnt(),
+			feedImageUrls,
 			user.getUserId(),
-			myRevisitedCount,
-			totalRevisitedCount,
 			isBookmarked);
 	}
 
@@ -96,80 +79,41 @@ public class StoreService {
 	public StoreReportResponse getStoreReport(Long storeId) {
 		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 
-		StoreMeta storeMeta = store.getStoreMeta();
-
-		Long mostVisitedCount = storeMeta.getMostVisitedCount();
-		Long totalRevisitedCount = storeMeta.getTotalRevisitedCount();
-
 		return StoreReportResponse.of(
 			store.getStoreId(),
 			store.getThumbnailUrl(),
-			mostVisitedCount,
-			totalRevisitedCount);
+			null, null);
 	}
 
 	// 음식점 리뷰 조회(타입별 조회)
 	@Transactional(readOnly = true)
-	public Slice<StoreReviewResponse> getStoreReview(User user, Long storeId, Optional<ReviewType> reviewType,
+	public Slice<StoreFeedResponse> getStoreFeed(User user, Long storeId,
 		Pageable pageable) {
 
 		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 
 		Integer size = 10;
-		Sort sort = Sort.by(Sort.Direction.DESC, "visitedAt");
+		Sort sort = Sort.by(Sort.Direction.DESC, "createAt");
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), size, sort);
 
-		Slice<Review> reviews = null;
-		if (reviewType.isEmpty()) {
-			reviews = feedRepository.findByStore(store, pageRequest);
-		} else if (reviewType.get() == ReviewType.REVISITED) {
-			reviews = feedRepository.findRevisitedReviews(store, pageRequest);
-		} else if (reviewType.get() == ReviewType.PHOTO) {
-			reviews = feedRepository.findByStoreAndImageUrlIsNotNullOrderByVisitedAtDesc(store, pageRequest);
-		}
-
+		Slice<StoreFeedResponse> feeds = feedRepository.findFeedByStoreId(storeId, (PageRequest)pageable,
+			user.getUserId());
 		// Review 객체를 StoreLogResponse DTO로 변환하여 Slice 객체에 담아 반환
-		Slice<StoreReviewResponse> storeReviewResponse = getStoreReviewResponses(user, reviews, store);
-
-		return storeReviewResponse;
-	}
-
-	private Slice<StoreReviewResponse> getStoreReviewResponses(User user, Slice<Review> reviews, Store store) {
-		List<StoreReviewResponse> storeReviewResponseList = reviews.getContent().stream()
-			.map(review -> {
-				Integer maxVisitTimes = feedRepository.maxVisitTimes(store, review.getUser());
-				// 현재 사용자가 리뷰 작성자와 동일한지 확인
-				Boolean isMine = review.getUser().getUserId().equals(user.getUserId()); // 사용자 비교 로직 수정
-				String imageUrl = review.getImageUrl() != null ? review.getImageUrl() : "";
-				// 필요한 정보를 포함하여 StoreReviewResponse 객체 생성
-				return StoreReviewResponse.of(
-					review.getUser().getUserId(),
-					review.getReviewId(),
-					review.getUser().getNickName(),
-					review.getRating(),
-					imageUrl,
-					maxVisitTimes,
-					review.getVisitedAt(),
-					review.getDescription(),
-					isMine
-				);
-			})
-			.collect(Collectors.toList());
-
-		Slice<StoreReviewResponse> storeReviewResponse = new SliceImpl<>(storeReviewResponseList, reviews.getPageable(),
-			reviews.hasNext());
-		return storeReviewResponse;
+		return feeds;
 	}
 
 	@Transactional(readOnly = true)
 	public StoreLocationRangeResponse getRangeStores(Double leftTopLatitude, Double leftTopLongitude,
-		Double rightBottomLatitude, Double rightBottomLongitude, Integer level, Optional<CategoryType> categoryType,
-		User user) {
+		Double rightBottomLatitude, Double rightBottomLongitude, Integer level, User user) {
 
 		List<StoreLocationRangeResponse.StoreLocationRange> totalList = new ArrayList<>();
 
-		List<Store> bookMarkStoreList = this.storeRepository.findByUsersBookMarkList(user.getUserId());
-		List<Long> bookMarkStoreIdList = storeToIdList(bookMarkStoreList);
+		List<Bookmark> bookmarks = this.bookmarkRepository.findByUserId(user.getUserId());
+		List<Long> bookMarkStoreIdList = bookmarks.stream()
+			.map(Bookmark::getStoreId)
+			.collect(Collectors.toList());
+
+		List<Store> bookMarkStoreList = this.storeRepository.findByStoreIdList(bookMarkStoreIdList);
 
 		double maxLatitude = Double.max(leftTopLatitude, rightBottomLatitude);
 		double minLatitude = Double.min(leftTopLatitude, rightBottomLatitude);
@@ -177,15 +121,10 @@ public class StoreService {
 		double minLongitude = Double.min(leftTopLongitude, rightBottomLongitude);
 
 		ViewLevel viewLevel = ViewLevel.findByLevel(level);
-		CategoryType type = categoryType.isEmpty() ? null : CategoryType.findByType(categoryType.get().getType());
 
-		List<Store> storeListWithCondition = this.storeRepository.findByLocationRangesWithCategory(maxLatitude,
-			minLatitude, maxLongitude, minLongitude, type, bookMarkStoreIdList);
-
-		if (bookMarkStoreIdList.size() == 0) {
-			storeListWithCondition = this.storeRepository.findByLocationRangesWithCategoryNoExcept(maxLatitude,
-				minLatitude, maxLongitude, minLongitude, type);
-		}
+		List<Store> storeListWithCondition
+			= this.storeRepository.findByLocationRangesNotInBookmarks(maxLatitude,
+			minLatitude, maxLongitude, minLongitude, bookMarkStoreIdList);
 
 		int viewStoreListCount = calculateViewStoreListRatio(storeListWithCondition.size(), viewLevel);
 
@@ -218,20 +157,17 @@ public class StoreService {
 
 	private List<StoreLocationRangeResponse.StoreLocationRange> toStoreLocationRange(List<Store> storeList,
 		Boolean isBookmarked) {
+
 		return storeList.stream()
 			.map(store ->
 				StoreLocationRangeResponse.StoreLocationRange.of(
 					store.getStoreId(),
 					store.getKakaoStoreId(),
 					store.getStoreName(),
-					store.getCategory().getCategoryId(),
-					store.getCategory().getCategoryName(),
-					store.getCategory().getCategoryType().getName(),
 					store.getAddress(),
 					store.getLocation().getLongitude(),
 					store.getLocation().getLatitude(),
-					store.getStoreMeta().getTotalRevisitedCount(),
-					store.getStoreMeta().getTotalReviewCount(),
+					store.getTotalFeedCnt(),
 					isBookmarked))
 			.collect(Collectors.toList());
 	}
@@ -255,112 +191,63 @@ public class StoreService {
 	}
 
 	@Transactional
-	public synchronized ReviewAddResponse createStoreReview(User user, ReviewRequest reviewRequest) {
-		Store store;
-		if (reviewRequest.getStoreId() != null) {
-			// 기존 StoreMeta 정보 업데이트
-			store = updateStoreMeta(reviewRequest.getStoreId(), user, reviewRequest.getRating());
-			if (store.getThumbnailUrl() == null && reviewRequest.getImageUrl() != null) {
-				store.setThumbnailUrl(reviewRequest.getImageUrl());
-			}
-		} else {
-			// 새로운 Store 생성
-			store = createNewStoreWithMeta(reviewRequest.getNewStore(), reviewRequest.getRating());
-			if (reviewRequest.getImageUrl() != null) {
-				store.setThumbnailUrl(reviewRequest.getImageUrl());
-			}
-		}
-		storeRepository.save(store);
-		Review review = saveReview(user, store, reviewRequest);
-		user.increaseMyReviewCount();
+	public synchronized FeedAddResponse createStoreFeed(User user, FeedRequest feedRequest) {
+		Store store = processStore(feedRequest);
+		Feed feed = feedRepository.save(feedRequest.toEntity(user));
+
+		return FeedAddResponse.of(feed.getFeedId(), store.getStoreId());
+	}
+
+	private void updateUserProfile(User user) {
+		user.increaseMyFeedCount();
 		user.updateUserLevel(getUserLevel(user));
 		userRepository.save(user);
+	}
 
-		return ReviewAddResponse.of(review.getReviewId(), store.getStoreId());
+	private Store processStore(FeedRequest feedRequest) {
+		Store store = feedRequest.hasStoreId()
+			? updateStoreInfo(feedRequest)
+			: createNewStore(feedRequest);
+
+		return storeRepository.save(store);
 	}
 
 	private UserLevel getUserLevel(User user) {
-		int userReviewCount = user.getMyReviewCount();
-		if (userReviewCount >= 20) {
+		int userMyFeedCnt = user.getMyFeedCnt();
+		if (userMyFeedCnt >= 20) {
 			return UserLevel.LEVEL4;
 		}
-		if (userReviewCount >= 6) {
+		if (userMyFeedCnt >= 6) {
 			return UserLevel.LEVEL3;
 		}
-		if (userReviewCount >= 1) {
+		if (userMyFeedCnt >= 1) {
 			return UserLevel.LEVEL2;
 		}
 		return UserLevel.LEVEL1;
 	}
 
-	private Store updateStoreMeta(Long storeId, User user, Integer rating) {
-		Store store = storeRepository.findById(storeId)
+	private Store updateStoreInfo(FeedRequest feedRequest) {
+		Store store = storeRepository.findById(feedRequest.getStoreId())
 			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 
-		StoreMeta storeMeta = store.getStoreMeta();
-
 		// 평점과 리뷰 개수 업데이트
-		storeMeta.updateTotalRating(rating);
-		storeMeta.increaseTotalReviewCount();
-
-		// 사용자가 이 가게에 대해 작성한 리뷰 개수 확인
-		Long userReviewCount = feedRepository.countByStoreAndUser(store, user);
-		if (userReviewCount == 1) {
-			// 두 번째 리뷰인 경우, 재방문 횟수 증가
-			storeMeta.increaseTotalRevisitedCount();
-		}
-
-		// 최다 방문자 횟수 업데이트
-		storeMeta.updateMostRevisitedCount(userReviewCount + 1);
-		storeMetaRepository.save(storeMeta);
+		store.updateTotalRating(feedRequest.getRating());
+		store.increaseTotalFeedCnt();
+		;
 		return store;
 	}
 
-	private Store createNewStoreWithMeta(NewStoreRequest newStoreRequest, Integer rating) {
-
-		Store store = storeRepository.findByKakaoStoreId(newStoreRequest.getKakaoStoreId());
+	private Store createNewStore(FeedRequest feedRequest) {
+		NewStoreRequest newStore = feedRequest.getNewStore();
+		Store store = storeRepository.findByKakaoStoreId(newStore.getKakaoStoreId());
 		if (store != null) {
 			throw new CustomException(Result.DUPLICATED_STORE);
 		}
-		// store 객체 만들기
-		store = buildNewStore(newStoreRequest);
-		// storemeta 객체 초기화
-		StoreMeta storeMeta = StoreMeta.builder()
-			.totalRevisitedCount(0L)
-			.totalReviewCount(1L)
-			.mostVisitedCount(1L)
-			.totalRating(rating.floatValue())
-			.kakaoCategoryName(newStoreRequest.getKakaoCategoryName())
-			.build();
-
-		store.setStoreMeta(storeMeta);
-
-		return store;
+		return storeRepository.save(newStore.toEntity(feedRequest.getRating(), feedRequest.getImageUrl()));
 	}
 
-	private Store buildNewStore(NewStoreRequest newStoreRequest) {
-		String categoryName = newStoreRequest.getCategoryType(); // 예: "한식"
-
-		CategoryType categoryType = CategoryType.fromDescription(categoryName)
-			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_CATEGORY));
-
-		Category category = categoryRepository.findByCategoryType(categoryType)
-			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_CATEGORY));
-
-		return newStoreRequest.toEntity(category);
-	}
-
-	private int getVisitTimes(Long storeId, Store store, User user) {
-		return storeId != null
-			? feedRepository.countByStoreAndUser(store, user).intValue() + 1
-			: 1;
-	}
-
-	private Review saveReview(User user, Store store, ReviewRequest reviewRequest) {
-		int visitTimes = getVisitTimes(reviewRequest.getStoreId(), store, user);
-		Review review = reviewRequest.toEntity(store, user, visitTimes);
-		feedRepository.save(review);
-		return review;
+	private Feed saveFeed(Feed feed) {
+		return feedRepository.save(feed);
 	}
 
 	@Transactional
@@ -458,15 +345,16 @@ public class StoreService {
 		storeMeta.decreaseTotalRevisitCount();
 	}
 
-	public ReviewAddLimitResponse checkUserDailyStoreReviewLimit(User user, Long storeId) {
+	public FeedAddLimitResponse checkUserDailyStoreFeedLimit(User user, Long storeId) {
 		Store store = storeRepository.findById(storeId)
 			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 
 		LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
 		LocalDateTime endOfDay = LocalDate.now().atTime(23, 59, 59);
 
-		int reviewCount = feedRepository.countStoreReviewByUserForDay(user, store, startOfDay, endOfDay);
-		return ReviewAddLimitResponse.of(reviewCount < 3);
+		Long feedCount = feedRepository.countStoreReviewByUserForDay(user.getUserId(), store.getStoreId(), startOfDay,
+			endOfDay);
+		return FeedAddLimitResponse.of(feedCount < 3);
 	}
 
 	@Transactional(readOnly = true)
@@ -475,17 +363,14 @@ public class StoreService {
 		User user = this.userRepository.findById(userId).orElseThrow(
 			() -> new CustomException(Result.NOT_FOUND_USER));
 
-		List<Review> reviews = this.feedRepository.findByUser(user);
+		List<Feed> feeds = this.feedRepository.findByUser(user);
 
-		// 재방문이상(리뷰 수 2개 이상)의 식당만 공유
-		List<Store> revisitedStores = reviews.stream()
-			.collect(Collectors.groupingBy(Review::getStore))
-			.entrySet()
-			.stream()
-			.filter(entry -> entry.getValue().size() >= 2)
-			.map(Map.Entry::getKey)
+		List<Store> storesMoreThanTwoFeeds = feeds.stream()
+			.map(feed -> storeRepository.findById(feed.getStoreId())
+				.orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE)))
+			.filter(store -> store.getTotalFeedCnt() >= 2)
 			.collect(Collectors.toList());
 
-		return StoreSharingSpotResponse.of(user.getNickName(), toStoreSharingSpot(revisitedStores));
+		return StoreSharingSpotResponse.of(user.getNickName(), toStoreSharingSpot(storesMoreThanTwoFeeds));
 	}
 }
