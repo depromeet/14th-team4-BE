@@ -39,9 +39,7 @@ import com.depromeet.domains.store.dto.response.StorePreviewResponse;
 import com.depromeet.domains.store.dto.response.StoreReportResponse;
 import com.depromeet.domains.store.dto.response.StoreFeedResponse;
 import com.depromeet.domains.store.dto.response.StoreSharingSpotResponse;
-import com.depromeet.enums.CategoryType;
 import com.depromeet.enums.FeedType;
-import com.depromeet.enums.ReviewType;
 
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
@@ -496,7 +494,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 				.address("서울특별시 1")
 				.longitude(127.239487)
 				.latitude(37.29472)
-				.totalReviewCount(1L)
+				.totalFeedCnt(1L)
 				.build();
 
 		StoreSharingSpotResponse.StoreSharingSpot storeSharingSpot2 =
@@ -507,7 +505,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 				.address("서울특별시 2")
 				.longitude(127.239487)
 				.latitude(37.29472)
-				.totalReviewCount(1L)
+				.totalFeedCnt(1L)
 				.build();
 
 		StoreSharingSpotResponse.StoreSharingSpot storeSharingSpot3 =
@@ -518,7 +516,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 				.address("서울특별시 3")
 				.longitude(127.239487)
 				.latitude(37.29472)
-				.totalReviewCount(1L)
+				.totalFeedCnt(1L)
 				.build();
 
 		StoreSharingSpotResponse.StoreSharingSpot storeSharingSpot4 =
@@ -529,7 +527,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 				.address("서울특별시 4")
 				.longitude(127.239487)
 				.latitude(37.29472)
-				.totalReviewCount(1L)
+				.totalFeedCnt(1L)
 				.build();
 
 		List<StoreSharingSpotResponse.StoreSharingSpot> storeSharingSpotList = Arrays.asList(
@@ -574,8 +572,8 @@ class StoreControllerTest extends RestDocsTestSupport {
 							.description("음식점 위도"),
 						fieldWithPath("data.locationStoreList[].latitude").type(JsonFieldType.NUMBER)
 							.description("음식점 경도"),
-						fieldWithPath("data.locationStoreList[].totalReviewCount").type(JsonFieldType.NUMBER)
-							.description("총 리뷰 갯수")
+						fieldWithPath("data.locationStoreList[].totalFeedCnt").type(JsonFieldType.NUMBER)
+							.description("총 피드 갯수")
 					)
 				)
 			);
