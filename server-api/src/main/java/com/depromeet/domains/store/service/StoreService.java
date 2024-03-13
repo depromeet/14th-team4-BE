@@ -179,14 +179,10 @@ public class StoreService {
 					store.getStoreId(),
 					store.getKakaoStoreId(),
 					store.getStoreName(),
-					store.getCategory().getCategoryId(),
-					store.getCategory().getCategoryName(),
-					store.getCategory().getCategoryType().getName(),
 					store.getAddress(),
 					store.getLocation().getLongitude(),
 					store.getLocation().getLatitude(),
-					store.getStoreMeta().getTotalRevisitedCount(),
-					store.getStoreMeta().getTotalReviewCount()))
+					store.getTotalFeedCnt()))
 			.collect(Collectors.toList());
 	}
 
