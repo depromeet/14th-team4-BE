@@ -376,7 +376,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.address("서울특별시 1")
 			.longitude(127.239487)
 			.latitude(37.29472)
-			.totalFeedCount(1L)
+			.totalFeedCnt(1L)
 			.isBookmarked(true)
 			.build();
 
@@ -387,7 +387,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.address("서울특별시 2")
 			.longitude(127.239487)
 			.latitude(37.29472)
-			.totalFeedCount(1L)
+			.totalFeedCnt(1L)
 			.isBookmarked(true)
 			.build();
 
@@ -398,7 +398,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.address("서울특별시 3")
 			.longitude(127.239487)
 			.latitude(37.29472)
-			.totalFeedCount(1L)
+			.totalFeedCnt(1L)
 			.isBookmarked(false)
 			.build();
 
@@ -409,7 +409,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 			.address("서울특별시 4")
 			.longitude(127.239487)
 			.latitude(37.29472)
-			.totalFeedCount(1L)
+			.totalFeedCnt(1L)
 			.isBookmarked(false)
 			.build();
 
