@@ -28,10 +28,10 @@ public class StoreSharingSpotResponse {
 		private String address;
 		private Double longitude;
 		private Double latitude;
-		private Long totalReviewCount;
+		private Long totalFeedCnt;
 
 		public static StoreSharingSpot of(Long storeId, Long kakaoStoreId, String storeName,
-			String address, Double longitude, Double latitude, Long totalReviewCount) {
+			String address, Double longitude, Double latitude, Long totalFeedCnt) {
 			return StoreSharingSpot.builder()
 				.storeId(storeId)
 				.kakaoStoreId(kakaoStoreId)
@@ -39,7 +39,7 @@ public class StoreSharingSpotResponse {
 				.address(address)
 				.longitude(longitude)
 				.latitude(latitude)
-				.totalReviewCount(totalReviewCount)
+				.totalFeedCnt(totalFeedCnt)
 				.build();
 		}
 	}
