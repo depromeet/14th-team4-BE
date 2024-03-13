@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.depromeet.domains.store.dto.StoreFeedResponse;
+import com.depromeet.domains.store.dto.response.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -22,13 +24,6 @@ import com.depromeet.domains.feed.entity.Feed;
 import com.depromeet.domains.feed.repository.FeedRepository;
 import com.depromeet.domains.store.dto.request.FeedRequest;
 import com.depromeet.domains.store.dto.request.NewStoreRequest;
-import com.depromeet.domains.store.dto.response.FeedAddLimitResponse;
-import com.depromeet.domains.store.dto.response.FeedAddResponse;
-import com.depromeet.domains.store.dto.response.StoreFeedResponse;
-import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
-import com.depromeet.domains.store.dto.response.StorePreviewResponse;
-import com.depromeet.domains.store.dto.response.StoreReportResponse;
-import com.depromeet.domains.store.dto.response.StoreSharingSpotResponse;
 import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.store.repository.StoreRepository;
 import com.depromeet.domains.user.entity.User;
@@ -58,7 +53,7 @@ public class StoreService {
 		List<String> feedImageUrls = feedRepository.findTop10FeedImagesByCreatedAtDesc(store.getStoreId());
 
 		Boolean isBookmarked = false;
-		if (bookmarkRepository.findByUserAndStore(user, store).isPresent()) {
+		if (bookmarkRepository.findByUserIdAndStoreId(user.getUserId(), store.getStoreId()).isPresent()) {
 			isBookmarked = true;
 		}
 
@@ -88,7 +83,7 @@ public class StoreService {
 	// 음식점 리뷰 조회(타입별 조회)
 	@Transactional(readOnly = true)
 	public Slice<StoreFeedResponse> getStoreFeed(User user, Long storeId,
-		Pageable pageable) {
+												 Pageable pageable) {
 
 		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 
@@ -96,7 +91,7 @@ public class StoreService {
 		Sort sort = Sort.by(Sort.Direction.DESC, "createAt");
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), size, sort);
 
-		Slice<StoreFeedResponse> feeds = feedRepository.findFeedByStoreId(storeId, (PageRequest)pageable,
+		Slice<com.depromeet.domains.store.dto.StoreFeedResponse> feeds = feedRepository.findFeedByStoreId(storeId, (PageRequest)pageable,
 			user.getUserId());
 		// Review 객체를 StoreLogResponse DTO로 변환하여 Slice 객체에 담아 반환
 		return feeds;
@@ -246,100 +241,6 @@ public class StoreService {
 		return feedRepository.save(feed);
 	}
 
-	@Transactional
-	public void deleteStoreReview(User user, Long reviewId) {
-		Review review = feedRepository.findById(reviewId)
-			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_REVIEW));
-
-		if (!review.getUser().getUserId().equals(user.getUserId())) {
-			throw new CustomException(Result.UNAUTHORIZED_USER);
-		}
-
-		Store store = review.getStore();
-		StoreMeta storeMeta = store.getStoreMeta();
-		String imageUrl = review.getImageUrl();
-
-		Long myRevisitedCount = feedRepository.countByStoreAndUser(store, user); // 나의 재방문 횟수
-		Long mostVisitedCount = storeMeta.getMostVisitedCount(); // 최다 방문 유저의 방문 수
-		Long duplicateMostVisitedCount = feedRepository.countByStoreAndReviewCount(store.getStoreId(),
-			mostVisitedCount); // 최다 방문자의 인원수(최다 방문자가 여러명)
-
-		boolean isDuplicateMostVisitor = duplicateMostVisitedCount > 1; // 최다 방문자가 여러명인지 여부
-		boolean isMostVisitor = mostVisitedCount.equals(myRevisitedCount); // 내가 해당 음식점의 최다 방문자 인지 여부
-		boolean hasVisitedThreeOrMore = myRevisitedCount >= 3; // 내 재방문 횟수가 3번 이상인지
-
-		// 총 별점 및 전체 리뷰 개수 업데이트
-		storeMeta.updateTotalRatingAfterDeletion(review.getRating());
-		storeMeta.decreaseTotalReviewCount();
-
-		if (isMostVisitor && isDuplicateMostVisitor) { // 나도 최다 방문자이고, 최다 방문자가 여러명인 경우
-			log.info("나도 최다 방문자, 최다 방문자 여려명");
-			processReviewForDuplicateMostVisitor(storeMeta, hasVisitedThreeOrMore);
-			feedRepository.delete(review);
-			return;
-		}
-
-		if (isMostVisitor) { // 나만 최다 방문자인 경우
-			log.info("나만 최다 방문자");
-			processReviewForSingleMostVisitor(storeMeta, hasVisitedThreeOrMore);
-			feedRepository.delete(review);
-			return;
-		}
-
-		// 내가 최다방문자가 아닌 경우
-		log.info("내가 최다 방문자가 아니고, 최다 방문자가 여러명도 아닌 경우");
-		processReviewForNonMostVisitor(storeMeta, hasVisitedThreeOrMore);
-		feedRepository.delete(review);
-
-		user.decreaseMyReviewCount();
-
-		if (storeMeta.getTotalReviewCount() == 0) {
-			log.info("음식점도 삭제");
-			storeRepository.delete(store);
-		}
-
-		if (imageUrl != null) {
-			Integer lastIdx = imageUrl.lastIndexOf("/") + 1;
-			String fileName = imageUrl.substring(lastIdx);
-			s3Service.deleteFile(fileName);
-		}
-	}
-
-	private void processReviewForDuplicateMostVisitor(StoreMeta storeMeta, boolean hasVisitedThreeOrMore) {
-		if (hasVisitedThreeOrMore) { // 내 재방문 횟수가 3번 이상인 경우
-			log.info("내 재방문 횟수가 3번 이상");
-			return;
-		}
-		// 내 재방문 횟수가 3번 이상이 아닌 경우
-		log.info("내 재방문 횟수가 3번 미만");
-		// 최다 방문자의 재방문 횟수 유지, 전체 재방문 인원의 수 1 감소
-		storeMeta.decreaseTotalRevisitCount();
-	}
-
-	private void processReviewForSingleMostVisitor(StoreMeta storeMeta, boolean hasVisitedThreeOrMore) {
-		storeMeta.decreaseMostVisitedCount(); // 나만 최다 방문자이므로 최다 방문자의 재방문 횟수 1감소
-		if (hasVisitedThreeOrMore) { // 내 재방문 횟수가 3번 이상인 경우
-			log.info("내 재방문 횟수가 3번 이상");
-			// 전체 재방문 인원 수 유지
-			return;
-		}
-		// 내 재방문 횟수가 3번 이상이 아닌 경우
-		log.info("내 재방문 횟수가 3번 미만");
-		// 최다 방문자의 재방문 횟수 1감소, 전체 재방문 인원 수 1감소
-		storeMeta.decreaseTotalRevisitCount();
-	}
-
-	private void processReviewForNonMostVisitor(StoreMeta storeMeta, boolean hasVisitedThreeOrMore) {
-		if (hasVisitedThreeOrMore) { // 내 재방문 횟수가 3번 이상인 경우
-			log.info("내 재방문 횟수가 3번 이상");
-			// 최다 방문자의 재방문 횟수 유지, 전체 재방문 인원 수 유지
-			return;
-		}
-		// 내 재방문 횟수가 3번 이상이 아닌 경우
-		log.info("내 재방문 횟수가 3번 미만");
-		// 최다 방문자의 재방문 횟수 유지, 전체 재방문 인원 수 1감소
-		storeMeta.decreaseTotalRevisitCount();
-	}
 
 	public FeedAddLimitResponse checkUserDailyStoreFeedLimit(User user, Long storeId) {
 		Store store = storeRepository.findById(storeId)
@@ -359,7 +260,7 @@ public class StoreService {
 		User user = this.userRepository.findById(userId).orElseThrow(
 			() -> new CustomException(Result.NOT_FOUND_USER));
 
-		List<Feed> feeds = this.feedRepository.findByUser(user);
+		List<Feed> feeds = this.feedRepository.findByUserId(user.getUserId());
 
 		List<Store> storesMoreThanTwoFeeds = feeds.stream()
 			.map(feed -> storeRepository.findById(feed.getStoreId())
