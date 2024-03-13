@@ -26,5 +26,5 @@ public class Comment extends BaseTimeEntity {
 
     private Long feedId;
 
-    private String content;
+    private String description;
 }
