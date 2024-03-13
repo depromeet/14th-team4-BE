@@ -2,8 +2,7 @@ package com.depromeet.domains.feed.repository;
 
 
 
-import com.depromeet.domains.store.dto.response.StoreFeedResponse;
-import org.springframework.data.domain.PageRequest;
+import com.depromeet.domains.store.dto.StoreFeedResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
@@ -11,8 +10,6 @@ import java.util.List;
 
 import java.time.LocalDateTime;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 
 import com.depromeet.domains.feed.entity.Feed;
 
