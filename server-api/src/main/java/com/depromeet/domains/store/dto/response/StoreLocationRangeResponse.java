@@ -26,11 +26,11 @@ public class StoreLocationRangeResponse {
 		private String address;
 		private Double longitude;
 		private Double latitude;
-		private Long totalFeedCount;
+		private Long totalFeedCnt;
 		private Boolean isBookmarked;
 
 		public static StoreLocationRange of(Long storeId, Long kakaoStoreId, String storeName,
-			String address, Double longitude, Double latitude, Long totalFeedCount
+			String address, Double longitude, Double latitude, Long totalFeedCnt
 			, Boolean isBookmarked) {
 			return StoreLocationRange.builder()
 				.storeId(storeId)
@@ -39,7 +39,7 @@ public class StoreLocationRangeResponse {
 				.address(address)
 				.longitude(longitude)
 				.latitude(latitude)
-				.totalFeedCount(totalFeedCount)
+				.totalFeedCnt(totalFeedCnt)
 				.isBookmarked(isBookmarked)
 				.build();
 		}
