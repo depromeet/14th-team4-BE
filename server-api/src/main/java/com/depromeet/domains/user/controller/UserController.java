@@ -14,7 +14,7 @@ import com.depromeet.common.exception.CustomResponseEntity;
 import com.depromeet.domains.user.dto.request.NicknameRequest;
 import com.depromeet.domains.user.dto.response.UserBookmarkResponse;
 import com.depromeet.domains.user.dto.response.UserProfileResponse;
-import com.depromeet.domains.user.dto.response.UserReviewResponse;
+import com.depromeet.domains.user.dto.response.UserFeedResponse;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.service.UserService;
 
@@ -56,9 +56,9 @@ public class UserController {
 	/**
 	 * 내 리뷰 반환
 	 */
-	@GetMapping("/reviews")
-	public CustomResponseEntity<Slice<UserReviewResponse>> getMyReviews(@AuthUser User user, Pageable pageable) {
-		return CustomResponseEntity.success(userService.getUserReviews(user, pageable));
+	@GetMapping("/feeds")
+	public CustomResponseEntity<Slice<UserFeedResponse>> getMyFeeds(@AuthUser User user, Pageable pageable) {
+		return CustomResponseEntity.success(userService.getUserFeeds(user, pageable));
 	}
 
 	@DeleteMapping("/withdraw")

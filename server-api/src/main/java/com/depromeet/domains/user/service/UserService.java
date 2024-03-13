@@ -8,11 +8,13 @@ import com.depromeet.common.exception.CustomException;
 import com.depromeet.common.exception.Result;
 import com.depromeet.domains.bookmark.entity.Bookmark;
 import com.depromeet.domains.bookmark.repository.BookmarkRepository;
+import com.depromeet.domains.feed.entity.Feed;
 import com.depromeet.domains.feed.repository.FeedRepository;
 import com.depromeet.domains.store.entity.Store;
+import com.depromeet.domains.store.repository.StoreRepository;
 import com.depromeet.domains.user.dto.response.UserBookmarkResponse;
 import com.depromeet.domains.user.dto.response.UserProfileResponse;
-import com.depromeet.domains.user.dto.response.UserReviewResponse;
+import com.depromeet.domains.user.dto.response.UserFeedResponse;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.repository.UserRepository;
 
@@ -29,6 +31,7 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final BookmarkRepository bookmarkRepository;
 	private final FeedRepository feedRepository;
+	private final StoreRepository storeRepository;
 
 	@Transactional
 	public void updateUserNickname(User user, String nickname) {
@@ -48,26 +51,27 @@ public class UserService {
 	@Transactional(readOnly = true)
 	public Slice<UserBookmarkResponse> getUserBookmarks(User user, Pageable pageable) {
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
-		Slice<Bookmark> bookmarks = bookmarkRepository.findByUser(user, pageRequest);
-
+		Slice<Bookmark> bookmarks = bookmarkRepository.findByUserId(user.getUserId(), pageRequest);
+		// TODO : 쿼리 최적화 (store 정보를 한번에 가져오기)
 		List<UserBookmarkResponse> userBookmarkResponses = bookmarks.stream()
-			.map(this::getUserBookemarkResponse)
+			.map(this::getUserBookmarkResponse)
 			.collect(Collectors.toList());
 
 		return new SliceImpl<>(userBookmarkResponses, bookmarks.getPageable(), bookmarks.hasNext());
 	}
 
 	@Transactional(readOnly = true)
-	public Slice<UserReviewResponse> getUserReviews(User user, Pageable pageable) {
+	public Slice<UserFeedResponse> getUserFeeds(User user, Pageable pageable) {
 
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "visitedAt"));
-		Slice<Review> reviews = feedRepository.findByUser(user, pageRequest);
+		Slice<Feed> feeds = feedRepository.findByUserId(user.getUserId(), pageRequest);
 
-		List<UserReviewResponse> userReviewResponses = reviews.stream()
-				.map(this::getUserReviewResponse)
+		// TODO : 쿼리 최적화 (store 정보를 한번에 가져오기)
+		List<UserFeedResponse> userFeedResponses = feeds.stream()
+				.map(this::getUserFeedResponse)
 				.collect(Collectors.toList());
 
-		return new SliceImpl<>(userReviewResponses, reviews.getPageable(), reviews.hasNext());
+		return new SliceImpl<>(userFeedResponses, feeds.getPageable(), feeds.hasNext());
 	}
 
 	private User findUserById(Long userId) {
@@ -84,32 +88,35 @@ public class UserService {
 		return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, sortBy));
 	}
 
-	private UserBookmarkResponse getUserBookemarkResponse(Bookmark bookmark) {
-		Store store = bookmark.getStore();
-		boolean isVisited = feedRepository.existsByStoreAndUser(store, bookmark.getUser());
+	private UserBookmarkResponse getUserBookmarkResponse(Bookmark bookmark) {
+		Store store = storeRepository.findById(bookmark.getBookmarkId())
+			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
+
+		boolean isVisited = feedRepository.existsByStoreAndUser(bookmark.getStoreId(), bookmark.getUserId());
 
 		return UserBookmarkResponse.of(
 			bookmark.getBookmarkId(),
 			store.getStoreId(),
 			store.getStoreName(),
 			store.getAddress(),
-			store.getStoreMeta().getTotalRevisitedCount(),
-			store.getCategory().getCategoryName(),
+			store.getKakaoCategoryName(),
 			isVisited
 		);
 	}
 
-	private UserReviewResponse getUserReviewResponse(Review review) {
-		return UserReviewResponse.of(
-			review.getReviewId(),
-			review.getStore().getStoreId(),
-			review.getStore().getStoreName(),
-			review.getVisitTimes(),
-			review.getVisitedAt(),
-			review.getStore().getCategory().getCategoryName(),
-			review.getRating(),
-			review.getImageUrl(),
-			review.getDescription()
+	private UserFeedResponse getUserFeedResponse(Feed feed) {
+		Store store = storeRepository.findById(feed.getStoreId())
+			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
+
+		return UserFeedResponse.of(
+			feed.getFeedId(),
+			store.getStoreId(),
+			store.getStoreName(),
+			feed.getCreatedAt(),
+			store.getKakaoCategoryName(),
+			feed.getRating(),
+			feed.getImageUrl(),
+			feed.getDescription()
 		);
 	}
 

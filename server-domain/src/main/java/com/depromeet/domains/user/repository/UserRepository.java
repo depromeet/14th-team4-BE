@@ -12,5 +12,4 @@ public interface UserRepository extends JpaRepository<User, Long>, UserRepositor
 	@Query("SELECT u FROM User u WHERE u.socialType = :socialType AND u.socialId = :socialId AND u.deletedAt is null")
 	Optional<User> findBySocialTypeAndSocialId(@Param("socialType") SocialType socialType, @Param("socialId") String socialId);
 
-	boolean existsByNickName(String nickname);
 }

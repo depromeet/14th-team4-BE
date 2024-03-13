@@ -4,14 +4,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.depromeet.domains.feed.entity.Feed;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,20 +22,17 @@ import com.depromeet.domains.feed.entity.Feed;
 import com.depromeet.domains.feed.repository.FeedRepository;
 import com.depromeet.domains.store.dto.request.FeedRequest;
 import com.depromeet.domains.store.dto.request.NewStoreRequest;
-import com.depromeet.domains.store.dto.response.FeedAddResponse;
 import com.depromeet.domains.store.dto.response.FeedAddLimitResponse;
+import com.depromeet.domains.store.dto.response.FeedAddResponse;
+import com.depromeet.domains.store.dto.response.StoreFeedResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
 import com.depromeet.domains.store.dto.response.StoreReportResponse;
-import com.depromeet.domains.store.dto.response.StoreFeedResponse;
 import com.depromeet.domains.store.dto.response.StoreSharingSpotResponse;
 import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.store.repository.StoreRepository;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.repository.UserRepository;
-import com.depromeet.enums.ReviewType;
-import com.depromeet.enums.CategoryType;
-import com.depromeet.enums.FeedType;
 import com.depromeet.enums.UserLevel;
 import com.depromeet.enums.ViewLevel;
 
@@ -61,7 +55,7 @@ public class StoreService {
 	public StorePreviewResponse getStore(Long storeId, User user) {
 
 		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
-		List<String > feedImageUrls = feedRepository.findTop10FeedImagesByCreatedAtDesc(store.getStoreId());
+		List<String> feedImageUrls = feedRepository.findTop10FeedImagesByCreatedAtDesc(store.getStoreId());
 
 		Boolean isBookmarked = false;
 		if (bookmarkRepository.findByUserAndStore(user, store).isPresent()) {
@@ -88,13 +82,13 @@ public class StoreService {
 		return StoreReportResponse.of(
 			store.getStoreId(),
 			store.getThumbnailUrl(),
-				null, null);
+			null, null);
 	}
 
 	// 음식점 리뷰 조회(타입별 조회)
 	@Transactional(readOnly = true)
 	public Slice<StoreFeedResponse> getStoreFeed(User user, Long storeId,
-												   Pageable pageable) {
+		Pageable pageable) {
 
 		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 
@@ -102,7 +96,8 @@ public class StoreService {
 		Sort sort = Sort.by(Sort.Direction.DESC, "createAt");
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), size, sort);
 
-		Slice<StoreFeedResponse> feeds = feedRepository.findFeedByStoreId(storeId, (PageRequest) pageable, user.getUserId());
+		Slice<StoreFeedResponse> feeds = feedRepository.findFeedByStoreId(storeId, (PageRequest)pageable,
+			user.getUserId());
 		// Review 객체를 StoreLogResponse DTO로 변환하여 Slice 객체에 담아 반환
 		return feeds;
 	}
@@ -128,8 +123,8 @@ public class StoreService {
 		ViewLevel viewLevel = ViewLevel.findByLevel(level);
 
 		List<Store> storeListWithCondition
-								= this.storeRepository.findByLocationRangesNotInBookmarks(maxLatitude,
-											minLatitude, maxLongitude, minLongitude, bookMarkStoreIdList);
+			= this.storeRepository.findByLocationRangesNotInBookmarks(maxLatitude,
+			minLatitude, maxLongitude, minLongitude, bookMarkStoreIdList);
 
 		int viewStoreListCount = calculateViewStoreListRatio(storeListWithCondition.size(), viewLevel);
 
@@ -237,7 +232,8 @@ public class StoreService {
 
 		// 평점과 리뷰 개수 업데이트
 		store.updateTotalRating(feedRequest.getRating());
-		store.increaseTotalFeedCnt();;
+		store.increaseTotalFeedCnt();
+		;
 		return store;
 	}
 
@@ -249,7 +245,6 @@ public class StoreService {
 		}
 		return storeRepository.save(newStore.toEntity(feedRequest.getRating(), feedRequest.getImageUrl()));
 	}
-
 
 	private Feed saveFeed(Feed feed) {
 		return feedRepository.save(feed);
@@ -357,7 +352,8 @@ public class StoreService {
 		LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
 		LocalDateTime endOfDay = LocalDate.now().atTime(23, 59, 59);
 
-		Long feedCount = feedRepository.countStoreReviewByUserForDay(user.getUserId(), store.getStoreId(), startOfDay, endOfDay);
+		Long feedCount = feedRepository.countStoreReviewByUserForDay(user.getUserId(), store.getStoreId(), startOfDay,
+			endOfDay);
 		return FeedAddLimitResponse.of(feedCount < 3);
 	}
 
