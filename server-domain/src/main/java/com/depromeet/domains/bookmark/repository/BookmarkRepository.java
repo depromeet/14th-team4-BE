@@ -10,7 +10,7 @@ import com.depromeet.domains.store.entity.Store;
 import com.depromeet.domains.user.entity.User;
 
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long>, BookmarkRepositoryCustom {
-	Optional<Bookmark> findByUserAndStore(User user, Store store);
+	Optional<Bookmark> findByUserIdAndStoreId(Long userId, Long storeId);
 
 	List<Bookmark> findByUserId(Long userId);
 
