@@ -25,7 +25,7 @@ public class BookmarkService {
         Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
 
         // 사용자의 현재 북마크 상태 확인
-        Optional<Bookmark> existingBookmark = bookmarkRepository.findByUserAndStore(user, store);
+        Optional<Bookmark> existingBookmark = bookmarkRepository.findByUserIdAndStoreId(user.getUserId(), store.getStoreId());
 
         if (existingBookmark.isPresent()) {
             // 이미 북마크된 음식점일 경우 북마크 제거

@@ -2,6 +2,7 @@ package com.depromeet.domains.feed.repository;
 
 import java.util.List;
 
+import com.depromeet.domains.store.dto.StoreFeedResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -9,8 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import com.depromeet.domains.feed.entity.Feed;
 import com.depromeet.domains.feed.entity.QFeed;
-import com.depromeet.domains.feed.entity.QFeed;
-import com.depromeet.domains.store.dto.response.StoreFeedResponse;
 import java.time.LocalDateTime;
 
 import com.depromeet.domains.user.entity.QUser;
@@ -19,12 +18,6 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 @RequiredArgsConstructor

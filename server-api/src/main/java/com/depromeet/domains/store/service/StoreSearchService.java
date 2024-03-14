@@ -89,7 +89,7 @@ public class StoreSearchService {
 					kakaoCategoryName = kakaoCategories[1];
 				}
 
-				String categoryType = findByType(kakaoCategoryName);
+//				String categoryType = findByType(kakaoCategoryName);
 
 				// storeName + address 조합후 DB 검색시 존재하지 않으면 새로운 음식점이므로 revisitedCount = 0,
 				// 존재하면 revisitedCount = 해당 음식점의 revisitedCount
@@ -98,7 +98,6 @@ public class StoreSearchService {
 					Store store = storeRepository.findByKakaoStoreId(kakaoStoreId);
 					storeId = store.getStoreId();
 					log.info("store: {}", store);
-					revisitedCount = store.getStoreMeta().getTotalRevisitedCount();
 				}
 
 				return StoreSearchResult.of(
@@ -106,7 +105,7 @@ public class StoreSearchService {
 					kakaoStoreId, // 카카오 스토어 ID
 					storeName,
 					kakaoCategoryName,
-					categoryType,
+					null,
 					address,
 					distance, // 숫자로 변환
 					revisitedCount,
@@ -116,12 +115,12 @@ public class StoreSearchService {
 			.collect(Collectors.toList());
 	}
 
-	private String findByType(String categoryName) {
-		for (CategoryType categoryType : CategoryType.values()) {
-			if (categoryType.getDescription().equals(categoryName)) {
-				return categoryType.getDescription();
-			}
-		}
-		return CategoryType.ETC.getDescription();
-	}
+//	private String findByType(String categoryName) {
+//		for (CategoryType categoryType : CategoryType.values()) {
+//			if (categoryType.getDescription().equals(categoryName)) {
+//				return categoryType.getDescription();
+//			}
+//		}
+//		return CategoryType.ETC.getDescription();
+//	}
 }

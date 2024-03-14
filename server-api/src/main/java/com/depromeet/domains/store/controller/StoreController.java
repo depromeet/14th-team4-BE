@@ -1,7 +1,6 @@
 package com.depromeet.domains.store.controller;
 
-import java.util.Optional;
-
+import com.depromeet.domains.store.dto.StoreFeedResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,13 +20,9 @@ import com.depromeet.domains.store.dto.response.FeedAddLimitResponse;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
 import com.depromeet.domains.store.dto.response.StorePreviewResponse;
 import com.depromeet.domains.store.dto.response.StoreReportResponse;
-import com.depromeet.domains.store.dto.response.StoreFeedResponse;
 import com.depromeet.domains.store.dto.response.StoreSharingSpotResponse;
 import com.depromeet.domains.store.service.StoreService;
 import com.depromeet.domains.user.entity.User;
-import com.depromeet.enums.ReviewType;
-import com.depromeet.enums.CategoryType;
-import com.depromeet.enums.FeedType;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -74,8 +69,8 @@ public class StoreController {
 
 	@GetMapping("/stores/{storeId}/reviews")
 	public CustomResponseEntity<Slice<StoreFeedResponse>> getStoreFeed(@AuthUser User user,
-																		 @PathVariable Long storeId,
-																		 Pageable pageable) {
+																	   @PathVariable Long storeId,
+																	   Pageable pageable) {
 		return CustomResponseEntity.success(storeService.getStoreFeed(user, storeId, pageable));
 	}
 

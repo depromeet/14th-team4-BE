@@ -16,11 +16,11 @@ import org.hibernate.annotations.Where;
 @Entity
 @Where(clause = "deletedAt is NULL")
 @SQLDelete(sql = "UPDATE Like SET deletedAt = CURRENT_TIMESTAMP WHERE likeId = ?")
-public class Like extends BaseTimeEntity {
+public class Heart extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long likeId;
+    private Long heartId;
 
     private Long userId;
 
