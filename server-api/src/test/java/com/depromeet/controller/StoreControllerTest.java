@@ -1,20 +1,11 @@
 package com.depromeet.controller;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.*;
-import static org.springframework.restdocs.headers.HeaderDocumentation.*;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
+import com.depromeet.document.RestDocsTestSupport;
+import com.depromeet.domains.store.dto.request.FeedRequest;
+import com.depromeet.domains.store.dto.request.NewStoreRequest;
+import com.depromeet.domains.store.dto.response.*;
+import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse.StoreLocationRange;
+import com.depromeet.enums.FeedType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -26,22 +17,23 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 
-import com.depromeet.document.RestDocsTestSupport;
-import com.depromeet.domains.store.dto.request.FeedRequest;
-import com.depromeet.domains.store.dto.request.NewStoreRequest;
-import com.depromeet.domains.store.dto.response.FeedAddResponse;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
-import com.depromeet.domains.store.dto.response.FeedAddLimitResponse;
-
-import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse;
-import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse.StoreLocationRange;
-import com.depromeet.domains.store.dto.response.StorePreviewResponse;
-import com.depromeet.domains.store.dto.response.StoreReportResponse;
-import com.depromeet.domains.store.dto.response.StoreFeedResponse;
-import com.depromeet.domains.store.dto.response.StoreSharingSpotResponse;
-import com.depromeet.enums.CategoryType;
-import com.depromeet.enums.FeedType;
-import com.depromeet.enums.ReviewType;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.doNothing;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
