@@ -40,10 +40,12 @@ public class Store extends BaseTimeEntity {
 
 	private Long kakaoStoreId;
 
+	@Builder.Default
 	private float totalRating = 0.0f;
 
 	private String kakaoCategoryName;
 
+	@Builder.Default
 	private Long totalFeedCnt = 0L;
 
 	public void setThumbnailUrl(String imageUrl) {
