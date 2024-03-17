@@ -98,7 +98,7 @@ class UserControllerTest extends RestDocsTestSupport {
 			.storeName("칠기마라탕")
 			.address("서울특별시 동대문구 제기로5길 38")
 			.totalRevisitedCount(3L)
-			.categoryName("중식")
+			.kakaoCategoryName("중식")
 			.isVisited(true)
 			.build();
 
@@ -108,7 +108,7 @@ class UserControllerTest extends RestDocsTestSupport {
 			.storeName("알베르")
 			.address("서울특별시 강남구 강남대로102길 34")
 			.totalRevisitedCount(0L)
-			.categoryName("카페")
+			.kakaoCategoryName("카페")
 			.isVisited(true)
 			.build();
 
@@ -118,7 +118,7 @@ class UserControllerTest extends RestDocsTestSupport {
 			.storeName("떡도리탕")
 			.address("서울특별시 강남구 테헤란로1길 28-9 1층")
 			.totalRevisitedCount(50L)
-			.categoryName("한식")
+			.kakaoCategoryName("한식")
 			.isVisited(false)
 			.build();
 
