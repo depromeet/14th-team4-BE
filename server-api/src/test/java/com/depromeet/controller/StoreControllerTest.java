@@ -272,12 +272,12 @@ class StoreControllerTest extends RestDocsTestSupport {
 						fieldWithPath("newStore.address").type(JsonFieldType.STRING).description("가게 주소"),
 						fieldWithPath("rating").type(JsonFieldType.NUMBER).description("별점"),
 						fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("첨부된 이미지 url"),
-						fieldWithPath("description").type(JsonFieldType.STRING).description("리뷰 내용")
+						fieldWithPath("description").type(JsonFieldType.STRING).description("피드 내용")
 					),
 					responseFields(
 						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
 						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
-						fieldWithPath("data.reviewId").type(JsonFieldType.NUMBER).description("생성된 리뷰 ID"),
+						fieldWithPath("data.feedId").type(JsonFieldType.NUMBER).description("생성된 피드 ID"),
 						fieldWithPath("data.storeId").type(JsonFieldType.NUMBER).description("생성된/기존 가게 ID")
 					)
 				)
@@ -334,12 +334,12 @@ class StoreControllerTest extends RestDocsTestSupport {
 						fieldWithPath("newStore.address").type(JsonFieldType.STRING).description("가게 주소"),
 						fieldWithPath("rating").type(JsonFieldType.NUMBER).description("별점"),
 						fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("첨부된 이미지 url"),
-						fieldWithPath("description").type(JsonFieldType.STRING).description("리뷰 내용")
+						fieldWithPath("description").type(JsonFieldType.STRING).description("피드 내용")
 					),
 					responseFields(
 						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
 						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
-						fieldWithPath("data.reviewId").type(JsonFieldType.NUMBER).description("생성된 리뷰 ID"),
+						fieldWithPath("data.feedId").type(JsonFieldType.NUMBER).description("생성된 피드 ID"),
 						fieldWithPath("data.storeId").type(JsonFieldType.NUMBER).description("생성된 가게 ID").optional()
 					)
 				)
