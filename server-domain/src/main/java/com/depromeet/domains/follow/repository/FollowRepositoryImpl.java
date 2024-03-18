@@ -7,8 +7,11 @@ import org.springframework.stereotype.Repository;
 import com.depromeet.domains.follow.dto.FollowListResponse;
 import com.depromeet.domains.follow.entity.QFollow;
 import com.depromeet.domains.user.entity.QUser;
+import com.depromeet.enums.FollowType;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -72,5 +75,38 @@ public class FollowRepositoryImpl implements FollowRepositoryCustom{
 			.fetch();
 
 		return followings;
+	}
+
+	@Override
+	public List<FollowListResponse> findFollowList(Long currentUserId, Long profileUserId, FollowType followType) {
+		BooleanExpression condition = followType == FollowType.FOLLOWER
+			? follow.receiverId.eq(profileUserId).and(follow.senderId.ne(currentUserId))
+			: follow.senderId.eq(profileUserId).and(follow.receiverId.ne(currentUserId));
+
+		BooleanExpression subCondition = followType == FollowType.FOLLOWER
+			? follow.senderId.eq(currentUserId).and(follow.receiverId.eq(follow.senderId))
+			: follow.senderId.eq(currentUserId).and(follow.receiverId.eq(follow.receiverId));
+
+		NumberPath<Long> relatedUserId = followType == FollowType.FOLLOWER ? follow.senderId : follow.receiverId;
+
+		BooleanExpression joinCondition = followType == FollowType.FOLLOWER
+			? follow.senderId.eq(user.userId)
+			: follow.receiverId.eq(user.userId);
+
+		List<FollowListResponse> followListResponses = jpaQueryFactory
+			.select(Projections.constructor(FollowListResponse.class,
+				relatedUserId,
+				user.nickName,
+				user.profileImageUrl,
+				JPAExpressions.selectOne()
+					.from(follow)
+					.where(subCondition)
+					.exists().as("isFollowing")))
+			.from(follow)
+			.join(user).on(joinCondition)
+			.where(condition)
+			.fetch();
+
+		return followListResponses;
 	}
 }
