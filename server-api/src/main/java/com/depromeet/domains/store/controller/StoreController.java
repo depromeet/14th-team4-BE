@@ -67,11 +67,12 @@ public class StoreController {
 		return CustomResponseEntity.success(storeService.getStoreReport(storeId));
 	}
 
-	@GetMapping("/stores/{storeId}/reviews")
+	@GetMapping("/stores/{storeId}/feeds")
 	public CustomResponseEntity<Slice<StoreFeedResponse>> getStoreFeed(@AuthUser User user,
 																	   @PathVariable Long storeId,
-																	   Pageable pageable) {
-		return CustomResponseEntity.success(storeService.getStoreFeed(user, storeId, pageable));
+																	   @RequestParam(value = "lastIdxId") Long lastIdxId,
+																	   @RequestParam(value = "size") Integer size) {
+		return CustomResponseEntity.success(storeService.getStoreFeed(user, storeId, lastIdxId, size));
 	}
 
 	@PostMapping("/stores/feeds")
