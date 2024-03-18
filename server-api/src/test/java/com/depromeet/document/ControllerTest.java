@@ -15,6 +15,7 @@ import com.depromeet.auth.service.CookieService;
 import com.depromeet.auth.service.RedisService;
 import com.depromeet.domains.bookmark.controller.BookmarkController;
 import com.depromeet.domains.bookmark.service.BookmarkService;
+import com.depromeet.domains.feed.service.FeedService;
 import com.depromeet.domains.image.controller.ImageController;
 import com.depromeet.domains.store.controller.StoreController;
 import com.depromeet.domains.store.controller.StoreSearchController;
@@ -69,6 +70,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected S3Service s3Service;
+
+    @MockBean
+    protected FeedService feedService;
     // @MockBean으로 필요한 레포지토리, 서비스로직을 정의
 
     protected String createJson(Object dto) throws JsonProcessingException {
