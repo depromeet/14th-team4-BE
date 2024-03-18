@@ -8,16 +8,16 @@ import lombok.Getter;
 @Builder
 public class ProfileResponse {
     private boolean isMine;
-    private String userId;
+    private long userId;
     private String profileImgUrl;
     private String nickname;
     private int feedcnt;
-    private int follwerCnt;
-    private int followingCnt;
+    private long follwerCnt;
+    private long followingCnt;
     private boolean isFllowed;
 
-    public static ProfileResponse of(boolean isMine, String userId, String profileImgUrl, String nickname
-            , int feedCnt, int follwerCnt, int followingCnt, boolean isFllowed) {
+    public static ProfileResponse of(boolean isMine, long userId, String profileImgUrl, String nickname
+            , int feedCnt, long follwerCnt, long followingCnt, boolean isFllowed) {
         return ProfileResponse.builder()
                 .isMine(isMine)
                 .userId(userId)
