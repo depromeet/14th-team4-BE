@@ -1,7 +1,10 @@
 package com.depromeet.domains.follow.controller;
 
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,9 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.depromeet.annotation.AuthUser;
 import com.depromeet.common.exception.CustomResponseEntity;
-import com.depromeet.domains.bookmark.dto.response.BookmarkingResponse;
-import com.depromeet.domains.bookmark.service.BookmarkService;
 import com.depromeet.domains.follow.dto.FollowUpdateResponse;
+import com.depromeet.domains.follow.dto.FollowListResponse;
 import com.depromeet.domains.follow.service.FollowService;
 import com.depromeet.domains.user.entity.User;
 
@@ -28,4 +30,13 @@ public class FollowController {
 	}
 
 	// 팔로우 목록 조회
+	@GetMapping("/{userId}/followers")
+	public CustomResponseEntity<List<FollowListResponse>> getFollowList(@AuthUser User user, @PathVariable Long userId) {
+		return CustomResponseEntity.success(followService.getFollwerList(user, userId));
+	}
+
+	@GetMapping("/{userId}/followings")
+	public CustomResponseEntity<List<FollowListResponse>> getFollowingList(@AuthUser User user, @PathVariable Long userId) {
+		return CustomResponseEntity.success(followService.getFollowingList(user, userId));
+	}
 }

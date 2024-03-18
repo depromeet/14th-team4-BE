@@ -1,5 +1,6 @@
 package com.depromeet.domains.follow.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.depromeet.common.exception.CustomException;
 import com.depromeet.common.exception.Result;
 import com.depromeet.domains.follow.dto.FollowUpdateResponse;
+import com.depromeet.domains.follow.dto.FollowListResponse;
 import com.depromeet.domains.follow.entity.Follow;
 import com.depromeet.domains.follow.repository.FollowRepository;
 import com.depromeet.domains.user.entity.User;
@@ -40,5 +42,13 @@ public class FollowService {
 			.build();
 		followRepository.save(newFollow);
 		return FollowUpdateResponse.of(newFollow.getFollowId(), user.getUserId(), receiver.getUserId(), true);
+	}
+
+	public List<FollowListResponse> getFollwerList(User currentUser, Long targetUserId) {
+		return followRepository.findFollowersWithFollowStatus(currentUser.getUserId(), targetUserId);
+	}
+
+	public List<FollowListResponse> getFollowingList(User currentUser, Long targetUserId) {
+		return followRepository.findFollowingsWithFollowStatus(currentUser.getUserId(), targetUserId);
 	}
 }
