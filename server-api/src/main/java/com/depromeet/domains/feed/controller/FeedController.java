@@ -40,7 +40,7 @@ public class FeedController {
 
     // 피드 삭제
     @DeleteMapping("/{feedId}")
-    public CustomResponseEntity<Void> deleteStoreReview(@AuthUser User user,
+    public CustomResponseEntity<Void> deleteFeed(@AuthUser User user,
                                                         @PathVariable Long feedId) {
         feedService.deleteFeed(user, feedId);
         return CustomResponseEntity.success();
