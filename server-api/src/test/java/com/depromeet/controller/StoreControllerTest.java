@@ -461,7 +461,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 							.description("음식점 위도"),
 						fieldWithPath("data.locationStoreList[].latitude").type(JsonFieldType.NUMBER)
 							.description("음식점 경도"),
-						fieldWithPath("data.locationStoreList[].totalFeedCount").type(JsonFieldType.NUMBER)
+						fieldWithPath("data.locationStoreList[].totalFeedCnt").type(JsonFieldType.NUMBER)
 							.description("총 피드 갯수"),
 						fieldWithPath("data.locationStoreList[].isBookmarked").type(JsonFieldType.BOOLEAN)
 							.description("북마크 여부")
