@@ -13,6 +13,7 @@ import com.depromeet.domains.follow.entity.Follow;
 import com.depromeet.domains.follow.repository.FollowRepository;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.repository.UserRepository;
+import com.depromeet.enums.FollowType;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,5 +51,9 @@ public class FollowService {
 
 	public List<FollowListResponse> getFollowingList(User currentUser, Long targetUserId) {
 		return followRepository.findFollowingsWithFollowStatus(currentUser.getUserId(), targetUserId);
+	}
+
+	public List<FollowListResponse> getFollowList(User user, Long userId, FollowType type) {
+		return followRepository.findFollowList(user.getUserId(), userId, type);
 	}
 }

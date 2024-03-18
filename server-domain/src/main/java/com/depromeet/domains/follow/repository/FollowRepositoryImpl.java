@@ -78,14 +78,14 @@ public class FollowRepositoryImpl implements FollowRepositoryCustom{
 	}
 
 	@Override
-	public List<FollowListResponse> findFollowList(Long currentUserId, Long profileUserId, FollowType followType) {
+	public List<FollowListResponse> findFollowList(Long currentUserId, Long targetUserId, FollowType followType) {
 		BooleanExpression condition = followType == FollowType.FOLLOWER
-			? follow.receiverId.eq(profileUserId).and(follow.senderId.ne(currentUserId))
-			: follow.senderId.eq(profileUserId).and(follow.receiverId.ne(currentUserId));
+			? follow.receiverId.eq(targetUserId).and(follow.senderId.ne(currentUserId))
+			: follow.senderId.eq(targetUserId).and(follow.receiverId.ne(currentUserId));
 
 		BooleanExpression subCondition = followType == FollowType.FOLLOWER
-			? follow.senderId.eq(currentUserId).and(follow.receiverId.eq(follow.senderId))
-			: follow.senderId.eq(currentUserId).and(follow.receiverId.eq(follow.receiverId));
+			? subFollow.senderId.eq(currentUserId).and(subFollow.receiverId.eq(follow.senderId))
+			: subFollow.senderId.eq(currentUserId).and(subFollow.receiverId.eq(follow.receiverId));
 
 		NumberPath<Long> relatedUserId = followType == FollowType.FOLLOWER ? follow.senderId : follow.receiverId;
 
@@ -98,10 +98,14 @@ public class FollowRepositoryImpl implements FollowRepositoryCustom{
 				relatedUserId,
 				user.nickName,
 				user.profileImageUrl,
-				JPAExpressions.selectOne()
-					.from(follow)
-					.where(subCondition)
-					.exists().as("isFollowing")))
+				new CaseBuilder()
+					.when(JPAExpressions.selectOne()
+						.from(subFollow)
+						.where(subCondition)
+						.exists())
+					.then(true)
+					.otherwise(false)
+			))
 			.from(follow)
 			.join(user).on(joinCondition)
 			.where(condition)
