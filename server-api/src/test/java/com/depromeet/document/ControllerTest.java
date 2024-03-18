@@ -1,5 +1,6 @@
 package com.depromeet.document;
 
+import com.depromeet.domains.feed.controller.FeedController;
 import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -33,7 +34,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
         UserController.class,
         BookmarkController.class,
         AuthController.class,
-        ImageController.class
+        ImageController.class,
+        FeedController.class
 })
 public abstract class ControllerTest {
 
