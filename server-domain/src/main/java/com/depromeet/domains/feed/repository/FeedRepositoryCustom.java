@@ -25,7 +25,7 @@ public interface FeedRepositoryCustom {
 	Slice<Feed> findByUserId(Long userId, Pageable pageable);
 
 	// type 별 피드 조회(ALL, FOLLOW)
-	List<FeedResponse> findByUserIdAndType(Long lastFeedId, Long userId, String type, Integer size);
+	List<FeedResponse> findFeedAll(Long lastFeedId, Long userId, String type, Integer size);
 
 	FeedDetailResponse findFeedDetail(Long userId, Long feedId);
 }

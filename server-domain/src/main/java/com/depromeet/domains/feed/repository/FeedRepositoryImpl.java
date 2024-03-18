@@ -112,7 +112,7 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
     }
 
     @Override
-    public List<FeedResponse> findByUserIdAndType(Long lastFeedId, Long userId, String type, Integer size) {
+    public List<FeedResponse> findFeedAll(Long lastFeedId, Long userId, String type, Integer size) {
         BooleanExpression condition = getTypeCondition(userId, type);
 
 
@@ -125,6 +125,7 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
                         store.storeName,
                         store.kakaoCategoryName,
                         store.address,
+                        feed.feedId,
                         feed.description,
                         feed.imageUrl,
                         feed.createdAt,
@@ -164,6 +165,7 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
                         store.storeName,
                         store.kakaoCategoryName,
                         store.address,
+                        feed.feedId,
                         feed.description,
                         feed.imageUrl,
                         feed.createdAt,

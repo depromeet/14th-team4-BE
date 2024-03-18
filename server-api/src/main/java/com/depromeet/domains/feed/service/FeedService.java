@@ -36,7 +36,7 @@ public class FeedService {
     @Transactional(readOnly = true)
     public Slice<FeedResponse> getFeeds(Long lastIdxId, User user, String type, Integer size) {
         User findUser = findUserById(user.getUserId());
-        List<FeedResponse> feedResponses = feedRepository.findByUserIdAndType(lastIdxId, findUser.getUserId(), type, size);
+        List<FeedResponse> feedResponses = feedRepository.findFeedAll(lastIdxId, findUser.getUserId(), type, size);
         Slice<FeedResponse> responses= getSlice(feedResponses, size);
         return responses;
     }

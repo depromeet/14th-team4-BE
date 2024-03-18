@@ -15,6 +15,7 @@ public class FeedDetailResponse {
     private String storeName;
     private String kakaoCategoryName;
     private String address;
+    private Long feedId;
     private String description;
     private String feedImg;
     private LocalDateTime createdAt; // 피드의 생성일자
