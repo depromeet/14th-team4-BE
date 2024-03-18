@@ -6,11 +6,11 @@ import com.depromeet.domains.store.dto.request.FeedRequest;
 import com.depromeet.domains.store.dto.request.NewStoreRequest;
 import com.depromeet.domains.store.dto.response.*;
 import com.depromeet.domains.store.dto.response.StoreLocationRangeResponse.StoreLocationRange;
-import com.depromeet.enums.FeedType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -23,8 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.doNothing;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
@@ -132,7 +131,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 	}
 
 	@Test
-	void getStoreReview() throws Exception {
+	void getStoreFeed() throws Exception {
 		// given
 		StoreFeedResponse storeReviewResponse1 = StoreFeedResponse.builder()
 			.userId(1L)
@@ -170,27 +169,25 @@ class StoreControllerTest extends RestDocsTestSupport {
 				.isMine(true)
 				.build();
 
-		List<StoreFeedResponse> content = Arrays.asList(storeReviewResponse1, storeReviewResponse2,
-			storeReviewResponse3);
-		Slice<StoreFeedResponse> storeReviewResponses = new SliceImpl<>(content, Pageable.unpaged(), true);
+		List<StoreFeedResponse> content = Arrays.asList(storeReviewResponse1, storeReviewResponse2, storeReviewResponse3);
+		Pageable pageable = PageRequest.of(0, 10);
+		Slice<StoreFeedResponse> storeReviewResponses = new SliceImpl<>(content, pageable, true);
 
-		given(storeService.getStoreFeed(any(),1L,
-			any(Pageable.class))).willReturn((Slice<com.depromeet.domains.store.dto.StoreFeedResponse>) new SliceImpl<>(content, Pageable.unpaged(), true));
+		given(storeService.getStoreFeed(any(), anyLong(), anyLong(), anyInt())).willReturn(storeReviewResponses);
 
 		// when
 		mockMvc.perform(
-				get("/api/v1/stores/{storeId}/reviews", 1L)
-					//                                .with(csrf())
-					.param("type", FeedType.REVISITED.name())
-					.param("page", "0")
+				get("/api/v1/stores/{storeId}/feeds", 1L)
 					.contentType(MediaType.APPLICATION_JSON)
-					.header("Authorization", "Bearer accessToken"))
+					.header("Authorization", "Bearer accessToken")
+					.param("lastIdxId", "13")
+					.param("size", "10"))
 			.andExpect(status().isOk())
 			.andDo(
 				restDocs.document(
 					queryParameters(
-						parameterWithName("page").description("페이지 번호 (0번 부터)"),
-						parameterWithName("type").description("리뷰 타입 - REVISITED, PHOTO").optional()
+						parameterWithName("lastIdxId").description("마지막 원소 ID"),
+						parameterWithName("size").description("페이지 크기")
 					),
 					pathParameters(
 						parameterWithName("storeId").description("음식점 ID")
@@ -198,35 +195,37 @@ class StoreControllerTest extends RestDocsTestSupport {
 					requestHeaders(
 						headerWithName("Authorization").description("accessToken")
 					),
-					responseFields(
-						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
-						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
-						subsectionWithPath("data.content[]").type(JsonFieldType.ARRAY).description("리뷰 목록"),
-						fieldWithPath("data.content[].userId").type(JsonFieldType.NUMBER).description("사용자 ID"),
-						fieldWithPath("data.content[].nickName").type(JsonFieldType.STRING).description("닉네임"),
-						fieldWithPath("data.content[].rating").type(JsonFieldType.NUMBER).description("평점"),
-						fieldWithPath("data.content[].imageUrl").type(JsonFieldType.STRING)
-							.description("이미지 URL")
-							.optional(),
-						fieldWithPath("data.content[].visitTimes").type(JsonFieldType.NUMBER).description("방문 횟수"),
-						fieldWithPath("data.content[].visitedAt").type(JsonFieldType.STRING).description("방문 일시"),
-						fieldWithPath("data.content[].description").type(JsonFieldType.STRING).description("리뷰 내용"),
-						fieldWithPath("data.content[].isMine").type(JsonFieldType.BOOLEAN).description("자신의 리뷰인지 여부"),
-						subsectionWithPath("data.pageable").type(JsonFieldType.STRING).description("페이지 정보"),
-						//                                        fieldWithPath("data.pageable.pageNumber").type(JsonFieldType.NUMBER).description("페이지 수"),
-						//                                        fieldWithPath("data.pageable.pageSize").type(JsonFieldType.NUMBER).description("페이지 크기"),
-						//                                        subsectionWithPath("data.pageable.sort").type(JsonFieldType.STRING).description("정렬 정보"),
-						//                                        fieldWithPath("data.pageable.offset").type(JsonFieldType.NUMBER).description("페이지 오프셋"),
-						//                                        fieldWithPath("data.pageable.paged").type(JsonFieldType.BOOLEAN).description("페이지 unpaged"),
-						//                                        fieldWithPath("data.pageable.unpaged").type(JsonFieldType.BOOLEAN).description("페이지 unpaged"),
-						fieldWithPath("data.first").type(JsonFieldType.BOOLEAN).description("첫 번째 페이지 여부"),
-						fieldWithPath("data.last").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부"),
-						fieldWithPath("data.size").type(JsonFieldType.NUMBER).description("페이지 크기"),
-						fieldWithPath("data.number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
-						subsectionWithPath("data.sort").type(JsonFieldType.OBJECT).description("정렬 정보"),
-						fieldWithPath("data.numberOfElements").type(JsonFieldType.NUMBER).description("현재 페이지의 요소 수"),
-						fieldWithPath("data.empty").type(JsonFieldType.BOOLEAN).description("현재 페이지가 비어 있는지 여부")
-					)
+						responseFields(
+								fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
+								fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
+								subsectionWithPath("data.content[]").type(JsonFieldType.ARRAY).description("리뷰 목록"),
+								fieldWithPath("data.content[].userId").type(JsonFieldType.NUMBER).description("사용자 ID"),
+								fieldWithPath("data.content[].feedId").type(JsonFieldType.NUMBER).description("피드 ID"),
+								fieldWithPath("data.content[].profileImageUrl").type(JsonFieldType.STRING).description("프로필 이미지 URL"),
+								fieldWithPath("data.content[].nickName").type(JsonFieldType.STRING).description("닉네임"),
+								fieldWithPath("data.content[].rating").type(JsonFieldType.NUMBER).description("평점"),
+								fieldWithPath("data.content[].feedImageUrl").type(JsonFieldType.STRING).description("이미지 URL"),
+								fieldWithPath("data.content[].createdAt").type(JsonFieldType.STRING).description("생성일"),
+								fieldWithPath("data.content[].description").type(JsonFieldType.STRING).description("리뷰 내용"),
+								fieldWithPath("data.content[].isMine").type(JsonFieldType.BOOLEAN).description("자신의 리뷰인지 여부"),
+								subsectionWithPath("data.pageable").type(JsonFieldType.OBJECT).description("페이지 정보"),
+								fieldWithPath("data.pageable.pageNumber").type(JsonFieldType.NUMBER).description("페이지 번호"),
+								fieldWithPath("data.pageable.pageSize").type(JsonFieldType.NUMBER).description("페이지 크기"),
+								subsectionWithPath("data.pageable.sort").type(JsonFieldType.OBJECT).description("정렬 정보"),
+								fieldWithPath("data.pageable.sort.empty").type(JsonFieldType.BOOLEAN).description("정렬 정보가 비어 있는지 여부"),
+								fieldWithPath("data.pageable.sort.sorted").type(JsonFieldType.BOOLEAN).description("정렬이 되어 있는지 여부"),
+								fieldWithPath("data.pageable.sort.unsorted").type(JsonFieldType.BOOLEAN).description("정렬이 되어 있지 않은지 여부"),
+								fieldWithPath("data.pageable.offset").type(JsonFieldType.NUMBER).description("페이지 오프셋"),
+								fieldWithPath("data.pageable.paged").type(JsonFieldType.BOOLEAN).description("페이지가 페이징 되어 있는지 여부"),
+								fieldWithPath("data.pageable.unpaged").type(JsonFieldType.BOOLEAN).description("페이지가 페이징 되어 있지 않은지 여부"),
+								fieldWithPath("data.first").type(JsonFieldType.BOOLEAN).description("첫 번째 페이지 여부"),
+								fieldWithPath("data.last").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부"),
+								fieldWithPath("data.size").type(JsonFieldType.NUMBER).description("페이지 크기"),
+								fieldWithPath("data.number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
+								subsectionWithPath("data.sort").type(JsonFieldType.OBJECT).description("정렬 정보"),
+								fieldWithPath("data.numberOfElements").type(JsonFieldType.NUMBER).description("현재 페이지의 요소 수"),
+								fieldWithPath("data.empty").type(JsonFieldType.BOOLEAN).description("현재 페이지가 비어 있는지 여부")
+						)
 				)
 			);
 	}
