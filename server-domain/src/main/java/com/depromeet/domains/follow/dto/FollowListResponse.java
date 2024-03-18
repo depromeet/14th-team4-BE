@@ -1,9 +1,11 @@
 package com.depromeet.domains.follow.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 @AllArgsConstructor
 public class FollowListResponse {
 	private Long userId; // 팔로잉/팔로워의 userid
