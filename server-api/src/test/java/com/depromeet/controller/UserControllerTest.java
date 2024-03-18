@@ -9,7 +9,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,8 +26,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import com.depromeet.document.RestDocsTestSupport;
 import com.depromeet.domains.user.dto.request.NicknameRequest;
 import com.depromeet.domains.user.dto.response.UserBookmarkResponse;
-import com.depromeet.domains.user.dto.response.UserProfileResponse;
 import com.depromeet.domains.user.dto.response.UserFeedResponse;
+import com.depromeet.domains.user.dto.response.UserProfileResponse;
 
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
@@ -97,7 +97,6 @@ class UserControllerTest extends RestDocsTestSupport {
 			.storeId(1L)
 			.storeName("칠기마라탕")
 			.address("서울특별시 동대문구 제기로5길 38")
-			.totalRevisitedCount(3L)
 			.kakaoCategoryName("중식")
 			.isVisited(true)
 			.build();
@@ -107,7 +106,6 @@ class UserControllerTest extends RestDocsTestSupport {
 			.storeId(2L)
 			.storeName("알베르")
 			.address("서울특별시 강남구 강남대로102길 34")
-			.totalRevisitedCount(0L)
 			.kakaoCategoryName("카페")
 			.isVisited(true)
 			.build();
@@ -117,7 +115,6 @@ class UserControllerTest extends RestDocsTestSupport {
 			.storeId(3L)
 			.storeName("떡도리탕")
 			.address("서울특별시 강남구 테헤란로1길 28-9 1층")
-			.totalRevisitedCount(50L)
 			.kakaoCategoryName("한식")
 			.isVisited(false)
 			.build();
@@ -153,9 +150,7 @@ class UserControllerTest extends RestDocsTestSupport {
 						fieldWithPath("data.content[].storeId").type(JsonFieldType.NUMBER).description("가게 ID"),
 						fieldWithPath("data.content[].storeName").type(JsonFieldType.STRING).description("가게 이름"),
 						fieldWithPath("data.content[].address").type(JsonFieldType.STRING).description("가게 주소"),
-						fieldWithPath("data.content[].categoryName").type(JsonFieldType.STRING).description("카테고리 이름"),
-						fieldWithPath("data.content[].totalRevisitedCount").type(JsonFieldType.NUMBER)
-							.description("총 재방문한 사람 수"),
+						fieldWithPath("data.content[].kakaoCategoryName").type(JsonFieldType.STRING).description("카테고리 이름"),
 						fieldWithPath("data.content[].isVisited").type(JsonFieldType.BOOLEAN)
 							.description("유저의 가게 방문 여부"),
 						subsectionWithPath("data.pageable").type(JsonFieldType.STRING).description("페이지 요청 정보"),
@@ -178,52 +173,49 @@ class UserControllerTest extends RestDocsTestSupport {
 	}
 
 	@Test
-	void getMyReviews() throws Exception {
+	void getMyFeeds() throws Exception {
 		// given
-		UserFeedResponse userReviewResponse1 = UserFeedResponse.builder()
-			.reviewId(1L)
+		UserFeedResponse userFeedResponse1 = UserFeedResponse.builder()
+			.feedId(1L)
 			.storeId(1L)
 			.storeName("칠기마라탕")
-			.visitTimes(1)
-			.visitedAt(LocalDate.of(2024, 1, 11))
 			.categoryName("중식")
+			.createdAt(LocalDateTime.now())
 			.rating(5)
 			.imageUrl("https://image.com/1.jpg")
 			.description("맛있어요")
 			.build();
 
-		UserFeedResponse userReviewResponse2 = UserFeedResponse.builder()
-			.reviewId(2L)
+		UserFeedResponse userFeedResponse2 = UserFeedResponse.builder()
+			.feedId(2L)
 			.storeId(1L)
 			.storeName("칠기마라탕")
-			.visitTimes(2)
-			.visitedAt(LocalDate.of(2024, 1, 13))
+			.createdAt(LocalDateTime.now())
 			.categoryName("중식")
 			.rating(4)
 			.imageUrl("https://image.com/2.jpg")
 			.description("맛있어요")
 			.build();
 
-		UserFeedResponse userReviewResponse3 = UserFeedResponse.builder()
-			.reviewId(3L)
+		UserFeedResponse userFeedResponse3 = UserFeedResponse.builder()
+			.feedId(3L)
 			.storeId(2L)
 			.storeName("알베르")
-			.visitTimes(1)
-			.visitedAt(LocalDate.of(2024, 1, 3))
+			.createdAt(LocalDateTime.now())
 			.categoryName("카페")
 			.rating(5)
 			.imageUrl(null)
 			.description("맛있어요")
 			.build();
 
-		List<UserFeedResponse> content = Arrays.asList(userReviewResponse1, userReviewResponse2, userReviewResponse3);
+		List<UserFeedResponse> content = Arrays.asList(userFeedResponse1, userFeedResponse2, userFeedResponse3);
 		Slice<UserFeedResponse> userReviewResponses = new SliceImpl<>(content, Pageable.unpaged(), true);
 
-		given(userService.getUserReviews(any(), any())).willReturn(userReviewResponses);
+		given(userService.getUserFeeds(any(), any())).willReturn(userReviewResponses);
 
 		// when
 		mockMvc.perform(
-				get("/api/v1/users/reviews")
+				get("/api/v1/users/feeds")
 					.param("page", "0")
 					.param("size", "20")
 					.contentType(MediaType.APPLICATION_JSON)
@@ -241,8 +233,8 @@ class UserControllerTest extends RestDocsTestSupport {
 					responseFields(
 						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
 						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
-						subsectionWithPath("data.content[]").type(JsonFieldType.ARRAY).description("리뷰 목록"),
-						fieldWithPath("data.content[].reviewId").type(JsonFieldType.NUMBER).description("리뷰 ID"),
+						subsectionWithPath("data.content[]").type(JsonFieldType.ARRAY).description("피드 목록"),
+						fieldWithPath("data.content[].feedId").type(JsonFieldType.NUMBER).description("피드 ID"),
 						fieldWithPath("data.content[].storeId").type(JsonFieldType.NUMBER).description("가게 ID"),
 						fieldWithPath("data.content[].storeName").type(JsonFieldType.STRING).description("가게 이름"),
 						fieldWithPath("data.content[].rating").type(JsonFieldType.NUMBER).description("평점"),
@@ -250,9 +242,8 @@ class UserControllerTest extends RestDocsTestSupport {
 						fieldWithPath("data.content[].imageUrl").type(JsonFieldType.STRING)
 							.description("이미지 URL")
 							.optional(),
-						fieldWithPath("data.content[].visitTimes").type(JsonFieldType.NUMBER).description("방문 횟수"),
-						fieldWithPath("data.content[].visitedAt").type(JsonFieldType.STRING).description("방문 일시"),
-						fieldWithPath("data.content[].description").type(JsonFieldType.STRING).description("리뷰 내용"),
+						fieldWithPath("data.content[].createdAt").type(JsonFieldType.STRING).description("피드 작성 일시"),
+						fieldWithPath("data.content[].description").type(JsonFieldType.STRING).description("피드 내용"),
 						subsectionWithPath("data.pageable").type(JsonFieldType.STRING).description("페이지 요청 정보"),
 						//                                        fieldWithPath("data.pageable.pageNumber").type(JsonFieldType.NUMBER).description("페이지 수"),
 						//                                        fieldWithPath("data.pageable.pageSize").type(JsonFieldType.NUMBER).description("페이지 크기"),

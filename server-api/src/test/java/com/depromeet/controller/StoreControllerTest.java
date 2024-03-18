@@ -1,6 +1,7 @@
 package com.depromeet.controller;
 
 import com.depromeet.document.RestDocsTestSupport;
+import com.depromeet.domains.store.dto.StoreFeedResponse;
 import com.depromeet.domains.store.dto.request.FeedRequest;
 import com.depromeet.domains.store.dto.request.NewStoreRequest;
 import com.depromeet.domains.store.dto.response.*;
@@ -21,7 +22,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -155,7 +155,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 				.feedImageUrl("https://image.com/1.jpg")
 				.createdAt(LocalDate.now())
 				.description("맛있어요")
-				.isMine(true)
+				.isMine(false)
 				.build();
 
 		StoreFeedResponse storeReviewResponse3 = StoreFeedResponse.builder()
@@ -170,14 +170,12 @@ class StoreControllerTest extends RestDocsTestSupport {
 				.isMine(true)
 				.build();
 
-		FeedType feedType = FeedType.REVISITED;
-
 		List<StoreFeedResponse> content = Arrays.asList(storeReviewResponse1, storeReviewResponse2,
 			storeReviewResponse3);
 		Slice<StoreFeedResponse> storeReviewResponses = new SliceImpl<>(content, Pageable.unpaged(), true);
 
-		given(storeService.getStoreReview(any(), eq(1L), eq(Optional.of(FeedType.REVISITED)),
-			any(Pageable.class))).willReturn(storeReviewResponses);
+		given(storeService.getStoreFeed(any(),1L,
+			any(Pageable.class))).willReturn((Slice<com.depromeet.domains.store.dto.StoreFeedResponse>) new SliceImpl<>(content, Pageable.unpaged(), true));
 
 		// when
 		mockMvc.perform(
@@ -274,12 +272,12 @@ class StoreControllerTest extends RestDocsTestSupport {
 						fieldWithPath("newStore.address").type(JsonFieldType.STRING).description("가게 주소"),
 						fieldWithPath("rating").type(JsonFieldType.NUMBER).description("별점"),
 						fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("첨부된 이미지 url"),
-						fieldWithPath("description").type(JsonFieldType.STRING).description("리뷰 내용")
+						fieldWithPath("description").type(JsonFieldType.STRING).description("피드 내용")
 					),
 					responseFields(
 						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
 						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
-						fieldWithPath("data.reviewId").type(JsonFieldType.NUMBER).description("생성된 리뷰 ID"),
+						fieldWithPath("data.feedId").type(JsonFieldType.NUMBER).description("생성된 피드 ID"),
 						fieldWithPath("data.storeId").type(JsonFieldType.NUMBER).description("생성된/기존 가게 ID")
 					)
 				)
@@ -336,12 +334,12 @@ class StoreControllerTest extends RestDocsTestSupport {
 						fieldWithPath("newStore.address").type(JsonFieldType.STRING).description("가게 주소"),
 						fieldWithPath("rating").type(JsonFieldType.NUMBER).description("별점"),
 						fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("첨부된 이미지 url"),
-						fieldWithPath("description").type(JsonFieldType.STRING).description("리뷰 내용")
+						fieldWithPath("description").type(JsonFieldType.STRING).description("피드 내용")
 					),
 					responseFields(
 						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
 						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
-						fieldWithPath("data.reviewId").type(JsonFieldType.NUMBER).description("생성된 리뷰 ID"),
+						fieldWithPath("data.feedId").type(JsonFieldType.NUMBER).description("생성된 피드 ID"),
 						fieldWithPath("data.storeId").type(JsonFieldType.NUMBER).description("생성된 가게 ID").optional()
 					)
 				)
@@ -463,7 +461,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 							.description("음식점 위도"),
 						fieldWithPath("data.locationStoreList[].latitude").type(JsonFieldType.NUMBER)
 							.description("음식점 경도"),
-						fieldWithPath("data.locationStoreList[].totalFeedCount").type(JsonFieldType.NUMBER)
+						fieldWithPath("data.locationStoreList[].totalFeedCnt").type(JsonFieldType.NUMBER)
 							.description("총 피드 갯수"),
 						fieldWithPath("data.locationStoreList[].isBookmarked").type(JsonFieldType.BOOLEAN)
 							.description("북마크 여부")
@@ -599,37 +597,6 @@ class StoreControllerTest extends RestDocsTestSupport {
 						fieldWithPath("data").type(JsonFieldType.OBJECT).description("리뷰 작성 가능 여부 반환"),
 						fieldWithPath("data.isAvailable").type(JsonFieldType.BOOLEAN)
 							.description("리뷰 작성 가능 여부 반환 (작성가능 : true, 작성불가 : false)")
-					)
-				)
-			);
-	}
-
-	@Test
-	void deleteReview() throws Exception {
-		// given
-		Long reviewId = 1L;
-
-		doNothing().when(storeService).deleteStoreReview(any(), eq(reviewId));
-
-		// when
-		mockMvc.perform(
-				delete("/api/v1/reviews/{reviewId}", reviewId)
-					.with(csrf())
-					.contentType(MediaType.APPLICATION_JSON)
-					.header("Authorization", "Bearer accessToken"))
-			.andExpect(status().isOk())
-			.andDo(
-				restDocs.document(
-					pathParameters(
-						parameterWithName("reviewId").description("리뷰 ID")
-					),
-					requestHeaders(
-						headerWithName("Authorization").description("accessToken")
-					),
-					responseFields(
-						fieldWithPath("code").type(JsonFieldType.NUMBER).description("결과코드"),
-						fieldWithPath("message").type(JsonFieldType.STRING).description("결과메시지"),
-						fieldWithPath("data").type(JsonFieldType.NULL).description("null")
 					)
 				)
 			);
