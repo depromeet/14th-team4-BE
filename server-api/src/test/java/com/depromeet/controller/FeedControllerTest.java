@@ -186,7 +186,7 @@ public class FeedControllerTest extends RestDocsTestSupport {
     }
 
     @Test
-    void deleteStoreReview() throws Exception {
+    void deleteStoreFeed() throws Exception {
         doNothing().when(feedService).deleteFeed(any(), anyLong());
 
         mockMvc.perform(delete("/api/v1/feeds/{feedId}", 1L)
