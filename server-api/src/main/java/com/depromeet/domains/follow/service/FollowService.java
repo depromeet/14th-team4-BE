@@ -27,6 +27,9 @@ public class FollowService {
 	private final UserRepository userRepository;
 
 	public FollowUpdateResponse updateFollow(User user, Long receiverId) {
+		if (user.getUserId().equals(receiverId)) {
+			throw new CustomException(Result.CANNOT_FOLLOW_YOURSELF);
+		}
 		User receiver = userRepository.findById(receiverId)
 			.orElseThrow(() -> new CustomException(Result.NOT_FOUND_USER));
 
