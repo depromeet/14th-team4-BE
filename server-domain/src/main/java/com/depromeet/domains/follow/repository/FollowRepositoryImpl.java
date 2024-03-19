@@ -1,9 +1,12 @@
 package com.depromeet.domains.follow.repository;
 
+import com.depromeet.domains.follow.entity.Follow;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 import static com.depromeet.domains.follow.entity.QFollow.follow;
 
@@ -34,6 +37,18 @@ public class FollowRepositoryImpl implements FollowRepositoryCustom{
                         receiverIdEq(receiverId)
                 )
                 .fetchOne();
+    }
+
+    @Override
+    public List<Follow> getFollowByEachId(Long senderId, Long receiverId) {
+         return jpaQueryFactory
+                 .select(follow)
+                 .from(follow)
+                 .where(
+                         senderIdEq(senderId),
+                         receiverIdEq(receiverId)
+                 )
+                 .fetch();
     }
 
     private BooleanExpression senderIdEq(Long senderId) {
