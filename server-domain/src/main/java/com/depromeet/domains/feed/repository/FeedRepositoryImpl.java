@@ -7,6 +7,7 @@ import com.depromeet.domains.feed.dto.response.FeedResponse;
 import com.depromeet.domains.follow.entity.QFollow;
 import com.depromeet.domains.store.dto.StoreFeedResponse;
 import com.depromeet.domains.store.entity.QStore;
+import com.querydsl.jpa.JPAExpressions;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -115,7 +116,6 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
     public List<FeedResponse> findFeedAll(Long lastFeedId, Long userId, String type, Integer size) {
         BooleanExpression condition = getTypeCondition(userId, type);
 
-
         List<FeedResponse> results = jpaQueryFactory
                 .select(Projections.constructor(FeedResponse.class,
                         user.userId,
@@ -137,7 +137,6 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
                 .from(feed)
                 .join(store).on(feed.storeId.eq(store.storeId))
                 .join(user).on(feed.userId.eq(user.userId))
-                .join(follow).on(feed.userId.eq(follow.receiverId))
                 .where(condition,
                         ltFeedId(lastFeedId))
                 .orderBy(feed.createdAt.desc())
@@ -179,14 +178,18 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
         return result;
     }
 
-    // type에 따른 조건 생성을 담당하는 private 메서드
+    // type에 따른 조건 생성
     private BooleanExpression getTypeCondition(Long userId, String type) {
-        return type.equals("FOLLOW") ? feed.userId.in(
-                jpaQueryFactory
-                        .select(follow.receiverId)
-                        .from(follow)
-                        .where(follow.senderId.eq(userId))
-        ) : null; // "ALL"일 경우 null을 전달하여 모든 피드를 조회
+        if ("FOLLOW".equals(type)) {
+            return feed.userId.in(
+                    JPAExpressions
+                            .select(follow.receiverId)
+                            .from(follow)
+                            .where(follow.senderId.eq(userId))
+            );
+        } else { // "ALL" 타입이거나 다른 타입일 경우
+            return null; // 모든 피드를 조회하기 위해 null을 반환
+        }
     }
 
     // no-offset 방식 처리하는 메서드

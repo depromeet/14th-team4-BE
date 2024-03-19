@@ -24,7 +24,7 @@ public class FeedController {
     @GetMapping
     public CustomResponseEntity<Slice<FeedResponse>> getFeeds(@AuthUser User user,
                                                               @RequestParam(value = "type") String type,
-                                                              @RequestParam(value = "lastIdxId") Long lastIdxId,
+                                                              @RequestParam(value = "lastIdxId", required = false) Long lastIdxId,
                                                               @RequestParam(value = "size") Integer size) {
         return CustomResponseEntity.success(feedService.getFeeds(lastIdxId, user, type, size));
     }
