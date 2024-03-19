@@ -120,6 +120,11 @@ operation::user-controller-test/get-my-reviews[]
 === 5. 회원 탈퇴
 operation::user-controller-test/delete-user-test[snippets='curl-request,http-request,http-response']
 
+== Profile API
+
+=== 1. 프로필 조회
+operation::profile-controller-test/get-profile[]
+
 == Store Search API
 
 [[get-store-search]]
