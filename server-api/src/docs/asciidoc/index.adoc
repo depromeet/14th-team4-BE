@@ -130,6 +130,11 @@ operation::store-search-controller-test/search[]
 === presigned url 발급
 operation::image-controller-test/get-presigned-url[snippets='curl-request,http-request,http-response,query-parameters,request-headers,response-fields']
 
+== Follow API
+=== 1. 팔로잉 / 언팔로잉 요청
+operation::follow-controller-test/update-follow[snippets='curl-request,http-request,http-response,response-fields']
+
+
 == Test API
 
 [[test-token]]
