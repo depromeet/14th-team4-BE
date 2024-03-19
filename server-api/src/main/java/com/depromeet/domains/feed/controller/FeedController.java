@@ -2,6 +2,7 @@ package com.depromeet.domains.feed.controller;
 
 import com.depromeet.annotation.AuthUser;
 import com.depromeet.common.exception.CustomResponseEntity;
+import com.depromeet.domains.feed.dto.request.FeedUpdateRequest;
 import com.depromeet.domains.feed.dto.response.FeedDetailResponse;
 import com.depromeet.domains.feed.dto.response.FeedResponse;
 import com.depromeet.domains.feed.service.FeedService;
@@ -37,6 +38,13 @@ public class FeedController {
     // 피드 작성
 
     // 피드 수정
+    @PutMapping("/{feedId}")
+    public CustomResponseEntity<Void> updateFeed(@AuthUser User user,
+                                                        @PathVariable Long feedId,
+                                                        @RequestBody FeedUpdateRequest feedUpdateRequest) {
+        feedService.updateFeed(user, feedId, feedUpdateRequest);
+        return CustomResponseEntity.success();
+    }
 
     // 피드 삭제
     @DeleteMapping("/{feedId}")
@@ -45,4 +53,11 @@ public class FeedController {
         feedService.deleteFeed(user, feedId);
         return CustomResponseEntity.success();
     }
+
+    // 피드 댓글 조회
+    @
+
+    // 피드 댓글 수정
+
+    // 피드 댓글 삭제
 }
