@@ -14,10 +14,10 @@ public class ProfileResponse {
     private int feedcnt;
     private long follwerCnt;
     private long followingCnt;
-    private boolean isFllowed;
+    private boolean isFollowed;
 
     public static ProfileResponse of(boolean isMine, long userId, String profileImgUrl, String nickname
-            , int feedCnt, long follwerCnt, long followingCnt, boolean isFllowed) {
+            , int feedCnt, long follwerCnt, long followingCnt, boolean isFollowed) {
         return ProfileResponse.builder()
                 .isMine(isMine)
                 .userId(userId)
@@ -26,7 +26,7 @@ public class ProfileResponse {
                 .feedcnt(feedCnt)
                 .follwerCnt(follwerCnt)
                 .followingCnt(followingCnt)
-                .isFllowed(isFllowed)
+                .isFollowed(isFollowed)
                 .build();
     }
 }
