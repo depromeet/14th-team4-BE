@@ -23,6 +23,6 @@ public class ProfileController {
     public CustomResponseEntity<ProfileResponse> getProfileInfo(@PathVariable("userId") Long userId,
                                                                 @AuthUser User user) {
         return CustomResponseEntity.success(
-                this.profileService.getProfileInfo(user, user.getUserId().equals(userId)));
+                this.profileService.getProfileInfo(user, userId));
     }
 }
