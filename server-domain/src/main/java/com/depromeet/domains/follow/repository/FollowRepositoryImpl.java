@@ -26,58 +26,6 @@ public class FollowRepositoryImpl implements FollowRepositoryCustom{
 	QFollow subFollow = new QFollow("subFollow");
 
 	@Override
-	public List<FollowListResponse> findFollowersWithFollowStatus(Long userId, Long targetUserId) {
-		List<FollowListResponse> followers = jpaQueryFactory
-			.select(Projections.constructor(FollowListResponse.class,
-				follow.senderId,
-				user.nickName,
-				user.profileImageUrl,
-				new CaseBuilder()
-					.when(JPAExpressions
-						.selectOne()
-						.from(subFollow)
-						.where(subFollow.senderId.eq(userId)
-							.and(subFollow.receiverId.eq(follow.senderId)))
-						.exists())
-					.then(true)
-					.otherwise(false)
-			))
-			.from(follow)
-			.join(user).on(follow.senderId.eq(user.userId))
-			.where(follow.receiverId.eq(targetUserId)
-				.and(follow.senderId.ne(userId))) // 자기 자신은 제외
-			.fetch();
-
-		return followers;
-	}
-
-	@Override
-	public List<FollowListResponse> findFollowingsWithFollowStatus(Long userId, Long targetUserId) {
-		List<FollowListResponse> followings = jpaQueryFactory
-			.select(Projections.constructor(FollowListResponse.class,
-				follow.receiverId,
-				user.nickName,
-				user.profileImageUrl,
-				new CaseBuilder()
-					.when(JPAExpressions
-						.selectOne()
-						.from(subFollow)
-						.where(subFollow.senderId.eq(userId)
-							.and(subFollow.receiverId.eq(follow.receiverId)))
-						.exists())
-					.then(true)
-					.otherwise(false)
-			))
-			.from(follow)
-			.join(user).on(follow.receiverId.eq(user.userId))
-			.where(follow.senderId.eq(targetUserId)
-				.and(follow.receiverId.ne(userId))) // 자기 자신은 제외
-			.fetch();
-
-		return followings;
-	}
-
-	@Override
 	public List<FollowListResponse> findFollowList(Long currentUserId, Long targetUserId, FollowType followType) {
 		BooleanExpression condition = followType == FollowType.FOLLOWER
 			? follow.receiverId.eq(targetUserId).and(follow.senderId.ne(currentUserId))

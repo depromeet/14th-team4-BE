@@ -45,14 +45,6 @@ public class FollowService {
 		return FollowUpdateResponse.of(newFollow.getFollowId(), user.getUserId(), receiver.getUserId(), true);
 	}
 
-	public List<FollowListResponse> getFollwerList(User currentUser, Long targetUserId) {
-		return followRepository.findFollowersWithFollowStatus(currentUser.getUserId(), targetUserId);
-	}
-
-	public List<FollowListResponse> getFollowingList(User currentUser, Long targetUserId) {
-		return followRepository.findFollowingsWithFollowStatus(currentUser.getUserId(), targetUserId);
-	}
-
 	public List<FollowListResponse> getFollowList(User user, Long userId, FollowType type) {
 		return followRepository.findFollowList(user.getUserId(), userId, type);
 	}

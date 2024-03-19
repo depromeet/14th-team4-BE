@@ -31,17 +31,6 @@ public class FollowController {
 		return CustomResponseEntity.success(followService.updateFollow(user, receiverId));
 	}
 
-	// 팔로우 목록 조회
-	@GetMapping("/{userId}/followers")
-	public CustomResponseEntity<List<FollowListResponse>> getFollowList(@AuthUser User user, @PathVariable Long userId) {
-		return CustomResponseEntity.success(followService.getFollwerList(user, userId));
-	}
-
-	@GetMapping("/{userId}/followings")
-	public CustomResponseEntity<List<FollowListResponse>> getFollowingList(@AuthUser User user, @PathVariable Long userId) {
-		return CustomResponseEntity.success(followService.getFollowingList(user, userId));
-	}
-
 	@GetMapping("/{userId}")
 	public CustomResponseEntity<List<FollowListResponse>> getFollowList(@AuthUser User user, @PathVariable Long userId, @RequestParam String type) {
 		return CustomResponseEntity.success(followService.getFollowList(user, userId, FollowType.valueOf(type)));
