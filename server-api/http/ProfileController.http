@@ -1,0 +1,4 @@
+### 프로필 조회
+GET {{host}}/api/v1/profile/4
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer {{token}}
