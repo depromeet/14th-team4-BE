@@ -15,11 +15,13 @@
 --        (7, '분식', 'SCHOOLFOOD', NOW()),
 --        (8, '기타', 'ETC', NOW());
 --
--- INSERT INTO User (socialType, nickName, userRole, socialId, level, myReviewCount, createdAt)
--- VALUES ('KAKAO', '김철수', 'USER', 'kakao1234', 'LEVEL1', 0, NOW()),
---        ('KAKAO', '이영희', 'USER', 'KAKAO11', 'LEVEL2', 3, NOW()),
---        ('APPLE', '김동현', 'USER', 'kakao123411', 'LEVEL3', 11, NOW()),
---        ('APPLE', '김나다', 'USER', 'kakao12341111', 'LEVEL4', 21, NOW());
+INSERT INTO User (myFeedCnt, createdAt, deletedAt, updatedAt, level, nickName, profileImageUrl, socialId, socialType, userRole)
+VALUES
+    (0, NOW(), NULL, NULL, 'LEVEL1', 'JohnDoe', 'http://example.com/profile1.jpg', 'john.doe@example.com', 'APPLE', 'USER'),
+    (0, NOW(), NULL, NULL, 'LEVEL2', 'JaneDoe', 'http://example.com/profile2.jpg', 'jane.doe@example.com', 'KAKAO', 'ADMIN'),
+    (0, NOW(), NULL, NULL, 'LEVEL3', 'Alice', 'http://example.com/profile3.jpg', 'alice@example.com', 'APPLE', 'USER'),
+    (0, NOW(), NULL, NULL, 'LEVEL4', 'Bob', 'http://example.com/profile4.jpg', 'bob@example.com', 'KAKAO', 'USER');
+
 --
 -- INSERT INTO StoreMeta (totalRevisitedCount, totalReviewCount, mostVisitedCount, totalRating, createdAt, updatedAt)
 -- VALUES (5, 14, 3, 4.5, NOW(), NOW()),
