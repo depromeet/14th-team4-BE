@@ -8,10 +8,7 @@ import java.util.stream.Collectors;
 
 import com.depromeet.domains.store.dto.StoreFeedResponse;
 import com.depromeet.domains.store.dto.response.*;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +30,8 @@ import com.depromeet.enums.ViewLevel;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import static com.depromeet.common.CursorPagingCommon.getSlice;
 
 @Service
 @RequiredArgsConstructor
@@ -83,18 +82,12 @@ public class StoreService {
 	// 음식점 리뷰 조회(타입별 조회)
 	@Transactional(readOnly = true)
 	public Slice<StoreFeedResponse> getStoreFeed(User user, Long storeId,
-												 Pageable pageable) {
+												 Long lastIdxId, Integer size) {
 
 		Store store = storeRepository.findById(storeId).orElseThrow(() -> new CustomException(Result.NOT_FOUND_STORE));
-
-		Integer size = 10;
-		Sort sort = Sort.by(Sort.Direction.DESC, "createAt");
-		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), size, sort);
-
-		Slice<com.depromeet.domains.store.dto.StoreFeedResponse> feeds = feedRepository.findFeedByStoreId(storeId, (PageRequest)pageable,
-			user.getUserId());
-		// Review 객체를 StoreLogResponse DTO로 변환하여 Slice 객체에 담아 반환
-		return feeds;
+		List<StoreFeedResponse> storeFeedResponses = feedRepository.findFeedByStoreId(storeId, user.getUserId(), lastIdxId, size);
+		Slice<StoreFeedResponse> response = getSlice(storeFeedResponses, size);
+		return response;
 	}
 
 	@Transactional(readOnly = true)
