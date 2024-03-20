@@ -141,6 +141,11 @@ operation::feed-controller-test/get-feed[]
 === 5. 피드 삭제
 operation::feed-controller-test/delete-store-feed[]
 
+== Follow API
+=== 1. 팔로잉 / 언팔로잉 요청
+operation::follow-controller-test/update-follow[snippets='curl-request,http-request,http-response,response-fields']
+
+
 == Test API
 
 [[test-token]]

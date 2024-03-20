@@ -16,6 +16,8 @@ import com.depromeet.auth.service.RedisService;
 import com.depromeet.domains.bookmark.controller.BookmarkController;
 import com.depromeet.domains.bookmark.service.BookmarkService;
 import com.depromeet.domains.feed.service.FeedService;
+import com.depromeet.domains.follow.controller.FollowController;
+import com.depromeet.domains.follow.service.FollowService;
 import com.depromeet.domains.image.controller.ImageController;
 import com.depromeet.domains.store.controller.StoreController;
 import com.depromeet.domains.store.controller.StoreSearchController;
@@ -36,7 +38,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
         BookmarkController.class,
         AuthController.class,
         ImageController.class,
-        FeedController.class
+        FeedController.class,
+        FollowController.class
 })
 public abstract class ControllerTest {
 
@@ -73,6 +76,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected FeedService feedService;
+
+    @MockBean
+    protected FollowService followService;
     // @MockBean으로 필요한 레포지토리, 서비스로직을 정의
 
     protected String createJson(Object dto) throws JsonProcessingException {
