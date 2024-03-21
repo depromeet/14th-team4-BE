@@ -135,6 +135,22 @@ operation::store-search-controller-test/search[]
 === presigned url 발급
 operation::image-controller-test/get-presigned-url[snippets='curl-request,http-request,http-response,query-parameters,request-headers,response-fields']
 
+== Feed API
+
+=== 1. 피드 전체 조회
+operation::feed-controller-test/get-feeds[]
+
+=== 2. 피드 상세 조회
+operation::feed-controller-test/get-feed[]
+
+=== 5. 피드 삭제
+operation::feed-controller-test/delete-store-feed[]
+
+== Follow API
+=== 1. 팔로잉 / 언팔로잉 요청
+operation::follow-controller-test/update-follow[snippets='curl-request,http-request,http-response,response-fields']
+
+
 == Test API
 
 [[test-token]]

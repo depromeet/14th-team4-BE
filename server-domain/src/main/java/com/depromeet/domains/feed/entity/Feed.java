@@ -2,6 +2,7 @@ package com.depromeet.domains.feed.entity;
 
 import com.depromeet.domains.common.entity.BaseTimeEntity;
 
+import com.depromeet.domains.feed.dto.request.FeedUpdateRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -50,4 +51,9 @@ public class Feed extends BaseTimeEntity {
 	@Column(nullable = false)
 	private Long commentCnt;
 
+	public void updateFeed(Integer rating, String imageUrl, String description) {
+		this.rating = rating;
+		this.imageUrl = imageUrl;
+		this.description = description;
+	}
 }

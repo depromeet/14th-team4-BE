@@ -1,8 +1,6 @@
 package com.depromeet.document;
 
 import com.depromeet.domains.feed.controller.FeedController;
-import com.depromeet.domains.profile.controller.ProfileController;
-import com.depromeet.domains.profile.service.ProfileService;
 import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -18,6 +16,8 @@ import com.depromeet.auth.service.RedisService;
 import com.depromeet.domains.bookmark.controller.BookmarkController;
 import com.depromeet.domains.bookmark.service.BookmarkService;
 import com.depromeet.domains.feed.service.FeedService;
+import com.depromeet.domains.follow.controller.FollowController;
+import com.depromeet.domains.follow.service.FollowService;
 import com.depromeet.domains.image.controller.ImageController;
 import com.depromeet.domains.store.controller.StoreController;
 import com.depromeet.domains.store.controller.StoreSearchController;
@@ -38,6 +38,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
         BookmarkController.class,
         AuthController.class,
         ImageController.class,
+        FeedController.class,
+        FollowController.class,
         FeedController.class,
         ProfileController.class
 })
@@ -79,6 +81,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected FeedService feedService;
+
+    @MockBean
+    protected FollowService followService;
     // @MockBean으로 필요한 레포지토리, 서비스로직을 정의
 
     protected String createJson(Object dto) throws JsonProcessingException {

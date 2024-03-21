@@ -2,7 +2,13 @@ package com.depromeet.domains.feed.repository;
 
 import java.util.List;
 
+import com.depromeet.domains.feed.dto.response.FeedDetailResponse;
+import com.depromeet.domains.feed.dto.response.FeedResponse;
+import com.depromeet.domains.follow.entity.QFollow;
 import com.depromeet.domains.store.dto.StoreFeedResponse;
+import com.depromeet.domains.store.entity.QStore;
+import com.querydsl.jpa.JPAExpressions;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -19,12 +25,16 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 
+import static com.querydsl.jpa.JPAExpressions.select;
+
 @Repository
 @RequiredArgsConstructor
 public class FeedRepositoryImpl implements FeedRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
     QFeed feed = QFeed.feed;
-
+    QUser user = QUser.user;
+    QFollow follow = QFollow.follow;
+    QStore store = QStore.store;
 
     @Override
     public Long countStoreReviewByUserForDay(Long userId, Long storeId, LocalDateTime startOfDay,
@@ -50,10 +60,7 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
     }
 
     @Override
-    public Slice<StoreFeedResponse> findFeedByStoreId(Long storeId, Pageable pageable, Long userId) {
-        QFeed feed = QFeed.feed;
-        QUser user = QUser.user;
-
+    public List<StoreFeedResponse> findFeedByStoreId(Long storeId, Long userId, Long lastFeedId, Integer size) {
         List<StoreFeedResponse> results = jpaQueryFactory
                 .select(Projections.fields(StoreFeedResponse.class,
                         feed.userId,
@@ -67,37 +74,14 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
                         feed.userId.eq(userId)))
                 .from(feed)
                 .join(user).on(feed.userId.eq(user.userId))
-                .where(ltFeedId((long) pageable.getPageNumber()),
+                .where(ltFeedId(lastFeedId),
                         feed.storeId.eq(storeId))
                 .orderBy(feed.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize() + 1)
+                .orderBy(feed.createdAt.desc())
+                .limit(size+1)
                 .fetch();
 
-        return checkLastPage(pageable, results);
-    }
-
-    // no-offset 방식 처리하는 메서드
-    private BooleanExpression ltFeedId(Long feedId) {
-        if (feedId == null) {
-            return null;
-        }
-
-        return feed.feedId.lt(feedId);
-    }
-
-    // 무한 스크롤 방식 처리하는 메서드
-    private Slice<StoreFeedResponse> checkLastPage(Pageable pageable, List<StoreFeedResponse> results) {
-
-        boolean hasNext = false;
-
-        // 조회한 결과 개수가 요청한 페이지 사이즈보다 크면 뒤에 더 있음, next = true
-        if (results.size() > pageable.getPageSize()) {
-            hasNext = true;
-            results.remove(pageable.getPageSize());
-        }
-
-        return new SliceImpl<>(results, pageable, hasNext);
+        return results;
     }
 
     @Override
@@ -126,5 +110,94 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
         List<Feed> content = hasNext ? results.subList(0, pageable.getPageSize()) : results;
 
         return new SliceImpl<>(content, pageable, hasNext);
+    }
+
+    @Override
+    public List<FeedResponse> findFeedAll(Long lastFeedId, Long userId, String type, Integer size) {
+        BooleanExpression condition = getTypeCondition(userId, type);
+
+        List<FeedResponse> results = jpaQueryFactory
+                .select(Projections.constructor(FeedResponse.class,
+                        user.userId,
+                        user.profileImageUrl,
+                        user.nickName,
+                        store.storeId,
+                        store.storeName,
+                        store.kakaoCategoryName,
+                        store.address,
+                        feed.feedId,
+                        feed.description,
+                        feed.imageUrl,
+                        feed.createdAt,
+                        select(follow.receiverId.count().gt(0))
+                                .from(follow)
+                                .where(follow.senderId.eq(userId)
+                                        .and(follow.receiverId.eq(feed.userId)))
+                                .exists().as("isFollowed")))
+                .from(feed)
+                .join(store).on(feed.storeId.eq(store.storeId))
+                .join(user).on(feed.userId.eq(user.userId))
+                .where(condition,
+                        ltFeedId(lastFeedId))
+                .orderBy(feed.createdAt.desc())
+                .limit(size+1)
+                .fetch();
+
+        return results;
+    }
+
+    @Override
+    public FeedDetailResponse findFeedDetail(Long userId, Long feedId) {
+
+        BooleanExpression isFollowedSubQuery = select(follow.receiverId.count().gt(0))
+                .from(follow)
+                .where(follow.senderId.eq(userId)
+                        .and(follow.receiverId.eq(feed.userId)))
+                .exists();
+
+        FeedDetailResponse result = jpaQueryFactory
+                .select(Projections.constructor(FeedDetailResponse.class,
+                        user.userId,
+                        user.profileImageUrl,
+                        user.nickName,
+                        store.storeId,
+                        store.storeName,
+                        store.kakaoCategoryName,
+                        store.address,
+                        feed.feedId,
+                        feed.description,
+                        feed.imageUrl,
+                        feed.createdAt,
+                        isFollowedSubQuery, // 서브쿼리 결과를 생성자 인자로 전달
+                        feed.rating))
+                .from(feed)
+                .join(store).on(feed.storeId.eq(store.storeId))
+                .join(user).on(feed.userId.eq(user.userId))
+                .where(feed.feedId.eq(feedId))
+                .fetchOne();
+        return result;
+    }
+
+    // type에 따른 조건 생성
+    private BooleanExpression getTypeCondition(Long userId, String type) {
+        if ("FOLLOW".equals(type)) {
+            return feed.userId.in(
+                    JPAExpressions
+                            .select(follow.receiverId)
+                            .from(follow)
+                            .where(follow.senderId.eq(userId))
+            );
+        } else { // "ALL" 타입이거나 다른 타입일 경우
+            return null; // 모든 피드를 조회하기 위해 null을 반환
+        }
+    }
+
+    // no-offset 방식 처리하는 메서드
+    private BooleanExpression ltFeedId(Long feedId) {
+        if (feedId == null) {
+            return null;
+        }
+
+        return feed.feedId.lt(feedId);
     }
 }
