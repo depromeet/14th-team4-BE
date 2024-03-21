@@ -63,7 +63,7 @@ class ProfileControllerTest extends RestDocsTestSupport {
                             fieldWithPath("data.isMine").type(JsonFieldType.BOOLEAN).description("본인 프로필 여부"),
                             fieldWithPath("data.userId").type(JsonFieldType.NUMBER).description("프로필 유저 Id"),
                             fieldWithPath("data.profileImgUrl").type(JsonFieldType.STRING).description("프로필 imageUrl"),
-                            fieldWithPath("data.nickName").type(JsonFieldType.STRING).description("프로필 유저 닉네임"),
+                            fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("프로필 유저 닉네임"),
                             fieldWithPath("data.feedCnt").type(JsonFieldType.NUMBER).description("프로필 유저의 피드갯수"),
                             fieldWithPath("data.follwerCnt").type(JsonFieldType.NUMBER).description("프로필 유저의 팔로워수"),
                             fieldWithPath("data.followingCnt").type(JsonFieldType.NUMBER).description("프로필 유저의 팔로잉수"),
