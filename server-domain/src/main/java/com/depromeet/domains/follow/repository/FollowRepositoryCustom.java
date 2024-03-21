@@ -1,13 +1,10 @@
 package com.depromeet.domains.follow.repository;
 
-import com.depromeet.domains.follow.entity.Follow;
-
-import java.util.List;
-
-import java.util.List;
-
 import com.depromeet.domains.follow.dto.FollowListResponse;
+import com.depromeet.domains.follow.entity.Follow;
 import com.depromeet.enums.FollowType;
+
+import java.util.List;
 
 public interface FollowRepositoryCustom {
 

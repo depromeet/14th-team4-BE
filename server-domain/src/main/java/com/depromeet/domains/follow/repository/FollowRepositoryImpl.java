@@ -1,11 +1,7 @@
 package com.depromeet.domains.follow.repository;
 
-import java.util.List;
-
-import com.depromeet.domains.follow.entity.Follow;
-import org.springframework.stereotype.Repository;
-
 import com.depromeet.domains.follow.dto.FollowListResponse;
+import com.depromeet.domains.follow.entity.Follow;
 import com.depromeet.domains.follow.entity.QFollow;
 import com.depromeet.domains.user.entity.QUser;
 import com.depromeet.enums.FollowType;
@@ -15,10 +11,10 @@ import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
-import static com.depromeet.domains.follow.entity.QFollow.follow;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor

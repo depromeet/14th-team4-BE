@@ -1,6 +1,8 @@
 package com.depromeet.document;
 
 import com.depromeet.domains.feed.controller.FeedController;
+import com.depromeet.domains.profile.controller.ProfileController;
+import com.depromeet.domains.profile.service.ProfileService;
 import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
