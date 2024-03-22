@@ -2,6 +2,8 @@ package com.depromeet.domains.profile.controller;
 
 import com.depromeet.annotation.AuthUser;
 import com.depromeet.common.exception.CustomResponseEntity;
+import com.depromeet.domains.feed.repository.ProfileFeedProjection;
+import com.depromeet.domains.profile.dto.response.ProfileFeedResponse;
 import com.depromeet.domains.profile.dto.response.ProfileResponse;
 import com.depromeet.domains.profile.service.ProfileService;
 import com.depromeet.domains.user.entity.User;
@@ -24,10 +26,10 @@ public class ProfileController {
     }
 
     @GetMapping("/{userId}/feeds")
-    public CustomResponseEntity<Slice<ProfileResponse>> getProfileFeed(@AuthUser User user,
-                                                                       @PathVariable("userId") Long userId,
-                                                                       @RequestParam(value = "lastIdxId") Long lastIdxId,
-                                                                       @RequestParam(value = "size") Integer size) {
+    public CustomResponseEntity<Slice<ProfileFeedResponse>> getProfileFeed(@AuthUser User user,
+                                                                           @PathVariable("userId") Long userId,
+                                                                           @RequestParam(value = "lastIdxId") Long lastIdxId,
+                                                                           @RequestParam(value = "size") Integer size) {
         return CustomResponseEntity.success(
                 this.profileService.getProfileFeed(user, userId, lastIdxId, size));
     }
