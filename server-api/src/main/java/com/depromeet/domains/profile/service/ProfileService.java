@@ -5,6 +5,7 @@ import com.depromeet.common.exception.Result;
 import com.depromeet.domains.feed.repository.FeedRepository;
 import com.depromeet.domains.feed.repository.ProfileFeedProjection;
 import com.depromeet.domains.follow.repository.FollowRepository;
+import com.depromeet.domains.profile.dto.response.ProfileFeedResponse;
 import com.depromeet.domains.profile.dto.response.ProfileResponse;
 import com.depromeet.domains.store.dto.StoreFeedResponse;
 import com.depromeet.domains.store.repository.StoreRepository;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.depromeet.common.CursorPagingCommon.getSlice;
 
@@ -49,12 +51,15 @@ public class ProfileService {
         return !ObjectUtils.isEmpty(followRepository.getFollowByEachId(profileUserId, loginUser.getUserId()));
     }
 
-    public Slice<ProfileResponse> getProfileFeed(User loginUser, Long profileUserId, Long lastIdxId, Integer size) {
+    public Slice<ProfileFeedResponse> getProfileFeed(User loginUser, Long profileUserId, Long lastIdxId, Integer size) {
         User profileUser = userRepository.findById(profileUserId)
                 .orElseThrow(() -> new CustomException(Result.NOT_FOUND_USER));
 
-        List<ProfileFeedProjection> profileFeedList
-                            = feedRepository.findProfileFeed(loginUser, profileUser.getUserId(), lastIdxId, size);
+        List<ProfileFeedResponse> profileFeedList = feedRepository.findProfileFeed(loginUser, profileUser.getUserId(), lastIdxId, size)
+                .stream()
+                .map(ProfileFeedResponse::of)
+                .collect(Collectors.toList());
+
         return getSlice(profileFeedList, size);
     }
 }
