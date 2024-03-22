@@ -125,6 +125,9 @@ operation::user-controller-test/delete-user-test[snippets='curl-request,http-req
 === 1. 프로필 조회
 operation::profile-controller-test/get-profile[]
 
+=== 2. 프로필 피드 조회
+operation::profile-controller-test/get-profile-feed[]
+
 == Store Search API
 
 [[get-store-search]]
