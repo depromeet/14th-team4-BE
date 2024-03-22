@@ -36,6 +36,12 @@ public class ProfileFeedResponse {
         this.isHeartFeed = isHeartFeed;
     }
 
+    public static ProfileFeedResponse of(Long feedId, Long userId, Long storeId, String storeName, Long kakaoStoreId
+            , String feedImageUrl, LocalDateTime feedCreatedAt, Long likeCnt, Long commentCnt, Boolean isHeartFeed) {
+        return new ProfileFeedResponse(feedId, userId, storeId, storeName, kakaoStoreId
+                , feedImageUrl, feedCreatedAt, likeCnt, commentCnt, isHeartFeed);
+    }
+
     public static ProfileFeedResponse of(ProfileFeedProjection projection) {
         return ProfileFeedResponse.builder()
                 .feedId(projection.getFeedId())
@@ -49,8 +55,6 @@ public class ProfileFeedResponse {
                 .commentCnt(projection.getCommentCnt())
                 .isHeartFeed(projection.getIsHeartFeed())
                 .build();
-
-
     }
 
 }
