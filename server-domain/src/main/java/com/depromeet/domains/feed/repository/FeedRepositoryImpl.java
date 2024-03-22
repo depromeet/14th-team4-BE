@@ -1,29 +1,28 @@
 package com.depromeet.domains.feed.repository;
 
-import java.util.List;
-
 import com.depromeet.domains.feed.dto.response.FeedDetailResponse;
 import com.depromeet.domains.feed.dto.response.FeedResponse;
+import com.depromeet.domains.feed.entity.Feed;
+import com.depromeet.domains.feed.entity.QFeed;
 import com.depromeet.domains.follow.entity.QFollow;
+import com.depromeet.domains.like.entity.QHeart;
 import com.depromeet.domains.store.dto.StoreFeedResponse;
 import com.depromeet.domains.store.entity.QStore;
+import com.depromeet.domains.user.entity.QUser;
+import com.depromeet.domains.user.entity.User;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
-import org.springframework.data.domain.PageRequest;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
-import com.depromeet.domains.feed.entity.Feed;
-import com.depromeet.domains.feed.entity.QFeed;
 import java.time.LocalDateTime;
-
-import com.depromeet.domains.user.entity.QUser;
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 
 import static com.querydsl.jpa.JPAExpressions.select;
 
@@ -35,17 +34,19 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
     QUser user = QUser.user;
     QFollow follow = QFollow.follow;
     QStore store = QStore.store;
+    QHeart heart = QHeart.heart;
 
     @Override
     public Long countStoreReviewByUserForDay(Long userId, Long storeId, LocalDateTime startOfDay,
-        LocalDateTime endOfDay) {
+                                             LocalDateTime endOfDay) {
         return jpaQueryFactory.select(feed.count())
-            .from(feed)
-            .where(feed.userId.eq(userId)
-                .and(feed.storeId.eq(storeId))
-                .and(feed.createdAt.between(startOfDay, endOfDay)))
-            .fetchOne();
+                .from(feed)
+                .where(feed.userId.eq(userId)
+                        .and(feed.storeId.eq(storeId))
+                        .and(feed.createdAt.between(startOfDay, endOfDay)))
+                .fetchOne();
     }
+
     @Override
     public List<String> findTop10FeedImagesByCreatedAtDesc(Long storeId) {
         List<String> imageUrls = jpaQueryFactory
@@ -78,7 +79,7 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
                         feed.storeId.eq(storeId))
                 .orderBy(feed.createdAt.desc())
                 .orderBy(feed.createdAt.desc())
-                .limit(size+1)
+                .limit(size + 1)
                 .fetch();
 
         return results;
@@ -88,11 +89,11 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
     public boolean existsByStoreAndUser(Long storeId, Long userId) {
         QFeed feed = QFeed.feed;
         Integer result = jpaQueryFactory
-            .selectOne()
-            .from(feed)
-            .where(feed.storeId.eq(storeId)
-                .and(feed.userId.eq(userId)))
-            .fetchFirst();
+                .selectOne()
+                .from(feed)
+                .where(feed.storeId.eq(storeId)
+                        .and(feed.userId.eq(userId)))
+                .fetchFirst();
         return result != null;
     }
 
@@ -100,11 +101,11 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
     public Slice<Feed> findByUserId(Long userId, Pageable pageable) {
         QFeed feed = QFeed.feed;
         List<Feed> results = jpaQueryFactory.selectFrom(feed)
-            .where(feed.userId.eq(userId))
-            .orderBy(feed.createdAt.desc())
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize() + 1) // 다음 페이지가 있는지 확인하기 위해 1개 더 가져옴
-            .fetch();
+                .where(feed.userId.eq(userId))
+                .orderBy(feed.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1) // 다음 페이지가 있는지 확인하기 위해 1개 더 가져옴
+                .fetch();
 
         boolean hasNext = results.size() > pageable.getPageSize();
         List<Feed> content = hasNext ? results.subList(0, pageable.getPageSize()) : results;
@@ -140,7 +141,7 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
                 .where(condition,
                         ltFeedId(lastFeedId))
                 .orderBy(feed.createdAt.desc())
-                .limit(size+1)
+                .limit(size + 1)
                 .fetch();
 
         return results;
@@ -178,6 +179,35 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
         return result;
     }
 
+    @Override
+    public List<ProfileFeedProjection> findProfileFeed(User loginUser, Long profileUserId, Long lastIdxId, Integer size) {
+        return jpaQueryFactory
+                .select(Projections.constructor(ProfileFeedProjection.class,
+                        feed.feedId,
+                        feed.userId,
+                        feed.storeId,
+                        store.storeName,
+                        store.kakaoStoreId,
+                        feed.imageUrl,
+                        feed.createdAt,
+                        feed.likeCnt,
+                        feed.commentCnt,
+                        isHeartFeed()
+                ))
+                .from(feed)
+                .innerJoin(store).on(feed.storeId.eq(store.storeId))
+                .leftJoin(heart).on(
+                          heart.feedId.eq(feed.feedId)
+                     .and(heart.userId.eq(loginUser.getUserId())))
+                .where(
+                        ltFeedId(lastIdxId),
+                        feed.userId.eq(profileUserId)
+                )
+                .orderBy(feed.createdAt.desc())
+                .limit(size + 1)
+                .fetch();
+    }
+
     // type에 따른 조건 생성
     private BooleanExpression getTypeCondition(Long userId, String type) {
         if ("FOLLOW".equals(type)) {
@@ -199,5 +229,17 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
         }
 
         return feed.feedId.lt(feedId);
+    }
+
+    private BooleanExpression isHeartFeed() {
+        return Expressions.cases()
+                .when(heart.heartId.isNull())
+                .then(false)
+                .otherwise(true)
+                .as("isHeartFeed");
+    }
+
+    private BooleanExpression feedIdEq(Long feedId) {
+        return feed.feedId.eq(feedId);
     }
 }
