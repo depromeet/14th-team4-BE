@@ -6,10 +6,8 @@ import com.depromeet.domains.profile.dto.response.ProfileResponse;
 import com.depromeet.domains.profile.service.ProfileService;
 import com.depromeet.domains.user.entity.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Slice;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,9 +17,18 @@ public class ProfileController {
     private final ProfileService profileService;
 
     @GetMapping("/{userId}")
-    public CustomResponseEntity<ProfileResponse> getProfile(@PathVariable("userId") Long userId,
-                                                            @AuthUser User user) {
+    public CustomResponseEntity<ProfileResponse> getProfile(@AuthUser User user,
+                                                            @PathVariable("userId") Long userId) {
         return CustomResponseEntity.success(
                 this.profileService.getProfile(user, userId));
+    }
+
+    @GetMapping("/{userId}/feeds")
+    public CustomResponseEntity<Slice<ProfileResponse>> getProfileFeed(@AuthUser User user,
+                                                                       @PathVariable("userId") Long userId,
+                                                                       @RequestParam(value = "lastIdxId") Long lastIdxId,
+                                                                       @RequestParam(value = "size") Integer size) {
+        return CustomResponseEntity.success(
+                this.profileService.getProfileFeed(user, userId, lastIdxId, size));
     }
 }
