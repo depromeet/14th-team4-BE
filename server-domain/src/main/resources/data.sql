@@ -18,88 +18,49 @@
 INSERT INTO User (myFeedCnt, createdAt, deletedAt, updatedAt, level, nickName, profileImageUrl, socialId, socialType, userRole)
 VALUES
     (0, NOW(), NULL, NULL, 'LEVEL1', 'JohnDoe', 'http://example.com/profile1.jpg', 'john.doe@example.com', 'APPLE', 'USER'),
-    (0, NOW(), NULL, NULL, 'LEVEL2', 'JaneDoe', 'http://example.com/profile2.jpg', 'jane.doe@example.com', 'KAKAO', 'ADMIN'),
+    (0, NOW(), NULL, NULL, 'LEVEL2', 'JaneDoe', 'http://example.com/profile2.jpg', 'jane.doe@example.com', 'KAKAO', 'USER'),
     (0, NOW(), NULL, NULL, 'LEVEL3', 'Alice', 'http://example.com/profile3.jpg', 'alice@example.com', 'APPLE', 'USER'),
     (0, NOW(), NULL, NULL, 'LEVEL4', 'Bob', 'http://example.com/profile4.jpg', 'bob@example.com', 'KAKAO', 'USER');
 
---
--- INSERT INTO StoreMeta (totalRevisitedCount, totalReviewCount, mostVisitedCount, totalRating, createdAt, updatedAt)
--- VALUES (5, 14, 3, 4.5, NOW(), NOW()),
---        (0, 4, 0, 5.0, NOW(), NOW()),
---        (2, 8, 2, 4.0, NOW(), NOW()),
---        (10, 50, 5, 3.5, NOW(), NOW()),
---        (1, 3, 2, 3.0, NOW(), NOW()),
---
---        (3, 9, 3, 5, NOW(), NOW()),
---        (3, 6, 2, 5, NOW(), NOW()),
---        (1, 3, 3, 5, NOW(), NOW()),
---        (1, 2, 2, 5, NOW(), NOW()),
---        (2, 7, 4, 5, NOW(), NOW()),
---        (2, 6, 4, 5, NOW(), NOW());
--- -- Store 테이블에 데이터 삽입
--- INSERT INTO Store (category_id, store_meta_id, storeName, latitude, longitude, address, thumbnailUrl, kakaoStoreId,
---                    createdAt, updatedAt)
--- VALUES (1, 1, '맛집1', 37.3665, 123.9780, '서울특별시 중구 세종대로 110', 'thumbnail1.jpg', '234', NOW(), NOW()),
---        (2, 2, '카페2', 37.6651, 126.98955, '서울특별시 중구 청계천로 100', 'thumbnail2.jpg', '3342', NOW(), NOW()),
---        (1, 3, '맛집2', 43.5665, 130.9780, '서울특별시 관악구 봉천동 62-1', 'thumbnail3.jpg', '1234', NOW(), NOW()),
---        (2, 4, '카페2', 45.5651, 131.98955, '서울특별시 강남구 테헤란로 21-10', 'thumbnail4.jpg', '3497', NOW(), NOW()),
---        (1, 5, '티컵 스타필드 코엑스몰점', 37.5126847515106, 127.058938708812, '서울 강남구 삼성동 159', 'thumbnail1.jpg', '43234', NOW(),
---         NOW()),
---
---        (1, 6, '맛집6', 37.3665, 123.9780, '서울특별시 중구 세종대로 110', 'thumbnail1.jpg', '234', NOW(), NOW()),
---        (1, 7, '맛집7', 37.3665, 123.9780, '서울특별시 중구 세종대로 110', 'thumbnail1.jpg', '234', NOW(), NOW()),
---        (1, 8, '맛집8', 37.3665, 123.9780, '서울특별시 중구 세종대로 110', 'thumbnail1.jpg', '234', NOW(), NOW()),
---        (1, 9, '맛집9', 37.3665, 123.9780, '서울특별시 중구 세종대로 110', 'thumbnail1.jpg', '234', NOW(), NOW()),
---        (1, 10, '맛집10', 37.3665, 123.9780, '서울특별시 중구 세종대로 110', 'thumbnail1.jpg', '234', NOW(), NOW()),
---        (1, 11, '맛집11', 37.3665, 123.9780, '서울특별시 중구 세종대로 110', 'thumbnail1.jpg', '234', NOW(), NOW());
---
---
---
--- INSERT INTO Review (store_id, user_id, rating, visitedAt, imageUrl, visitTimes, description, createdAt)
--- VALUES (1, 1, 4, '2022-01-01T12:00:00', 'http://example.com/image1.jpg', 1, '맛있었어요1', '2022-01-01T12:00:00');
--- INSERT INTO Review (store_id, user_id, rating, visitedAt, imageUrl, visitTimes, description, createdAt)
--- VALUES (1, 1, 5, '2022-01-01T13:00:00', 'http://example.com/image2.jpg', 2, '맛있었어요2', '2022-01-01T13:00:00');
--- INSERT INTO Review (store_id, user_id, rating, visitedAt, imageUrl, visitTimes, description, createdAt)
--- VALUES (1, 1, 3, '2022-01-01T14:00:00', 'http://example.com/image3.jpg', 3, '맛있었어요3', '2022-01-01T14:00:00');
--- INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
--- VALUES (1, 2, 4, '2022-01-04T13:00:00', 1, '괜찮았어요1', now());
--- INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
--- VALUES (1, 2, 4, '2022-01-05T13:00:00', 2, '괜찮았어2', now());
--- INSERT INTO Review (store_id, user_id, rating, visitedAt, imageUrl, visitTimes, description, createdAt)
--- VALUES (1, 3, 3, '2022-01-01T12:00:00', 'http://example.com/image3.jpg', 1, '맛있었어요4', '2022-01-01T17:00:00');
--- INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
--- VALUES (2, 1, 3, '2022-01-02T13:00:00', 1, '괜찮았어요3', '2022-01-01T13:00:00');
--- INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
--- VALUES (2, 3, 2, '2022-01-02T13:00:00', 1, '괜찮았어요4', '2022-01-01T15:00:00');
--- INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
--- VALUES (2, 3, 4, '2022-01-02T14:00:00', 2, '괜찮았어요5', '2022-01-01T12:00:00');
--- INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
--- VALUES (3, 1, 4, '2022-01-02T13:00:00', 1, '괜찮았어요6', '2022-01-01T12:00:00');
--- INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
--- VALUES (3, 2, 4, '2022-01-02T13:00:00', 1, '괜찮았어요7', '2022-01-01T12:00:00');
--- INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
--- VALUES (4, 3, 4, '2022-01-02T13:00:00', 1, '요 식당 괜찮았어요1', now());
--- INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
--- VALUES (4, 3, 4, '2022-01-02T14:00:00', 2, '요 식당 괜찮았어요2', now());
--- INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
--- VALUES (4, 4, 4, '2022-01-03T13:00:00', 1, '진짜 맛있어요11', now());
--- INSERT INTO Review (store_id, user_id, rating, visitedAt, imageUrl, visitTimes, description, createdAt)
--- VALUES (1, 1, 4, '2022-01-01T12:00:00', 'http://example.com/image1.jpg', 1, '맛있었어요12222', '2022-01-01T12:00:00');
--- INSERT INTO Review (store_id, user_id, rating, visitedAt, imageUrl, visitTimes, description, createdAt)
--- VALUES (1, 1, 5, '2022-01-01T13:00:00', 'http://example.com/image2.jpg', 2, '맛있었어요233333', '2022-01-01T13:00:00');
--- INSERT INTO Review (store_id, user_id, rating, visitedAt, imageUrl, visitTimes, description, createdAt)
--- VALUES (1, 1, 3, '2022-01-01T14:00:00', 'http://example.com/image3.jpg', 3, '맛있었어요344444', '2022-01-01T14:00:00');
--- INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
--- VALUES (1, 2, 4, '2022-01-04T13:00:00', 1, '괜찮았어요111111', now());
--- INSERT INTO Review (store_id, user_id, rating, visitedAt, visitTimes, description, createdAt)
--- VALUES (1, 2, 4, '2022-01-05T13:00:00', 2, '괜찮았어233333', now());
--- INSERT INTO Review (store_id, user_id, rating, visitedAt, imageUrl, visitTimes, description, createdAt)
--- VALUES (1, 3, 3, '2022-01-01T12:00:00', 'http://example.com/image3.jpg', 1, '맛있었어요4666666', '2022-01-01T17:00:00');
---
---
--- INSERT INTO Review (store_id, user_id, rating, visitedAt, imageUrl, visitTimes, description, createdAt)
--- VALUES (1, 1, 5, '2022-01-01T12:00:00', 'http://example.com/image2.jpg', 1, '맛있었어요121', '2022-01-01T11:00:00');
---
+INSERT INTO Feed (storeId, userId, rating, imageUrl, description, likeCnt, commentCnt, createdAt)
+VALUES
+    (1, 1, 5, 'image_url_1.jpg', 'Description 1', 10, 20, now()),
+    (2, 1, 4, 'image_url_2.jpg', 'Description 2', 15, 25, now()),
+    (3, 2, 3, 'image_url_3.jpg', 'Description 3', 20, 30, now()),
+    (4, 2, 2, 'image_url_4.jpg', 'Description 4', 25, 35, now()),
+    (5, 3, 1, 'image_url_5.jpg', 'Description 5', 30, 40, now()),
+    (6, 3, 5, 'image_url_6.jpg', 'Description 6', 35, 45, now()),
+    (7, 4, 4, 'image_url_7.jpg', 'Description 7', 40, 50, now()),
+    (8, 4, 3, 'image_url_8.jpg', 'Description 8', 45, 55, now()),
+    (9, 4, 2, 'image_url_9.jpg', 'Description 9', 50, 60, now()),
+    (10, 4, 1, 'image_url_10.jpg', 'Description 10', 55, 65, now());
+
+INSERT INTO Store (storeId, storeName, latitude, longitude, address, thumbnailUrl, kakaoStoreId, totalRating, kakaoCategoryName, totalFeedCnt, createdAt, updatedAt)
+VALUES
+    (1, 'Store 1', 37.123456, 127.123456, 'Address 1', 'thumbnail_url_1.jpg', 123456789, 4.5, 'Category 1', 100, NOW(), NULL),
+    (2, 'Store 2', 37.234567, 127.234567, 'Address 2', 'thumbnail_url_2.jpg', 234567890, 4.2, 'Category 2', 200, NOW(), NULL),
+    (3, 'Store 3', 37.345678, 127.345678, 'Address 3', 'thumbnail_url_3.jpg', 345678901, 4.7, 'Category 3', 150, NOW(), NULL),
+    (4, 'Store 4', 37.456789, 127.456789, 'Address 4', 'thumbnail_url_4.jpg', 456789012, 4.0, 'Category 4', 180, NOW(), NULL),
+    (5, 'Store 5', 37.567890, 127.567890, 'Address 5', 'thumbnail_url_5.jpg', 567890123, 4.9, 'Category 5', 220, NOW(), NULL),
+    (6, 'Store 6', 37.678901, 127.678901, 'Address 6', 'thumbnail_url_6.jpg', 678901234, 4.3, 'Category 6', 130, NOW(), NULL),
+    (7, 'Store 7', 37.789012, 127.789012, 'Address 7', 'thumbnail_url_7.jpg', 789012345, 4.6, 'Category 7', 190, NOW(), NULL),
+    (8, 'Store 8', 37.890123, 127.890123, 'Address 8', 'thumbnail_url_8.jpg', 890123456, 4.1, 'Category 8', 170, NOW(), NULL),
+    (9, 'Store 9', 37.901234, 127.901234, 'Address 9', 'thumbnail_url_9.jpg', 901234567, 4.8, 'Category 9', 210, NOW(), NULL),
+    (10, 'Store 10', 37.012345, 127.012345, 'Address 10', 'thumbnail_url_10.jpg', 123456789, 4.4, 'Category 10', 160, NOW(), NULL);
+
+INSERT INTO Heart (createdAt, deletedAt, feedId, updatedAt, userId)
+VALUES
+    (NOW(), NULL, 1, NULL, 1),
+    (NOW(), NULL, 2, NULL, 2),
+    (NOW(), NULL, 3, NULL, 3),
+    (NOW(), NULL, 4, NULL, 4),
+    (NOW(), NULL, 5, NULL, 1),
+    (NOW(), NULL, 6, NULL, 2),
+    (NOW(), NULL, 7, NULL, 3),
+    (NOW(), NULL, 8, NULL, 4),
+    (NOW(), NULL, 9, NULL, 1),
+    (NOW(), NULL, 10, NULL, 2);
+
 -- -- INSERT INTO Bookmark (user_id, store_id, isDeleted, createdAt, updatedAt)
 -- -- VALUES (1, 1, 0, now(), now()),
 -- --        (1, 2, 0, now(), now()),
