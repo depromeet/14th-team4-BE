@@ -1,7 +1,5 @@
 package com.depromeet.domains.feed.repository;
 
-
-
 import com.depromeet.domains.feed.dto.response.FeedDetailResponse;
 import com.depromeet.domains.feed.dto.response.FeedResponse;
 import com.depromeet.domains.store.dto.StoreFeedResponse;
@@ -12,8 +10,8 @@ import java.util.List;
 
 import java.time.LocalDateTime;
 
-
 import com.depromeet.domains.feed.entity.Feed;
+import com.depromeet.domains.user.entity.User;
 
 public interface FeedRepositoryCustom {
 	Long countStoreReviewByUserForDay(Long userId, Long storeId, LocalDateTime startOfDay, LocalDateTime endOfDay);
@@ -28,4 +26,6 @@ public interface FeedRepositoryCustom {
 	List<FeedResponse> findFeedAll(Long lastFeedId, Long userId, String type, Integer size);
 
 	FeedDetailResponse findFeedDetail(Long userId, Long feedId);
+
+	List<ProfileFeedProjection> findProfileFeed(User loginUser, Long profileUserId, Long lastIdxId, Integer size);
 }
