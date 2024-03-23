@@ -1,6 +1,7 @@
 package com.depromeet.controller;
 
 import com.depromeet.document.RestDocsTestSupport;
+import com.depromeet.domains.profile.dto.request.ProfileImageUrlRequest;
 import com.depromeet.domains.profile.dto.request.ProfileNicknameRequest;
 import com.depromeet.domains.profile.dto.response.ProfileFeedResponse;
 import com.depromeet.domains.profile.dto.response.ProfileResponse;
@@ -196,6 +197,36 @@ class ProfileControllerTest extends RestDocsTestSupport {
                                 ),
                                 requestFields(
                                         fieldWithPath("nickname").description("새로운 닉네임")
+                                )
+                        )
+                );
+    }
+
+    @Test
+    void updateProfileImageUrl() throws Exception {
+        //given
+        ProfileImageUrlRequest nicknameRequest = new ProfileImageUrlRequest("뉴 imageUrl");
+
+        doNothing().when(profileService).updateProfileNickname(any(), anyLong(), eq("뉴 imageUrl"));
+
+        // when & then
+        mockMvc.perform(
+                        put("/api/v1/profile/{userId}/img", 3L)
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsBytes(nicknameRequest))
+                                .header("Authorization", "Bearer accessToken"))
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("userId").description("프로필 유저 ID")
+                                ),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("accessToken")
+                                ),
+                                requestFields(
+                                        fieldWithPath("profileImageUrl").description("프로필 이미지 url")
                                 )
                         )
                 )
