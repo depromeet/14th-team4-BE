@@ -2,3 +2,17 @@
 GET {{host}}/api/v1/profile/4
 Content-Type: application/json;charset=UTF-8
 Authorization: Bearer {{token}}
+
+### 특정 유저의 프로필 조회
+GET {{host}}/api/v1/profile/3/feeds?lastIdxId=10&size=5
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer {{token}}
+
+### 프로필 닉네임 수정
+PUT {{host}}/api/v1/profile/3/nickname
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer {{token}}
+
+{
+  "nickname": "업뎃닉넴"
+}
