@@ -17,6 +17,7 @@ public enum Result {
     TOKEN_EXPIRED(401, "토큰 유효 기간 만료"),
     TOKEN_NOTSUPPORTED(401, "지원되지 않는 토큰 형식"),
     TOKEN_INVALID(401, "잘못된 토큰 형식"),
+    CANNOT_MODIFY_INFORMATION_ANOTHER_ACCOUNT(400, "다른 계정의 정보를 수정할 수 없습니다."),
     CANNOT_FOLLOW_YOURSELF(400, "자기 자신을 팔로우할 수 없습니다."),
     DUPLICATED_NICKNAME(400, "이미 존재하는 닉네임입니다."),
     DUPLICATED_STORE(400, "이미 존재하는 가게입니다."),
