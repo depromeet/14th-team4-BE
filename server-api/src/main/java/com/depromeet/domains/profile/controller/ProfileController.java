@@ -36,10 +36,10 @@ public class ProfileController {
     }
 
     @PutMapping("/{userId}/nickname")
-    public CustomResponseEntity<Void> updateNickname(@AuthUser User user,
-                                                     @PathVariable("userId") Long userId,
-                                                     @RequestBody @Valid NicknameRequest nicknameRequest) {
-        profileService.updateUserNickname(user, userId, nicknameRequest.getNickname());
+    public CustomResponseEntity<Void> updateProfileNickname(@AuthUser User user,
+                                                            @PathVariable("userId") Long userId,
+                                                            @RequestBody @Valid NicknameRequest nicknameRequest) {
+        profileService.updateProfileNickname(user, userId, nicknameRequest.getNickname());
         return CustomResponseEntity.success();
     }
 }
