@@ -27,6 +27,7 @@ public class ProfileService {
     private final UserRepository userRepository;
     private final FeedRepository feedRepository;
 
+    @Transactional(readOnly = true)
     public ProfileResponse getProfile(User loginUser, Long profileUserId) {
         Long followingCnt = followRepository.getFollowingCountBySenderId(loginUser.getUserId());
         Long followerCnt = followRepository.getFollowerCountByReceiverId(loginUser.getUserId());
@@ -48,6 +49,7 @@ public class ProfileService {
         return !ObjectUtils.isEmpty(followRepository.getFollowByEachId(profileUserId, loginUser.getUserId()));
     }
 
+    @Transactional(readOnly = true)
     public Slice<ProfileFeedResponse> getProfileFeed(User loginUser, Long profileUserId, Long lastIdxId, Integer size) {
         User profileUser = userRepository.findById(profileUserId)
                 .orElseThrow(() -> new CustomException(Result.NOT_FOUND_USER));
