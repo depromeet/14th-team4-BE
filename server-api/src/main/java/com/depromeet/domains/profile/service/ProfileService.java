@@ -3,17 +3,15 @@ package com.depromeet.domains.profile.service;
 import com.depromeet.common.exception.CustomException;
 import com.depromeet.common.exception.Result;
 import com.depromeet.domains.feed.repository.FeedRepository;
-import com.depromeet.domains.feed.repository.ProfileFeedProjection;
 import com.depromeet.domains.follow.repository.FollowRepository;
 import com.depromeet.domains.profile.dto.response.ProfileFeedResponse;
 import com.depromeet.domains.profile.dto.response.ProfileResponse;
-import com.depromeet.domains.store.dto.StoreFeedResponse;
-import com.depromeet.domains.store.repository.StoreRepository;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
@@ -28,8 +26,8 @@ public class ProfileService {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
     private final FeedRepository feedRepository;
-    private final StoreRepository storeRepository;
 
+    @Transactional(readOnly = true)
     public ProfileResponse getProfile(User loginUser, Long profileUserId) {
         Long followingCnt = followRepository.getFollowingCountBySenderId(loginUser.getUserId());
         Long followerCnt = followRepository.getFollowerCountByReceiverId(loginUser.getUserId());
@@ -51,6 +49,7 @@ public class ProfileService {
         return !ObjectUtils.isEmpty(followRepository.getFollowByEachId(profileUserId, loginUser.getUserId()));
     }
 
+    @Transactional(readOnly = true)
     public Slice<ProfileFeedResponse> getProfileFeed(User loginUser, Long profileUserId, Long lastIdxId, Integer size) {
         User profileUser = userRepository.findById(profileUserId)
                 .orElseThrow(() -> new CustomException(Result.NOT_FOUND_USER));
