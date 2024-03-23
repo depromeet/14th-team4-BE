@@ -2,6 +2,7 @@ package com.depromeet.domains.profile.controller;
 
 import com.depromeet.annotation.AuthUser;
 import com.depromeet.common.exception.CustomResponseEntity;
+import com.depromeet.domains.profile.dto.request.ProfileNicknameRequest;
 import com.depromeet.domains.profile.dto.response.ProfileFeedResponse;
 import com.depromeet.domains.profile.dto.response.ProfileResponse;
 import com.depromeet.domains.profile.service.ProfileService;
@@ -38,7 +39,7 @@ public class ProfileController {
     @PutMapping("/{userId}/nickname")
     public CustomResponseEntity<Void> updateProfileNickname(@AuthUser User user,
                                                             @PathVariable("userId") Long userId,
-                                                            @RequestBody @Valid NicknameRequest nicknameRequest) {
+                                                            @RequestBody @Valid ProfileNicknameRequest nicknameRequest) {
         profileService.updateProfileNickname(user, userId, nicknameRequest.getNickname());
         return CustomResponseEntity.success();
     }
