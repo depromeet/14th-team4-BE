@@ -2,11 +2,11 @@ package com.depromeet.domains.profile.controller;
 
 import com.depromeet.annotation.AuthUser;
 import com.depromeet.common.exception.CustomResponseEntity;
+import com.depromeet.domains.profile.dto.request.ProfileImageUrlRequest;
 import com.depromeet.domains.profile.dto.request.ProfileNicknameRequest;
 import com.depromeet.domains.profile.dto.response.ProfileFeedResponse;
 import com.depromeet.domains.profile.dto.response.ProfileResponse;
 import com.depromeet.domains.profile.service.ProfileService;
-import com.depromeet.domains.user.dto.request.NicknameRequest;
 import com.depromeet.domains.user.entity.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +41,14 @@ public class ProfileController {
                                                             @PathVariable("userId") Long userId,
                                                             @RequestBody @Valid ProfileNicknameRequest nicknameRequest) {
         profileService.updateProfileNickname(user, userId, nicknameRequest.getNickname());
+        return CustomResponseEntity.success();
+    }
+
+    @PutMapping("/{userId}/img")
+    public CustomResponseEntity<Void> updateProfileImageUrl(@AuthUser User user,
+                                                            @PathVariable("userId") Long userId,
+                                                            @RequestBody @Valid ProfileImageUrlRequest profileImageUrlRequest) {
+        profileService.updateProfileImageUrl(user, userId, profileImageUrlRequest.getProfileImageUrl());
         return CustomResponseEntity.success();
     }
 }
