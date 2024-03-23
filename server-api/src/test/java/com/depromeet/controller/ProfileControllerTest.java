@@ -4,6 +4,7 @@ import com.depromeet.document.RestDocsTestSupport;
 import com.depromeet.domains.profile.dto.response.ProfileFeedResponse;
 import com.depromeet.domains.profile.dto.response.ProfileResponse;
 import com.depromeet.domains.store.dto.StoreFeedResponse;
+import com.depromeet.domains.user.dto.request.NicknameRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,9 +22,11 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -59,7 +62,7 @@ class ProfileControllerTest extends RestDocsTestSupport {
                 .andDo(
                     restDocs.document(
                         pathParameters(
-                            parameterWithName("userId").description("프로필 유저 id")
+                            parameterWithName("userId").description("프로필 유저 ID")
                         ),
                         requestHeaders(
                             headerWithName("Authorization").description("accessToken")
@@ -167,5 +170,37 @@ class ProfileControllerTest extends RestDocsTestSupport {
                         )
                     )
                 );
+    }
+
+    @Test
+    void updateProfileNickname() throws Exception {
+        //given
+        NicknameRequest nicknameRequest = new NicknameRequest("뉴닉네임");
+
+        doNothing().when(profileService).updateProfileNickname(any(), anyLong(), eq("뉴닉네임"));
+
+        // when & then
+        mockMvc.perform(
+                        put("/api/v1/profile/{userId}/nickname", 3L)
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsBytes(nicknameRequest))
+                                .header("Authorization", "Bearer accessToken"))
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("userId").description("프로필 유저 ID")
+                                ),
+                                requestHeaders(
+                                        headerWithName("Authorization").description("accessToken")
+                                ),
+                                requestFields(
+                                        fieldWithPath("nickname").description("새로운 닉네임")
+                                )
+                        )
+                )
+        ;
+
     }
 }
