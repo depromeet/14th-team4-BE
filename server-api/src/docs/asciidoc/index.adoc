@@ -128,6 +128,9 @@ operation::profile-controller-test/get-profile[]
 === 2. 프로필 피드 조회
 operation::profile-controller-test/get-profile-feed[]
 
+=== 3. 프로필 닉네임 수정
+operation::profile-controller-test/update-profile-nickname[]
+
 == Store Search API
 
 [[get-store-search]]
