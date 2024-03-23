@@ -2,11 +2,12 @@ package com.depromeet.domains.profile.controller;
 
 import com.depromeet.annotation.AuthUser;
 import com.depromeet.common.exception.CustomResponseEntity;
-import com.depromeet.domains.feed.repository.ProfileFeedProjection;
 import com.depromeet.domains.profile.dto.response.ProfileFeedResponse;
 import com.depromeet.domains.profile.dto.response.ProfileResponse;
 import com.depromeet.domains.profile.service.ProfileService;
+import com.depromeet.domains.user.dto.request.NicknameRequest;
 import com.depromeet.domains.user.entity.User;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
@@ -32,5 +33,13 @@ public class ProfileController {
                                                                            @RequestParam(value = "size") Integer size) {
         return CustomResponseEntity.success(
                 this.profileService.getProfileFeed(user, userId, lastIdxId, size));
+    }
+
+    @PutMapping("/{userId}/nickname")
+    public CustomResponseEntity<Void> updateNickname(@AuthUser User user,
+                                                     @PathVariable("userId") Long userId,
+                                                     @RequestBody @Valid NicknameRequest nicknameRequest) {
+        profileService.updateUserNickname(user, userId, nicknameRequest.getNickname());
+        return CustomResponseEntity.success();
     }
 }
