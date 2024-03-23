@@ -8,7 +8,6 @@ import com.depromeet.domains.profile.dto.response.ProfileFeedResponse;
 import com.depromeet.domains.profile.dto.response.ProfileResponse;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.repository.UserRepository;
-import com.depromeet.domains.user.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
