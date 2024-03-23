@@ -27,7 +27,7 @@ public class ProfileService {
         boolean isFollowed = isUserFollowingMe(loginUser, profileUserId);
 
         return ProfileResponse.of(isMine, profileUser.getUserId(), profileUser.getProfileImageUrl()
-                , profileUser.getNickName(), profileUser.getMyFeedCnt(), followerCnt, followingCnt, isFollowed);
+                , profileUser.getNickname(), profileUser.getMyFeedCnt(), followerCnt, followingCnt, isFollowed);
     }
 
     private boolean isUserFollowingMe(User loginUser, Long profileUserId) {

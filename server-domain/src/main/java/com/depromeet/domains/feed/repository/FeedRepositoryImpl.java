@@ -8,7 +8,6 @@ import com.depromeet.domains.follow.entity.QFollow;
 import com.depromeet.domains.store.dto.StoreFeedResponse;
 import com.depromeet.domains.store.entity.QStore;
 import com.querydsl.jpa.JPAExpressions;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -66,7 +65,7 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
                         feed.userId,
                         feed.feedId,
                         user.profileImageUrl,
-                        user.nickName,
+                        user.nickname,
                         feed.rating,
                         feed.imageUrl,
                         feed.createdAt,
@@ -120,7 +119,7 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
                 .select(Projections.constructor(FeedResponse.class,
                         user.userId,
                         user.profileImageUrl,
-                        user.nickName,
+                        user.nickname,
                         store.storeId,
                         store.storeName,
                         store.kakaoCategoryName,
@@ -159,7 +158,7 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
                 .select(Projections.constructor(FeedDetailResponse.class,
                         user.userId,
                         user.profileImageUrl,
-                        user.nickName,
+                        user.nickname,
                         store.storeId,
                         store.storeName,
                         store.kakaoCategoryName,

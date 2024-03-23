@@ -45,7 +45,7 @@ public class UserService {
 	@Transactional(readOnly = true)
 	public UserProfileResponse getUserProfile(User user) {
 		User existUser = findUserById(user.getUserId());
-		return UserProfileResponse.of(existUser.getUserId(), existUser.getNickName(), existUser.getLevel().getDescription());
+		return UserProfileResponse.of(existUser.getUserId(), existUser.getNickname(), existUser.getLevel().getDescription());
 	}
 
 	@Transactional(readOnly = true)
