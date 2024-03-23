@@ -131,6 +131,9 @@ operation::profile-controller-test/get-profile-feed[]
 === 3. 프로필 닉네임 수정
 operation::profile-controller-test/update-profile-nickname[]
 
+=== 4. 프로필 이미지url 수정
+operation::profile-controller-test/update-profile-imageurl[]
+
 == Store Search API
 
 [[get-store-search]]
