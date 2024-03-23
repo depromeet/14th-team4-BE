@@ -69,6 +69,14 @@ public class ProfileService {
         profileUser.updateNickname(nickname);
     }
 
+    @Transactional
+    public void updateProfileImageUrl(User loginUser, Long profileUserId, String profileImageUrl) {
+        validateIsSameAccount(loginUser, profileUserId);
+        User profileUser = userRepository.findById(profileUserId)
+                .orElseThrow(() -> new CustomException(Result.NOT_FOUND_USER));
+        profileUser.updateProfileImageUrl(profileImageUrl);
+    }
+
     private void validateIsSameAccount(User loginUser, Long profileUserId) {
         if (!loginUser.getUserId().equals(profileUserId)) {
             throw new CustomException(Result.CANNOT_MODIFY_INFORMATION_ANOTHER_ACCOUNT);
