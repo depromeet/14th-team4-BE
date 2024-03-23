@@ -25,7 +25,6 @@ import static com.depromeet.common.CursorPagingCommon.getSlice;
 public class ProfileService {
 
     private final FollowRepository followRepository;
-    private final UserService userService;
     private final UserRepository userRepository;
     private final FeedRepository feedRepository;
 
@@ -63,7 +62,7 @@ public class ProfileService {
     }
 
     @Transactional
-    public void updateUserNickname(User loginUser, Long profileUserId, String nickname) {
+    public void updateProfileNickname(User loginUser, Long profileUserId, String nickname) {
         validateIsSameAccount(loginUser, profileUserId);
         validateIsExistsNickname(nickname);
         User profileUser = userRepository.findById(profileUserId)
