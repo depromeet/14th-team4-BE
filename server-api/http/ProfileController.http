@@ -16,3 +16,12 @@ Authorization: Bearer {{token}}
 {
   "nickname": "업뎃닉넴"
 }
+
+### 프로필 이미지url 수정
+PUT {{host}}/api/v1/profile/3/img
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer {{token}}
+
+{
+  "profileImageUrl": "업뎃imageUrl"
+}
