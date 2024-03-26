@@ -112,7 +112,7 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
     }
 
     @Override
-    public List<FeedResponse> findFeedAll(Long lastFeedId, Long userId, String type, Integer size) {
+    public List<FeedResponse> findFeedAll(Long lastIdxId, Long userId, String type, Integer size) {
         BooleanExpression condition = getTypeCondition(userId, type);
 
         List<FeedResponse> results = jpaQueryFactory
@@ -137,7 +137,7 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
                 .join(store).on(feed.storeId.eq(store.storeId))
                 .join(user).on(feed.userId.eq(user.userId))
                 .where(condition,
-                        ltFeedId(lastFeedId))
+                        ltFeedId(lastIdxId))
                 .orderBy(feed.createdAt.desc())
                 .limit(size+1)
                 .fetch();
