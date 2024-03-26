@@ -14,10 +14,11 @@ import java.time.LocalDateTime;
 public class CommentsResponse {
 
     private Long userId;
-    private String userProfile;
+    private String profileImageUrl;
     private String nickname;
     private String description;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Boolean isMine;
 
 }
