@@ -28,7 +28,7 @@ public class CommentService {
     }
 
     @Transactional
-    public Void createComment(User user, CommentCreateRequest request) {
+    public void createComment(User user, CommentCreateRequest request) {
         User findUser = userRepository.findById(user.getUserId())
                 .orElseThrow(() -> new CustomException(Result.NOT_FOUND_USER));
 
@@ -39,12 +39,10 @@ public class CommentService {
                 .build();
 
         commentRepository.save(comment);
-
-        return null;
     }
 
     @Transactional
-    public Void updateComment(User user, CommentUpdateRequest request, Long commentId) {
+    public void updateComment(User user, CommentUpdateRequest request, Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(Result.NOT_FOUND_COMMENT));
 
@@ -53,12 +51,10 @@ public class CommentService {
         }
 
         comment.updateDescription(request.getDescription());
-
-        return null;
     }
 
     @Transactional
-    public Void deleteComment(User user, Long commentId) {
+    public void deleteComment(User user, Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(Result.NOT_FOUND_COMMENT));
 
@@ -66,6 +62,5 @@ public class CommentService {
             throw new CustomException(Result.UNAUTHORIZED_USER);
         }
         commentRepository.deleteById(commentId);
-        return null;
     }
 }

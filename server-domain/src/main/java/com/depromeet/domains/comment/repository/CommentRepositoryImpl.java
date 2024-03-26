@@ -26,7 +26,8 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom{
                         user.nickname,
                         comment.description,
                         comment.createdAt,
-                        comment.updatedAt))
+                        comment.updatedAt,
+                        comment.userId.eq(user.userId)))
                 .from(comment)
                 .join(user).on(comment.userId.eq(user.userId))
                 .where(comment.feedId.eq(feedId))

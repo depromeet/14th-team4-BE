@@ -28,19 +28,22 @@ public class CommentController {
     // 피드에 댓글 작성
     @PostMapping("/comments")
     public CustomResponseEntity<Void> createComment(@AuthUser User user, @RequestBody CommentCreateRequest request) {
-        return CustomResponseEntity.success(commentService.createComment(user, request));
+        commentService.createComment(user, request);
+        return CustomResponseEntity.success();
     }
 
     // 피드의 댓글 수정
     @PutMapping("/comments/{commentId}")
     public CustomResponseEntity<Void> updateComment(@AuthUser User user, @RequestBody CommentUpdateRequest request,
                                                     @PathVariable("commentId") Long commentId) {
-        return CustomResponseEntity.success(commentService.updateComment(user, request, commentId));
+        commentService.updateComment(user, request, commentId);
+        return CustomResponseEntity.success();
     }
 
     // 피드의 댓글 삭제
     @DeleteMapping("/comments/{commentId}")
     public CustomResponseEntity<Void> deleteComment(@AuthUser User user, @PathVariable("commentId") Long commentId) {
-        return CustomResponseEntity.success(commentService.deleteComment(user, commentId));
+        commentService.deleteComment(user, commentId);
+        return CustomResponseEntity.success();
     }
 }
