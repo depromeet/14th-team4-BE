@@ -87,7 +87,7 @@ public class FollowRepositoryImpl implements FollowRepositoryCustom {
         List<FollowListResponse> followListResponses = jpaQueryFactory
                 .select(Projections.constructor(FollowListResponse.class,
                         relatedUserId,
-                        user.nickName,
+                        user.nickname,
                         user.profileImageUrl,
                         new CaseBuilder()
                                 .when(JPAExpressions.selectOne()

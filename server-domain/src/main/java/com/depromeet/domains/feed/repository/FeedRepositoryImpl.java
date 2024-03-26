@@ -8,7 +8,6 @@ import com.depromeet.domains.follow.entity.QFollow;
 import com.depromeet.domains.store.dto.StoreFeedResponse;
 import com.depromeet.domains.store.entity.QStore;
 import com.querydsl.jpa.JPAExpressions;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -66,7 +65,7 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
                         feed.userId,
                         feed.feedId,
                         user.profileImageUrl,
-                        user.nickName,
+                        user.nickname,
                         feed.rating,
                         feed.imageUrl,
                         feed.createdAt,
@@ -113,14 +112,14 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
     }
 
     @Override
-    public List<FeedResponse> findFeedAll(Long lastFeedId, Long userId, String type, Integer size) {
+    public List<FeedResponse> findFeedAll(Long lastIdxId, Long userId, String type, Integer size) {
         BooleanExpression condition = getTypeCondition(userId, type);
 
         List<FeedResponse> results = jpaQueryFactory
                 .select(Projections.constructor(FeedResponse.class,
                         user.userId,
                         user.profileImageUrl,
-                        user.nickName,
+                        user.nickname,
                         store.storeId,
                         store.storeName,
                         store.kakaoCategoryName,
@@ -138,7 +137,7 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
                 .join(store).on(feed.storeId.eq(store.storeId))
                 .join(user).on(feed.userId.eq(user.userId))
                 .where(condition,
-                        ltFeedId(lastFeedId))
+                        ltFeedId(lastIdxId))
                 .orderBy(feed.createdAt.desc())
                 .limit(size+1)
                 .fetch();
@@ -159,7 +158,7 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
                 .select(Projections.constructor(FeedDetailResponse.class,
                         user.userId,
                         user.profileImageUrl,
-                        user.nickName,
+                        user.nickname,
                         store.storeId,
                         store.storeName,
                         store.kakaoCategoryName,

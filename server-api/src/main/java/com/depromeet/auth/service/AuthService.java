@@ -185,7 +185,7 @@ public class AuthService {
 		User newUser = User.builder()
 			.socialType(socialType)
 			.socialId(socialId)
-			.nickName(GUEST_PREFIX + randomUUID)
+			.nickname(GUEST_PREFIX + randomUUID)
 			.userRole(Role.GUEST)
 			.build();
 		return userRepository.save(newUser);

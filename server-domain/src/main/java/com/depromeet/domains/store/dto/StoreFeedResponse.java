@@ -15,19 +15,19 @@ public class StoreFeedResponse {
     private Long userId;
     private Long feedId;
     private String profileImageUrl;
-    private String nickName;
+    private String nickname;
     private Integer rating;
     private String feedImageUrl;
     private LocalDate createdAt;
     private String description;
 	private Boolean isMine;
 
-    public StoreFeedResponse of(Long userId, Long feedId, String profileImageUrl, String nickName, Integer rating, String feedImageUrl, LocalDate createdAt, String description, Boolean isMine) {
+    public StoreFeedResponse of(Long userId, Long feedId, String profileImageUrl, String nickname, Integer rating, String feedImageUrl, LocalDate createdAt, String description, Boolean isMine) {
     	return StoreFeedResponse.builder()
     			.userId(userId)
     			.feedId(feedId)
     			.profileImageUrl(profileImageUrl)
-    			.nickName(nickName)
+    			.nickname(nickname)
     			.rating(rating)
     			.feedImageUrl(feedImageUrl)
     			.createdAt(createdAt)
