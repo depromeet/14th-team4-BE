@@ -8,9 +8,9 @@ import com.depromeet.domains.comment.dto.response.CommentsResponse;
 import com.depromeet.domains.commet.servicce.CommentService;
 import com.depromeet.domains.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,8 +21,11 @@ public class CommentController {
 
     // 피드의 댓글 전체 조회
     @GetMapping("/feeds/{feedId}/comments")
-    public CustomResponseEntity<List<CommentsResponse>> getComments(@PathVariable("feedId") Long feedId) {
-        return CustomResponseEntity.success(commentService.getComments(feedId));
+    public CustomResponseEntity<Slice<CommentsResponse>> getComments(@PathVariable("feedId") Long feedId,
+                                                                     @AuthUser User user,
+                                                                     @RequestParam(value = "lastIdxId", required = false) Long lastIdxId,
+                                                                     @RequestParam(value = "size") Integer size){
+        return CustomResponseEntity.success(commentService.getComments(user, feedId, lastIdxId, size));
     }
 
     // 피드에 댓글 작성

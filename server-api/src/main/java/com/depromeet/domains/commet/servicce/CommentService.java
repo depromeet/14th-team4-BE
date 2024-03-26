@@ -10,10 +10,13 @@ import com.depromeet.domains.comment.repository.CommentRepository;
 import com.depromeet.domains.user.entity.User;
 import com.depromeet.domains.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.depromeet.common.CursorPagingCommon.getSlice;
 
 @Service
 @RequiredArgsConstructor
@@ -23,8 +26,10 @@ public class CommentService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public List<CommentsResponse> getComments(Long feedId) {
-        return commentRepository.findByFeedId(feedId);
+    public Slice<CommentsResponse> getComments(User user, Long feedId, Long lastIdxId, Integer size) {
+        List<CommentsResponse> commentsResponse = commentRepository.findByFeedId(user.getUserId(), feedId, lastIdxId, size);
+        Slice<CommentsResponse> responses = getSlice(commentsResponse, size);
+        return responses;
     }
 
     @Transactional

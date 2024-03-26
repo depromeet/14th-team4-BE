@@ -5,5 +5,5 @@ import com.depromeet.domains.comment.dto.response.CommentsResponse;
 import java.util.List;
 
 public interface CommentRepositoryCustom {
-    List<CommentsResponse> findByFeedId(Long feedId);
+    List<CommentsResponse> findByFeedId(Long userId, Long feedId, Long lastIdxId, Integer size);
 }
