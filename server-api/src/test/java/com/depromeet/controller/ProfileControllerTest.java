@@ -93,6 +93,7 @@ class ProfileControllerTest extends RestDocsTestSupport {
                 , "Store 5"
                 , 567890123L
                 , "image_url_5.jpg"
+                , "서울특별시 강남구 동네1"
                 , LocalDateTime.now()
                 , 30L
                 , 40L
@@ -105,6 +106,7 @@ class ProfileControllerTest extends RestDocsTestSupport {
                 , "Store 6"
                 , 678901234L
                 , "image_url_6.jpg"
+                , "서울특별시 강남구 동네2"
                 , LocalDateTime.now()
                 , 35L
                 , 45L
