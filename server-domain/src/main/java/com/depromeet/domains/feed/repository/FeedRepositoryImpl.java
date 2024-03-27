@@ -188,6 +188,7 @@ public class FeedRepositoryImpl implements FeedRepositoryCustom {
                         feed.storeId,
                         store.storeName,
                         store.kakaoStoreId,
+                        store.address,
                         feed.imageUrl,
                         feed.createdAt,
                         feed.likeCnt,
