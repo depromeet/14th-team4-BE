@@ -18,7 +18,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
         Integer result = jpaQueryFactory
             .selectOne()
             .from(user)
-            .where(user.nickName.eq(nickname))
+            .where(user.nickname.eq(nickname))
             .fetchFirst();
         return result != null;
     }

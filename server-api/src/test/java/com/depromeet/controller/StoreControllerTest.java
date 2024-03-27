@@ -202,7 +202,7 @@ class StoreControllerTest extends RestDocsTestSupport {
 								fieldWithPath("data.content[].userId").type(JsonFieldType.NUMBER).description("사용자 ID"),
 								fieldWithPath("data.content[].feedId").type(JsonFieldType.NUMBER).description("피드 ID"),
 								fieldWithPath("data.content[].profileImageUrl").type(JsonFieldType.STRING).description("프로필 이미지 URL"),
-								fieldWithPath("data.content[].nickName").type(JsonFieldType.STRING).description("닉네임"),
+								fieldWithPath("data.content[].nickname").type(JsonFieldType.STRING).description("닉네임"),
 								fieldWithPath("data.content[].rating").type(JsonFieldType.NUMBER).description("평점"),
 								fieldWithPath("data.content[].feedImageUrl").type(JsonFieldType.STRING).description("이미지 URL"),
 								fieldWithPath("data.content[].createdAt").type(JsonFieldType.STRING).description("생성일"),
