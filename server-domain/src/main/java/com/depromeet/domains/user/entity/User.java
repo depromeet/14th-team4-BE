@@ -35,7 +35,7 @@ public class User extends BaseTimeEntity {
 	private SocialType socialType;
 
 	@Column(nullable = false)
-	private String nickName;
+	private String nickname;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -54,9 +54,9 @@ public class User extends BaseTimeEntity {
 	private String profileImageUrl;
 
 	@Builder
-	public User(SocialType socialType, String nickName, Role userRole, String socialId) {
+	public User(SocialType socialType, String nickname, Role userRole, String socialId) {
 		this.socialType = socialType;
-		this.nickName = nickName;
+		this.nickname = nickname;
 		this.userRole = userRole;
 		this.socialId = socialId;
 	}
@@ -66,7 +66,7 @@ public class User extends BaseTimeEntity {
 	}
 
 	public void updateNickname(String nickName) {
-		this.nickName = nickName;
+		this.nickname = nickName;
 	}
 
 	public void updateProfileImageUrl(String profileImageUrl) {

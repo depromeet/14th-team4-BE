@@ -261,6 +261,6 @@ public class StoreService {
 			.filter(store -> store.getTotalFeedCnt() >= 2)
 			.collect(Collectors.toList());
 
-		return StoreSharingSpotResponse.of(user.getNickName(), toStoreSharingSpot(storesMoreThanTwoFeeds));
+		return StoreSharingSpotResponse.of(user.getNickname(), toStoreSharingSpot(storesMoreThanTwoFeeds));
 	}
 }

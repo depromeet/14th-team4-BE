@@ -27,4 +27,8 @@ public class Comment extends BaseTimeEntity {
     private Long feedId;
 
     private String description;
+
+    public void updateDescription(String description) {
+        this.description = description;
+    }
 }

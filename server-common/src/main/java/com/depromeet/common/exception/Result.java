@@ -27,7 +27,7 @@ public enum Result {
     NOT_FOUND_STORE(404, "가게를 찾을 수 없습니다."),
     NOT_FOUND_CATEGORY(404, "카테고리를 찾을 수 없습니다." ),
     NOT_FOUND_REVIEW(404, "리뷰를 찾을 수 없습니다."),
-    NOT_FOUND_FEED(404, "피드를 찾을 수 없습니다."),;
+    NOT_FOUND_FEED(404, "피드를 찾을 수 없습니다."), NOT_FOUND_COMMENT(404, "댓글을 찾을 수 없습니다."),;
 
 
 
