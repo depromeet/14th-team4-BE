@@ -37,16 +37,16 @@ VALUES
 
 INSERT INTO Store (storeId, storeName, latitude, longitude, address, thumbnailUrl, kakaoStoreId, totalRating, kakaoCategoryName, totalFeedCnt, createdAt, updatedAt)
 VALUES
-    (1, 'Store 1', 37.123456, 127.123456, 'Address 1', 'thumbnail_url_1.jpg', 123456789, 4.5, 'Category 1', 100, NOW(), NULL),
-    (2, 'Store 2', 37.234567, 127.234567, 'Address 2', 'thumbnail_url_2.jpg', 234567890, 4.2, 'Category 2', 200, NOW(), NULL),
-    (3, 'Store 3', 37.345678, 127.345678, 'Address 3', 'thumbnail_url_3.jpg', 345678901, 4.7, 'Category 3', 150, NOW(), NULL),
-    (4, 'Store 4', 37.456789, 127.456789, 'Address 4', 'thumbnail_url_4.jpg', 456789012, 4.0, 'Category 4', 180, NOW(), NULL),
-    (5, 'Store 5', 37.567890, 127.567890, 'Address 5', 'thumbnail_url_5.jpg', 567890123, 4.9, 'Category 5', 220, NOW(), NULL),
-    (6, 'Store 6', 37.678901, 127.678901, 'Address 6', 'thumbnail_url_6.jpg', 678901234, 4.3, 'Category 6', 130, NOW(), NULL),
-    (7, 'Store 7', 37.789012, 127.789012, 'Address 7', 'thumbnail_url_7.jpg', 789012345, 4.6, 'Category 7', 190, NOW(), NULL),
-    (8, 'Store 8', 37.890123, 127.890123, 'Address 8', 'thumbnail_url_8.jpg', 890123456, 4.1, 'Category 8', 170, NOW(), NULL),
-    (9, 'Store 9', 37.901234, 127.901234, 'Address 9', 'thumbnail_url_9.jpg', 901234567, 4.8, 'Category 9', 210, NOW(), NULL),
-    (10, 'Store 10', 37.012345, 127.012345, 'Address 10', 'thumbnail_url_10.jpg', 123456789, 4.4, 'Category 10', 160, NOW(), NULL);
+    (1, 'Store 1', 37.123456, 127.123456, '서울특별시 강남구 1 2', 'thumbnail_url_1.jpg', 123456789, 4.5, 'Category 1', 100, NOW(), NULL),
+    (2, 'Store 2', 37.234567, 127.234567, '서울특별시 강남구 2 3', 'thumbnail_url_2.jpg', 234567890, 4.2, 'Category 2', 200, NOW(), NULL),
+    (3, 'Store 3', 37.345678, 127.345678, '서울특별시 강남구 3 4', 'thumbnail_url_3.jpg', 345678901, 4.7, 'Category 3', 150, NOW(), NULL),
+    (4, 'Store 4', 37.456789, 127.456789, '서울특별시 강남구 4 5', 'thumbnail_url_4.jpg', 456789012, 4.0, 'Category 4', 180, NOW(), NULL),
+    (5, 'Store 5', 37.567890, 127.567890, '서울특별시 강남구 5 6', 'thumbnail_url_5.jpg', 567890123, 4.9, 'Category 5', 220, NOW(), NULL),
+    (6, 'Store 6', 37.678901, 127.678901, '서울특별시 강남구 6 7', 'thumbnail_url_6.jpg', 678901234, 4.3, 'Category 6', 130, NOW(), NULL),
+    (7, 'Store 7', 37.789012, 127.789012, '서울특별시 강남구 7 8', 'thumbnail_url_7.jpg', 789012345, 4.6, 'Category 7', 190, NOW(), NULL),
+    (8, 'Store 8', 37.890123, 127.890123, '서울특별시 강남구 8 6', 'thumbnail_url_8.jpg', 890123456, 4.1, 'Category 8', 170, NOW(), NULL),
+    (9, 'Store 9', 37.901234, 127.901234, '서울특별시 강남구 9 7', 'thumbnail_url_9.jpg', 901234567, 4.8, 'Category 9', 210, NOW(), NULL),
+    (10, 'Store 10', 37.012345, 127.012345, '서울특별시 강남구 10 1', 'thumbnail_url_10.jpg', 123456789, 4.4, 'Category 10', 160, NOW(), NULL);
 
 INSERT INTO Heart (createdAt, deletedAt, feedId, updatedAt, userId)
 VALUES
