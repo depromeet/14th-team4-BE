@@ -16,7 +16,7 @@ public class ProfileFeedProjection {
     private Long storeId;
     private String storeName;
     private Long kakaoStoreId;
-    // todo - 위치(행정구)
+    private String address;
     private String feedImageUrl;
     private LocalDateTime feedCreatedAt;
     private Long likeCnt;
@@ -25,13 +25,14 @@ public class ProfileFeedProjection {
 
     @QueryProjection
     public ProfileFeedProjection(Long feedId, Long userId, Long storeId, String storeName, Long kakaoStoreId,
-                                 String feedImageUrl, LocalDateTime feedCreatedAt,
+                       String address, String feedImageUrl, LocalDateTime feedCreatedAt,
                                  Long likeCnt, Long commentCnt, Boolean isHeartFeed) {
         this.feedId = feedId;
         this.userId = userId;
         this.storeId = storeId;
         this.storeName = storeName;
         this.kakaoStoreId = kakaoStoreId;
+        this.address = address;
         this.feedImageUrl = feedImageUrl;
         this.feedCreatedAt = feedCreatedAt;
         this.likeCnt = likeCnt;
